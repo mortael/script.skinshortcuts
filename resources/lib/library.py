@@ -6,7 +6,6 @@ from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
 from traceback import print_exc
 from unidecode import unidecode
-from unicodeutils import try_decode
 import datafunctions, nodefunctions
 import json as simplejson
 import urllib.request, urllib.parse, urllib.error
@@ -22,8 +21,6 @@ KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        if not isinstance (txt,str):
-            txt = txt.decode('utf-8')
         message = u'%s: %s' % (ADDONID, txt)
         xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
@@ -568,11 +565,11 @@ class LibraryFunctions():
 
         # Retrieve icon and thumbnail
         if item[3]:
-            if "icon" in item[3].keys() and item[ 3 ][ "icon" ] is not None:
-                icon = try_decode(item[3]["icon"])
+            if "icon" in list(item[3].keys()) and item[3]["icon"] is not None:
+                icon = item[3]["icon"]
             else:
                 icon = "DefaultShortcut.png"
-            if "thumb" in item[3].keys():
+            if "thumb" in list(item[3].keys()):
                 thumbnail = item[3]["thumb"]
             else:
                 thumbnail = None
@@ -595,7 +592,7 @@ class LibraryFunctions():
 
         usedDefaultThumbAsIcon = False
         if self.useDefaultThumbAsIcon == True and thumbnail is not None:
-            icon = try_decode(thumbnail)
+            icon = thumbnail
             thumbnail = None
             usedDefaultThumbAsIcon = True
 
@@ -1311,9 +1308,9 @@ class LibraryFunctions():
         widgetType = None
         addonType = None
 
-        dialogLabel = try_decode( label[0] ).replace( "  >", "" )
+        dialogLabel = label[0].replace("  >", "")
         if len( label ) != 1:
-            dialogLabel = try_decode( label[0] ).replace( "  >", "" ) + " - " + try_decode( label[ -1 ] ).replace( "  >", "" )
+            dialogLabel = label[0].replace("  >", "") + " - " + label[-1].replace("  >", "")
 
         listings = []
 
@@ -1336,7 +1333,7 @@ class LibraryFunctions():
                 createLabel = "32100"
             listings.append( self._get_icon_overrides( tree, self._create( ["::CREATE::", createLabel, "", {}] ), "" ) )
 
-        log( "Getting %s - %s" %( dialogLabel, try_decode( location ) ) )
+        log("Getting %s - %s" %(dialogLabel, location))
 
         # Show a waiting dialog, then get the listings for the directory
         dialog = xbmcgui.DialogProgress()
@@ -1385,7 +1382,7 @@ class LibraryFunctions():
                             listitem = self._create( [ item[ "file" ], "%s  >" %( item[ "label" ] ), "", {"icon": "DefaultFolder.png", "thumb": thumb} ] )
 
                         # Add widget properties
-                        widgetName = try_decode(label[0]).replace( "  >", "" ) + " - " + item[ "label" ]
+                        widgetName = label[0].replace("  >", "") + " - " + item["label"]
                         listitem.setProperty( "widget", "Library" )
                         listitem.setProperty( "widgetName", widgetName )
                         listitem.setProperty( "widgetType", widgetType )
@@ -1403,7 +1400,7 @@ class LibraryFunctions():
                     listitem = self._create( [ item[ "file" ], altLabel, "", {"icon": item.get("icon"), "thumb": thumb} ] )
                     # add all passed properties to the gui to set default background, widget etc.
                     properties = []
-                    for key, value in smartShortCutsData.iteritems():
+                    for key, value in smartShortCutsData.items():
                         properties.append( [key, value ] )
                     listitem.setProperty( "smartShortcutProperties", repr( properties ) )
                     listitem.setProperty( "untranslatedIcon", thumb )

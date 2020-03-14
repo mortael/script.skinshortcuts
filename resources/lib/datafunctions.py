@@ -7,7 +7,6 @@ import ast
 from xml.dom.minidom import parse
 from traceback import print_exc
 from unidecode import unidecode
-from unicodeutils import try_decode
 import urllib.request, urllib.parse, urllib.error
 from html.entities import name2codepoint
 
@@ -38,8 +37,6 @@ REMOVE_REXP = re.compile('-{2,}')
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        if not isinstance (txt,str):
-            txt = txt.decode('utf-8')
         message = u'%s: %s' % (ADDONID, txt)
         xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
@@ -146,7 +143,6 @@ class DataFunctions():
 
         for path in paths:
             log( " - Attempting to load file %s" %( path ) )
-            path = try_decode( path )
             tree = None
             if xbmcvfs.exists( path ):
                 file = xbmcvfs.File( path ).read()
@@ -441,8 +437,6 @@ class DataFunctions():
         if icon is None:
             return
 
-        icon = try_decode( icon )
-
         # If the icon is a VAR or an INFO, we aren't going to override
         if icon.startswith( "$" ):
             return icon
@@ -688,7 +682,7 @@ class DataFunctions():
                 if propertyName not in fallbackProperties:
                     # Save the property name in the order in which we processed it
                     fallbackProperties.append( propertyName )
-                if propertyName not in fallbacks.keys():
+                if propertyName not in list(fallbacks.keys()):
                     # Create an empty list to hold fallbacks for this property
                     fallbacks[ propertyName ] = []
                 # Check whether any attribute/value pair has to match for this fallback
@@ -1131,13 +1125,10 @@ class DataFunctions():
         if data is None:
             return ["","","",""]
 
-        data = try_decode( data )
-
         skinid = None
         lasttranslation = None
 
         # Get just the integer of the string, for the input forms where this is valid
-        data = try_decode(data)
 
         if not data.find( "::SCRIPT::" ) == -1:
             data = data[10:]
@@ -1306,46 +1297,22 @@ class DataFunctions():
     def upgradeAction( self, action ):
         # This function looks for actions used in a previous version of Kodi, and upgrades them to the current action
 
-        if not action.lower().startswith( "activatewindow(" ): return action
-
-        # Isengard + earlier music addons
-        if int( KODIVERSION ) <= 15:
-            # Shortcut to addon section
-            if action.lower().startswith( "activatewindow(musiclibrary,addons" ) and xbmc.getCondVisibility( "!Library.HasContent(Music)" ):
-                return( "ActivateWindow(MusicFiles,Addons,return)" )
-            elif action.lower().startswith( "activatewindow(10502,addons" ) and xbmc.getCondVisibility( "!Library.HasContent(Music)" ):
-                return( "ActivateWindow(10501,Addons,return)" )
-            elif action.lower().startswith( "activatewindow(musicfiles,addons" ) and xbmc.getCondVisibility( "Library.HasContent(Music)" ):
-                return( "ActivateWindow(MusicLibrary,Addons,return)" )
-            elif action.lower().startswith( "activatewindow(10501,addons" ) and xbmc.getCondVisibility( "Library.HasContent(Music)" ):
-                return( "ActivateWindow(10502,Addons,return)" )
-
-            # Shortcut to a specific addon
-            if "plugin://" in action.lower():
-                if action.lower().startswith( "activatewindow(musiclibrary" ) and xbmc.getCondVisibility( "!Library.HasContent(Music)" ):
-                    return self.buildReplacementMusicAddonAction( action, "MusicFiles" )
-                elif action.lower().startswith( "activatewindow(10502" ) and xbmc.getCondVisibility( "!Library.HasContent(Music)" ):
-                    return self.buildReplacementMusicAddonAction( action, "10501" )
-                elif action.lower().startswith( "activatewindow(musicfiles" ) and xbmc.getCondVisibility( "Library.HasContent(Music)" ):
-                    return self.buildReplacementMusicAddonAction( action, "MusicLibrary" )
-                elif action.lower().startswith( "activatewindow(10501" ) and xbmc.getCondVisibility( "Library.HasContent(Music)" ):
-                    return self.buildReplacementMusicAddonAction( action, "10502" )
-
+        if not action.lower().startswith("activatewindow("): return action
 
         # Jarvis + later music windows
-        if action.lower() == "activatewindow(musicfiles)" and int( KODIVERSION ) >= 16:
+        if action.lower() == "activatewindow(musicfiles)":
             return "ActivateWindow(Music,Files,Return)"
 
-        if action.lower().startswith("activatewindow(musiclibrary") and int( KODIVERSION ) >= 16:
+        if action.lower().startswith("activatewindow(musiclibrary"):
             if "," in action:
-                return "ActivateWindow(Music," + action.split( ",", 1 )[ 1 ]
+                return "ActivateWindow(Music," + action.split(",", 1)[1]
             else:
                 return "ActivateWindow(Music)"
 
-        # Isengard + later (all supported versions) video windows
-        if action.lower().startswith( "activatewindow(videolibrary"):
+        # Isengard + later video windows
+        if action.lower().startswith("activatewindow(videolibrary"):
             if "," in action:
-                return "ActivateWindow(Videos," + action.split( ",", 1 )[ 1 ]
+                return "ActivateWindow(Videos," + action.split(",", 1)[1]
             else:
                 return "ActivateWindow(Videos)"
 

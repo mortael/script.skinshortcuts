@@ -14,8 +14,6 @@ SKINPATH = xbmc.translatePath("special://skin/shortcuts/")
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        if not isinstance (txt,str):
-            txt = txt.decode('utf-8')
         message = u'%s: %s' % (ADDONID, txt)
         xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
@@ -213,7 +211,7 @@ class Template():
                     for variable in variables.findall( "variable" ):
                         # If the profile doesn't have a dict in finalVariables, create one
                         profileVisibility = profile.attrib.get( "visible" )
-                        if profileVisibility not in finalVariables.keys():
+                        if profileVisibility not in list(finalVariables.keys()):
                             finalVariables[ profileVisibility ] = {}
 
                         # Save the variable name
@@ -223,7 +221,7 @@ class Template():
 
                         # Get any existing values for this profile + variable
                         newVariables = []
-                        if varName in finalVariables[ profileVisibility ].keys():
+                        if varName in list(finalVariables[profileVisibility].keys()):
                             newVariables = finalVariables[ profileVisibility ][ varName ]
 
                         # Loop through new values provided by this template
@@ -264,7 +262,7 @@ class Template():
         # Firstly, lets pull out the specific variables from all the variables we've been passed
         limitedVariables = {}
         for profile in allVariables:
-            if variableName in allVariables[ profile ].keys():
+            if variableName in list(allVariables[profile].keys()):
                 limitedVariables[ profile ] = allVariables[ profile ][ variableName ]
 
         numProfiles = len( limitedVariables )
@@ -709,7 +707,7 @@ class Template():
         # Combines an existing set of properties with additional properties
         newProperties = self.getProperties( elem, items )
         for propertyName in newProperties:
-            if propertyName in currentProperties.keys():
+            if propertyName in list(currentProperties.keys()):
                 continue
             currentProperties[ propertyName ] = newProperties[ propertyName ]
 

@@ -5,7 +5,6 @@ import xml.etree.ElementTree as xmltree
 from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
 from traceback import print_exc
-from unicodeutils import try_decode
 import calendar
 from time import gmtime, strftime
 import random
@@ -41,8 +40,6 @@ def log(txt):
         xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 def is_hebrew(text):
-    if not isinstance(text, str):
-        text = text.decode('utf-8')
     for chr in text:
         if ord(chr) >= 1488 and ord(chr) <= 1514:
             return True
@@ -436,14 +433,14 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Add fallback properties
         for key in fallbackProperties:
-            if key not in allProps.keys():
+            if key not in list(allProps.keys()):
                 # Check whether we have a fallback for the value
                 for propertyMatch in fallbacks[ key ]:
                     matches = False
                     if propertyMatch[ 1 ] is None:
                         # This has no conditions, so it matched
                         matches = True
-                    elif propertyMatch[ 1 ] in allProps.keys() and allProps[ propertyMatch[ 1 ] ] == propertyMatch[ 2 ]:
+                    elif propertyMatch[1] in list(allProps.keys()) and allProps[propertyMatch[1]] == propertyMatch[2]:
                         matches = True
 
                     if matches:
@@ -455,10 +452,10 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Remove any properties whose requirements haven't been met
         for key in otherProperties:
-            if key in allProps.keys() and key in requires.keys() and requires[ key ] not in allProps.keys():
+            if key in list(allProps.keys()) and key in list(requires.keys()) and requires[key] not in list(allProps.keys()):
                 # This properties requirements aren't met
                 allProps.pop( key )
-                if "%s-NUM" %( key ) in allProps.keys():
+                if "%s-NUM" %(key) in list(allProps.keys()):
                     allProps.pop( "%s-NUM" %( key ) )
 
         # Save the new properties to the listitem
@@ -467,7 +464,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
         for key in added:
             listitem.setProperty( key, allProps[ key ] )
         for key in removed:
-            if key not in allProps.keys(): continue
+            if key not in list(allProps.keys()): continue
             listitem.setProperty( key, None )
         for key in changed:
             listitem.setProperty( key, allProps[ key ] )
@@ -592,7 +589,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         enabledSystemDebug = False
         enabledScriptDebug = False
-        if json_response.has_key('result') and json_response['result'].has_key('settings') and json_response['result']['settings'] is not None:
+        if 'result' in json_response and 'settings' in json_response['result'] and json_response['result']['settings'] is not None:
             for item in json_response['result']['settings']:
                 if item["id"] == "debug.showloginfo":
                     if item["value"] == False:
@@ -635,13 +632,13 @@ class GUI( xbmcgui.WindowXMLDialog ):
             for listitem in self.allListItems:
 
                 # If the item has a label or an action, or a specified property from the override is present
-                if try_decode( listitem.getLabel() ) != LANGUAGE(32013) or listitem.getProperty( "path" ) != "noop" or self.hasSaveWithProperty( listitem ):
+                if listitem.getLabel() != LANGUAGE(32013) or listitem.getProperty("path") != "noop" or self.hasSaveWithProperty(listitem):
                     # Generate labelID, and mark if it has changed
                     labelID = listitem.getProperty( "labelID" )
                     newlabelID = labelID
 
                     # defaultID
-                    defaultID = try_decode( listitem.getProperty( "defaultID" ) )
+                    defaultID = listitem.getProperty("defaultID")
 
                     localizedString = listitem.getProperty( "localizedString" )
                     if localizedString is None or localizedString == "":
@@ -672,11 +669,11 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
                     thumb = listitem.getProperty( "thumbnail" )
 
-                    xmltree.SubElement( shortcut, "icon" ).text = try_decode( icon )
-                    xmltree.SubElement( shortcut, "thumb" ).text = try_decode( thumb )
+                    xmltree.SubElement(shortcut, "icon").text = icon
+                    xmltree.SubElement(shortcut, "thumb").text = thumb
 
                     # Action
-                    xmltree.SubElement( shortcut, "action" ).text = try_decode( listitem.getProperty( "path" ) )
+                    xmltree.SubElement(shortcut, "action").text = listitem.getProperty("path")
 
                     # Visible
                     if listitem.getProperty( "visible-condition" ):
@@ -707,7 +704,6 @@ class GUI( xbmcgui.WindowXMLDialog ):
             # Save the shortcuts
             DATA.indent( root )
             path = os.path.join( DATAPATH , DATA.slugify( self.group, True, isSubLevel = isSubLevel ) + ".DATA.xml" )
-            path = try_decode( path )
 
             tree.write( path.replace( ".shortcuts", ".DATA.xml" ), encoding="UTF-8"  )
 
@@ -747,11 +743,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
                         paths = [[os.path.join(DATAPATH, DATA.slugify("%s.%s" %(labelIDFrom, str( i )), True, isSubLevel = True) + ".DATA.xml"), "Move"], [os.path.join(SKINPATH, DATA.slugify("%s.%s" %(defaultIDFrom, str(i)), isSubLevel = True) + ".DATA.xml"), "Copy"], [os.path.join(DEFAULTPATH, DATA.slugify("%s.%s" %(defaultIDFrom, str(i)), isSubLevel = True) + ".DATA.xml"), "Copy"]]
                         target = os.path.join(DATAPATH, DATA.slugify("%s.%s" %(labelIDTo, str(i)), True, isSubLevel = True) + ".DATA.xml")
 
-                    target = try_decode( target )
-
                     for path in paths:
-                        path[0] = try_decode( path[0] )
-                        path[1] = try_decode( path[1] )
 
                         if path[1] == "New":
                             tree = xmltree.ElementTree( xmltree.Element( "shortcuts" ) )
@@ -822,14 +814,14 @@ class GUI( xbmcgui.WindowXMLDialog ):
         for property in currentProperties:
             #[ groupname, itemLabelID, property, value ]
             if not property[0] == self.group:
-                if property[0] in labelIDChanges.keys():
+                if property[0] in list(labelIDChanges.keys()):
                     property[0] = labelIDChanges[property[0]]
                 elif "." in property[0] and property[ 0 ].rsplit( ".", 1 )[ 1 ].isdigit():
                     # Additional menu
                     groupName, groupValue = property[ 0 ].rsplit( ".", 1 )
-                    if groupName in labelIDChanges.keys() and int( groupValue ) in range( 1, 6 ):
-                        property[0] = "%s.%s" %( labelIDChanges[ groupName ], groupValue )
-                saveData.append( property )
+                    if groupName in list(labelIDChanges.keys()) and int(groupValue) in range(1, 6):
+                        property[0] = "%s.%s" %(labelIDChanges[groupName], groupValue)
+                saveData.append(property)
 
         # Add all the properties we've been passed
         for property in properties:
@@ -1260,12 +1252,12 @@ class GUI( xbmcgui.WindowXMLDialog ):
             oldlabelID = listitem.getProperty( "labelID" )
 
             # If the item is blank, set the current label to empty
-            if try_decode( label ) == LANGUAGE(32013):
+            if label == LANGUAGE(32013):
                 label = ""
 
             # Get new label from keyboard dialog
             if is_hebrew(label):
-                label = label.decode('utf-8')[::-1]
+                label = label[::-1]
             keyboard = xbmc.Keyboard( label, xbmc.getLocalizedString(528), False )
             keyboard.doModal()
             if ( keyboard.isConfirmed() ):
@@ -1321,9 +1313,9 @@ class GUI( xbmcgui.WindowXMLDialog ):
                 return
 
             if selectedShortcut.getProperty( "chosenPath" ):
-                action = try_decode( selectedShortcut.getProperty( "chosenPath" ) )
+                action = selectedShortcut.getProperty("chosenPath")
             elif selectedShortcut.getProperty( "path" ):
-                action = try_decode(selectedShortcut.getProperty( "path" ))
+                action = selectedShortcut.getProperty("path")
 
             if action == "":
                 action = "noop"
@@ -1592,8 +1584,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
                     keyboard = xbmc.Keyboard( widgetTempName, xbmc.getLocalizedString(16105), False )
                     keyboard.doModal()
                     if ( keyboard.isConfirmed() ) and keyboard.getText() != "":
-                        if widgetTempName != try_decode( keyboard.getText() ):
-                            widgetName = try_decode( keyboard.getText() )
+                        if widgetTempName != keyboard.getText():
+                            widgetName = keyboard.getText()
 
                 # Add any necessary reload parameter
                 widgetPath = LIBRARY.addWidgetReload( selectedShortcut.getProperty( "widgetPath" ) )
