@@ -98,7 +98,7 @@ class XMLFunctions():
 
         if complete == True:
             # Menu is built, reload the skin
-            xbmc.executebuiltin( "XBMC.ReloadSkin()" )
+            xbmc.executebuiltin("ReloadSkin()")
         else:
             # Menu couldn't be built - generate a debug log
 
