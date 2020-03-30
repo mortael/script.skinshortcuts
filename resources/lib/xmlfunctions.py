@@ -8,15 +8,17 @@ from traceback import print_exc
 import json as simplejson
 
 ADDON        = xbmcaddon.Addon()
-ADDONID      = sys.modules[ "__main__" ].ADDONID
+ADDONID      = ADDON.getAddonInfo('id')
 ADDONVERSION = ADDON.getAddonInfo('version')
 KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 LANGUAGE     = ADDON.getLocalizedString
 MASTERPATH   = os.path.join(xbmc.translatePath("special://masterprofile/addon_data/"), ADDONID)
 
-import datafunctions, template
+from resources.lib import datafunctions, template
 DATA = datafunctions.DataFunctions()
-import hashlib, hashlist
+import hashlib
+
+hashlist = []
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
@@ -294,13 +296,13 @@ class XMLFunctions():
 
     def writexml( self, profilelist, mainmenuID, groups, numLevels, buildMode, progress, options, minitems ):
         # Reset the hashlist, add the profile list and script version
-        hashlist.list = []
-        hashlist.list.append( ["::PROFILELIST::", profilelist] )
-        hashlist.list.append( ["::SCRIPTVER::", ADDONVERSION] )
-        hashlist.list.append( ["::XBMCVER::", KODIVERSION] )
-        hashlist.list.append( ["::HIDEPVR::",  ADDON.getSetting( "donthidepvr" )] )
-        hashlist.list.append( ["::SHARED::", ADDON.getSetting( "shared_menu" )] )
-        hashlist.list.append( ["::SKINDIR::", xbmc.getSkinDir()] )
+        hashlist = []
+        hashlist.append( ["::PROFILELIST::", profilelist] )
+        hashlist.append( ["::SCRIPTVER::", ADDONVERSION] )
+        hashlist.append( ["::XBMCVER::", KODIVERSION] )
+        hashlist.append( ["::HIDEPVR::",  ADDON.getSetting( "donthidepvr" )] )
+        hashlist.append( ["::SHARED::", ADDON.getSetting( "shared_menu" )] )
+        hashlist.append( ["::SKINDIR::", xbmc.getSkinDir()] )
 
         # Clear any skin settings for backgrounds and widgets
         DATA._reset_backgroundandwidgets()
@@ -379,7 +381,7 @@ class XMLFunctions():
             if groups == "" or groups.split( "|" )[0] == "mainmenu":
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin( "Skin.SetBool(SkinShortcuts-FullMenu)" )
-                hashlist.list.append( ["::FULLMENU::", "True"] )
+                hashlist.append( ["::FULLMENU::", "True"] )
                 for node in DATA._get_shortcuts( "mainmenu", None, True, profile[0] ).findall( "shortcut" ):
                     menuitems.append( node )
                     submenuItems.append( node )
@@ -387,7 +389,7 @@ class XMLFunctions():
             else:
                 # Clear any skinstring marking that we're providing the whole menu
                 xbmc.executebuiltin( "Skin.Reset(SkinShortcuts-FullMenu)" )
-                hashlist.list.append( ["::FULLMENU::", "False"] )
+                hashlist.append( ["::FULLMENU::", "False"] )
 
             # If building specific groups, split them into the menuitems list
             count = 0
@@ -628,7 +630,7 @@ class XMLFunctions():
                         else:
                             xbmc.executebuiltin( "Skin.Reset(%s)" %( checkForShortcut[ 1 ] ) )
                     # Save this to the hashes file, so we can set it on profile changes
-                    hashlist.list.append( [ "::SKINBOOL::", [ profile[ 1 ], checkForShortcut[ 1 ], checkForShortcut[ 2 ] ] ] )
+                    hashlist.append( [ "::SKINBOOL::", [ profile[ 1 ], checkForShortcut[ 1 ], checkForShortcut[ 2 ] ] ] )
 
             # Build the template for the main menu
             Template.parseItems( "mainmenu", 0, templateMainMenuItems, profile[ 2 ], profile[ 1 ], "", "", mainmenuID, True )
@@ -678,11 +680,11 @@ class XMLFunctions():
 
         # Save the hashes
         # Append the skin version to the hashlist
-        hashlist.list.append( ["::SKINVER::", skinVersion] )
+        hashlist.append( ["::SKINVER::", skinVersion] )
 
         # Save the hashes
         file = xbmcvfs.File( os.path.join( MASTERPATH , xbmc.getSkinDir() + ".hash" ), "w" )
-        file.write( repr( hashlist.list ) )
+        file.write(repr(hashlist))
         file.close()
 
 

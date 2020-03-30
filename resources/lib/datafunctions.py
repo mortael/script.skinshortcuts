@@ -1,8 +1,7 @@
-# coding=utf-8
 import os, sys, datetime, unicodedata, re, types
 import xbmc, xbmcaddon, xbmcgui, xbmcvfs
 import xml.etree.ElementTree as xmltree
-import hashlib, hashlist
+import hashlib
 import ast
 from xml.dom.minidom import parse
 from traceback import print_exc
@@ -10,7 +9,8 @@ from unidecode import unidecode
 import urllib.request, urllib.parse, urllib.error
 from html.entities import name2codepoint
 
-import nodefunctions
+
+from resources.lib import nodefunctions
 NODE = nodefunctions.NodeFunctions()
 
 ADDON        = xbmcaddon.Addon()
@@ -21,6 +21,8 @@ CWD          = ADDON.getAddonInfo('path')
 DATAPATH     = os.path.join(xbmc.translatePath("special://profile/"), "addon_data", ADDONID)
 SKINPATH     = xbmc.translatePath("special://skin/shortcuts/")
 DEFAULTPATH  = xbmc.translatePath(os.path.join(CWD, 'resources', 'shortcuts'))
+
+hashlist = []
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))
@@ -1090,9 +1092,9 @@ class DataFunctions():
         if file is not None:
             hasher = hashlib.md5()
             hasher.update(xbmcvfs.File(filename).read().encode("utf-8"))
-            hashlist.list.append([filename, hasher.hexdigest()])
+            hashlist.append([filename, hasher.hexdigest()])
         else:
-            hashlist.list.append([filename, None])
+            hashlist.append([filename, None])
 
 
     # in-place prettyprint formatter

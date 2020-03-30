@@ -1,16 +1,18 @@
-# coding=utf-8
 import os, sys
 import xbmc, xbmcaddon, xbmcvfs
 import xml.etree.ElementTree as xmltree
-import hashlib, hashlist
+import hashlib
 import copy
 from traceback import print_exc
-import simpleeval, operator, ast
-from simpleeval import simple_eval
+from resources.lib import simpleeval
+import operator, ast
+from resources.lib.simpleeval import simple_eval
 
 ADDON    = xbmcaddon.Addon()
 ADDONID  = ADDON.getAddonInfo('id')
 SKINPATH = xbmc.translatePath("special://skin/shortcuts/")
+
+hashlist = []
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
@@ -898,9 +900,9 @@ class Template():
         if file is not None:
             hasher = hashlib.md5()
             hasher.update(file.encode("utf8"))
-            hashlist.list.append([filename.encode("utf8"), hasher.hexdigest()])
+            hashlist.append([filename.encode("utf8"), hasher.hexdigest()])
         else:
-            hashlist.list.append([filename.encode("utf8"), None])
+            hashlist.append([filename.encode("utf8"), None])
 
     def copy_tree( self, elem ):
         if elem is None: return None

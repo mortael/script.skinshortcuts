@@ -1,6 +1,6 @@
 # coding=utf-8
 import os, sys, datetime, unicodedata
-import xbmc, xbmcgui, xbmcvfs
+import xbmc, xbmcaddon, xbmcgui, xbmcvfs
 import xml.etree.ElementTree as xmltree
 from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
@@ -12,15 +12,15 @@ import json as simplejson
 import urllib.request, urllib.parse, urllib.error
 import _thread as thread
 
-import datafunctions
+from resources.lib import datafunctions
 DATA = datafunctions.DataFunctions()
 
-import library
+from resources.lib import library
 LIBRARY = library.LibraryFunctions()
 
-ADDON        = sys.modules[ "__main__" ].ADDON
-ADDONID      = sys.modules[ "__main__" ].ADDONID
-CWD          = sys.modules[ "__main__" ].CWD
+ADDON        = xbmcaddon.Addon()
+ADDONID      = ADDON.getAddonInfo('id')
+CWD          = ADDON.getAddonInfo('path')
 LANGUAGE     = ADDON.getLocalizedString
 DATAPATH     = os.path.join(xbmc.translatePath("special://profile/addon_data/"), ADDONID)
 SKINPATH     = xbmc.translatePath("special://skin/shortcuts/")

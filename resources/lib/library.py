@@ -1,22 +1,21 @@
-# coding=utf-8
 import os, sys, datetime, unicodedata
-import xbmc, xbmcgui, xbmcvfs
+import xbmc, xbmcaddon, xbmcgui, xbmcvfs
 import xml.etree.ElementTree as xmltree
 from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
 from traceback import print_exc
 from unidecode import unidecode
-import datafunctions, nodefunctions
+from resources.lib import datafunctions, nodefunctions
 import json as simplejson
 import urllib.request, urllib.parse, urllib.error
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
-ADDON        = sys.modules[ "__main__" ].ADDON
-ADDONID      = sys.modules[ "__main__" ].ADDONID
-CWD          = sys.modules[ "__main__" ].CWD
+ADDON        = xbmcaddon.Addon()
+ADDONID      = ADDON.getAddonInfo('id')
+CWD          = ADDON.getAddonInfo('path')
 DATAPATH     = os.path.join(xbmc.translatePath("special://profile/"), "addon_data", ADDONID)
-LANGUAGE     = sys.modules[ "__main__" ].LANGUAGE
+LANGUAGE     = ADDON.getLocalizedString
 KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 
 def log(txt):
@@ -1400,7 +1399,7 @@ class LibraryFunctions():
                     listitem = self._create( [ item[ "file" ], altLabel, "", {"icon": item.get("icon"), "thumb": thumb} ] )
                     # add all passed properties to the gui to set default background, widget etc.
                     properties = []
-                    for key, value in smartShortCutsData.items():
+                    for key, value in list(smartShortCutsData.items()):
                         properties.append( [key, value ] )
                     listitem.setProperty( "smartShortcutProperties", repr( properties ) )
                     listitem.setProperty( "untranslatedIcon", thumb )
