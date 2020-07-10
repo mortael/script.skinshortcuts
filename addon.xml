@@ -36,6 +36,6 @@
 			<icon>icon.png</icon>
 			<fanart>fanart.jpg</fanart>
 		</assets>
-		<news>Template improvements and bug fixes</news>
+		<news>Kodi v19 Matrix + Python 3 compatibility</news>
 	</extension>
 </addon>
