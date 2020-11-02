@@ -1372,7 +1372,7 @@ class LibraryFunctions():
 
                     if item[ "filetype" ] == "directory":
                         thumb = None
-                        if item[ "thumbnail" ] is not "":
+                        if item[ "thumbnail" ] != "":
                             thumb = item[ "thumbnail" ]
 
                         listitem = self._create( [ "ActivateWindow(%s,%s,return)" %( windowID, item[ "file" ] ), altLabel, "", {"icon": "DefaultFolder.png", "thumb": thumb} ] )
@@ -1417,7 +1417,7 @@ class LibraryFunctions():
                     # Process this as a plugin
                     if item["filetype"] == "directory":
                         thumb = None
-                        if item[ "thumbnail" ] is not "":
+                        if item[ "thumbnail" ] != "":
                             thumb = item[ "thumbnail" ]
                         listitem = self._create( [item[ "file" ], item[ "label" ] + "  >", "", {"icon": "DefaultFolder.png", "thumb": thumb} ] )
                         listings.append( self._get_icon_overrides( tree, listitem, "" ) )
@@ -1786,7 +1786,7 @@ class LibraryFunctions():
             temp_path = target.replace( "multipath://", "" ).split( "%2f/" )
             target = []
             for item in temp_path:
-                if item is not "":
+                if item != "":
                     target.append( urllib.url2pathname( item ) )
         else:
             target = [target]

@@ -960,7 +960,7 @@ class DataFunctions():
             # currentProperty[4] = defaultID
             if labelID is not None and currentProperty[0] == group and currentProperty[1] == labelID:
                 returnProperties.append( self.upgradeAdditionalProperties( currentProperty[2], currentProperty[3] ) )
-            elif len( currentProperty ) is not 4:
+            elif len( currentProperty ) != 4:
                 if defaultID is not None and currentProperty[0] == group and currentProperty[4] == defaultID:
                     returnProperties.append( self.upgradeAdditionalProperties( currentProperty[2], currentProperty[3] ) )
 
