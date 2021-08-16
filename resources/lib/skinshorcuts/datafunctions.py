@@ -35,17 +35,17 @@ NODE = nodefunctions.NodeFunctions()
 hashlist = []
 
 # character entity reference
-CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))
+CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
 
 # decimal character reference
-DECIMAL_REXP = re.compile('&#(\d+);')
+DECIMAL_REXP = re.compile(r'&#(\d+);')
 
 # hexadecimal character reference
-HEX_REXP = re.compile('&#x([\da-fA-F]+);')
+HEX_REXP = re.compile(r'&#x([\da-fA-F]+);')
 
 REPLACE1_REXP = re.compile(r'[\']+')
 REPLACE2_REXP = re.compile(r'[^-a-z0-9]+')
-REMOVE_REXP = re.compile('-{2,}')
+REMOVE_REXP = re.compile(r'-{2,}')
 
 
 class DataFunctions:
