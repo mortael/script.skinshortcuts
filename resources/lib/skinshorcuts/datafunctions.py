@@ -657,7 +657,6 @@ class DataFunctions:
         # Load icons out of mainmenu.DATA.xml
         path = os.path.join(SKIN_PATH, "mainmenu.DATA.xml")
         if xbmcvfs.exists(path):
-            file = xbmcvfs.File(path).read()
             self._save_hash(path)
             tree = xmltree.parse(path)
             for node in tree.getroot().findall("shortcut"):
