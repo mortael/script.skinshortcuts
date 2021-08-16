@@ -33,8 +33,8 @@ if not xbmcvfs.exists(DATA_PATH):
 
 
 def is_hebrew(text):
-    for chr in text:
-        if 1488 <= ord(chr) <= 1514:
+    for _chr in text:
+        if 1488 <= ord(_chr) <= 1514:
             return True
     return False
 
@@ -823,26 +823,26 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Copy any items not in the current group to the array we'll save, and
         # make any labelID changes whilst we're at it
         saveData = []
-        for property in currentProperties:
+        for prop in currentProperties:
             # [ groupname, itemLabelID, property, value ]
-            if not property[0] == self.group:
-                if property[0] in list(labelIDChanges.keys()):
-                    property[0] = labelIDChanges[property[0]]
-                elif "." in property[0] and property[0].rsplit(".", 1)[1].isdigit():
+            if not prop[0] == self.group:
+                if prop[0] in list(labelIDChanges.keys()):
+                    prop[0] = labelIDChanges[prop[0]]
+                elif "." in prop[0] and prop[0].rsplit(".", 1)[1].isdigit():
                     # Additional menu
-                    groupName, groupValue = property[0].rsplit(".", 1)
+                    groupName, groupValue = prop[0].rsplit(".", 1)
                     if groupName in list(labelIDChanges.keys()) and int(groupValue) in range(1, 6):
-                        property[0] = "%s.%s" % (labelIDChanges[groupName], groupValue)
-                saveData.append(property)
+                        prop[0] = "%s.%s" % (labelIDChanges[groupName], groupValue)
+                saveData.append(prop)
 
         # Add all the properties we've been passed
-        for property in properties:
-            # property[0] = labelID
-            for toSave in property[1]:
+        for prop in properties:
+            # prop[0] = labelID
+            for toSave in prop[1]:
                 # toSave[0] = property name
                 # toSave[1] = property value
 
-                saveData.append([self.group, property[0], toSave[0], toSave[1]])
+                saveData.append([self.group, prop[0], toSave[0], toSave[1]])
 
         # Add any default properties
         for group in copyDefaults:
@@ -2075,20 +2075,20 @@ class GUI(xbmcgui.WindowXMLDialog):
                             imageBrowse = True
 
                 # Create lists for the select dialog
-                property = []
+                prop = []
                 propertyLabel = []
                 propertyPretty = []
 
                 if showNone:
                     # Add a 'None' option to the list
-                    property.append("")
+                    prop.append("")
                     propertyLabel.append(LANGUAGE(32053))
                     propertyPretty.append(LIBRARY._create(["", LANGUAGE(32053), "", {
                         "icon": "DefaultAddonNone.png"
                     }]))
                 if imageBrowse:
                     # Add browse single/multi options to the list
-                    property.extend(["", ""])
+                    prop.extend(["", ""])
                     propertyLabel.extend([LANGUAGE(32051), LANGUAGE(32052)])
                     propertyPretty.extend([LIBRARY._create(["", LANGUAGE(32051), "", {
                         "icon": "DefaultFile.png"
@@ -2102,7 +2102,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         if "condition" in elem.attrib and not xbmc.getCondVisibility(elem.attrib.get("condition")):
                             continue
                         foundProperty = elem.text
-                        property.append(foundProperty)
+                        prop.append(foundProperty)
                         if "icon" in elem.attrib:
                             usePrettyDialog = True
                             iconImage = {
@@ -2147,7 +2147,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     browseMulti = True
                 else:
                     self.changeMade = True
-                    self._add_additionalproperty(listitem, propertyName, property[selectedProperty])
+                    self._add_additionalproperty(listitem, propertyName, prop[selectedProperty])
 
                 if browseSingle or browseMulti:
                     # User has chosen to browse for an image/folder
@@ -2266,10 +2266,10 @@ class GUI(xbmcgui.WindowXMLDialog):
             properties = eval(listitem.getProperty("additionalListItemProperties"))
 
         foundProperty = False
-        for property in properties:
-            if property[0] == propertyName:
+        for idx, prop in enumerate(properties):
+            if prop[0] == propertyName:
                 foundProperty = True
-                property[1] = DATA.local(propertyValue)[0]
+                properties[idx][1] = DATA.local(propertyValue)[0]
 
         if foundProperty is False:
             properties.append([propertyName, DATA.local(propertyValue)[0]])
@@ -2293,10 +2293,10 @@ class GUI(xbmcgui.WindowXMLDialog):
         if listitem.getProperty("additionalListItemProperties"):
             properties = eval(listitem.getProperty("additionalListItemProperties"))
 
-        for property in properties:
-            if property[0] == propertyName or "%s-NUM" % (property[0]) == "%s-NUM" % propertyName:
-                properties.remove(property)
-                listitem.setProperty(property[0], None)
+        for prop in properties:
+            if prop[0] == propertyName or "%s-NUM" % (prop[0]) == "%s-NUM" % propertyName:
+                listitem.setProperty(prop[0], None)
+                properties.remove(prop)
 
         listitem.setProperty("additionalListItemProperties", repr(properties))
 

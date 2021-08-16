@@ -44,8 +44,8 @@ class NodeFunctions:
         nodes = {}
 
         try:
-            for dir in dirs:
-                self.parse_node(os.path.join(path, dir), dir, nodes, prefix)
+            for _dir in dirs:
+                self.parse_node(os.path.join(path, _dir), _dir, nodes, prefix)
             for file in files:
                 self.parse_view(os.path.join(path, file), nodes, origPath="%s/%s" % (prefix, file), prefix=prefix)
         except:
@@ -54,10 +54,10 @@ class NodeFunctions:
 
         return nodes
 
-    def parse_node(self, node, dir, nodes, prefix):
+    def parse_node(self, node, directory, nodes, prefix):
         # If the folder we've been passed contains an index.xml, send that file to be processed
         if xbmcvfs.exists(os.path.join(node, "index.xml")):
-            self.parse_view(os.path.join(node, "index.xml"), nodes, True, "%s/%s/" % (prefix, dir), node, prefix=prefix)
+            self.parse_view(os.path.join(node, "index.xml"), nodes, True, "%s/%s/" % (prefix, directory), node, prefix=prefix)
 
     def parse_view(self, file, nodes, isFolder=False, origFolder=None, origPath=None, prefix=None):
         if not isFolder and file.endswith("index.xml"):

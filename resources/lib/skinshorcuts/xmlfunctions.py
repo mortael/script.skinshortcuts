@@ -57,15 +57,15 @@ class XMLFunctions:
             profiles = tree.findall("profile")
             for profile in profiles:
                 name = profile.find("name").text
-                dir = profile.find("directory").text
-                log("Profile found: " + name + " (" + dir + ")")
+                _dir = profile.find("directory").text
+                log("Profile found: " + name + " (" + _dir + ")")
 
                 # Localise the directory
-                if "://" in dir:
-                    dir = xbmcvfs.translatePath(dir)
+                if "://" in _dir:
+                    _dir = xbmcvfs.translatePath(_dir)
                 # Base if off of the master profile
-                dir = xbmcvfs.translatePath(os.path.join("special://masterprofile", dir))
-                profilelist.append([dir, "String.IsEqual(System.ProfileName,%s)" % name, name])
+                _dir = xbmcvfs.translatePath(os.path.join("special://masterprofile", _dir))
+                profilelist.append([_dir, "String.IsEqual(System.ProfileName,%s)" % name, name])
 
         else:
             profilelist = [["special://masterprofile", None]]
@@ -149,9 +149,9 @@ class XMLFunctions:
     @staticmethod
     def shouldwerun(profilelist):
         try:
-            property = xbmcgui.Window(10000).getProperty("skinshortcuts-reloadmainmenu")
+            prop = xbmcgui.Window(10000).getProperty("skinshortcuts-reloadmainmenu")
             xbmcgui.Window(10000).clearProperty("skinshortcuts-reloadmainmenu")
-            if property == "True":
+            if prop == "True":
                 log("Menu has been edited")
                 return True
         except:
@@ -207,71 +207,71 @@ class XMLFunctions:
         checkedSharedMenu = False
         foundFullMenu = False
 
-        for hash in hashes:
-            if hash[1] is not None:
-                if hash[0] == "::XBMCVER::":
-                    # Check the skin version is still the same as hash[1]
+        for _hash in hashes:
+            if _hash[1] is not None:
+                if _hash[0] == "::XBMCVER::":
+                    # Check the skin version is still the same as _hash[1]
                     checkedXBMCVer = True
-                    if KODI_VERSION != hash[1]:
+                    if KODI_VERSION != _hash[1]:
                         log("Now running a different version of Kodi")
                         return True
-                elif hash[0] == "::SKINVER::":
-                    # Check the skin version is still the same as hash[1]
+                elif _hash[0] == "::SKINVER::":
+                    # Check the skin version is still the same as _hash[1]
                     checkedSkinVer = True
-                    if skinVersion != hash[1]:
+                    if skinVersion != _hash[1]:
                         log("Now running a different skin version")
                         return True
-                elif hash[0] == "::SCRIPTVER::":
-                    # Check the script version is still the same as hash[1]
+                elif _hash[0] == "::SCRIPTVER::":
+                    # Check the script version is still the same as _hash[1]
                     checkedScriptVer = True
-                    if ADDON_VERSION != hash[1]:
+                    if ADDON_VERSION != _hash[1]:
                         log("Now running a different script version")
                         return True
-                elif hash[0] == "::PROFILELIST::":
-                    # Check the profilelist is still the same as hash[1]
+                elif _hash[0] == "::PROFILELIST::":
+                    # Check the profilelist is still the same as _hash[1]
                     checkedProfileList = True
-                    if profilelist != hash[1]:
+                    if profilelist != _hash[1]:
                         log("Profiles have changes")
                         return True
-                elif hash[0] == "::HIDEPVR::":
+                elif _hash[0] == "::HIDEPVR::":
                     checkedPVRVis = True
-                    if ADDON.getSetting("donthidepvr") != hash[1]:
+                    if ADDON.getSetting("donthidepvr") != _hash[1]:
                         log("PVR visibility setting has changed")
-                elif hash[0] == "::SHARED::":
+                elif _hash[0] == "::SHARED::":
                     # Check whether shared-menu setting has changed
                     checkedSharedMenu = True
-                    if ADDON.getSetting("shared_menu") != hash[1]:
+                    if ADDON.getSetting("shared_menu") != _hash[1]:
                         log("Shared menu setting has changed")
                         return True
-                elif hash[0] == "::LANGUAGE::":
+                elif _hash[0] == "::LANGUAGE::":
                     # We no longer need to rebuild on a system language change
                     pass
-                elif hash[0] == "::SKINBOOL::":
+                elif _hash[0] == "::SKINBOOL::":
                     # A boolean we need to set (if profile matches)
-                    if xbmc.getCondVisibility(hash[1][0]):
-                        if hash[1][2] == "True":
-                            xbmc.executebuiltin("Skin.SetBool(%s)" % (hash[1][1]))
+                    if xbmc.getCondVisibility(_hash[1][0]):
+                        if _hash[1][2] == "True":
+                            xbmc.executebuiltin("Skin.SetBool(%s)" % (_hash[1][1]))
                         else:
-                            xbmc.executebuiltin("Skin.Reset(%s)" % (hash[1][1]))
-                elif hash[0] == "::FULLMENU::":
+                            xbmc.executebuiltin("Skin.Reset(%s)" % (_hash[1][1]))
+                elif _hash[0] == "::FULLMENU::":
                     # Mark that we need to set the fullmenu bool
                     foundFullMenu = True
-                elif hash[0] == "::SKINDIR::":
+                elif _hash[0] == "::SKINDIR::":
                     # Used to import menus from one skin to another, nothing to check here
                     pass
                 else:
                     try:
-                        hexdigest = get_hash(hash[0])
-                        if hexdigest != hash[1]:
-                            log("Hash does not match on file " + hash[0])
-                            log("(" + hash[1] + " > " + hexdigest + ")")
+                        hexdigest = get_hash(_hash[0])
+                        if hexdigest != _hash[1]:
+                            log("Hash does not match on file " + _hash[0])
+                            log("(" + _hash[1] + " > " + hexdigest + ")")
                             return True
                     except:
-                        log("(%s > ?)" % hash[1])
+                        log("(%s > ?)" % _hash[1])
 
             else:
-                if xbmcvfs.exists(hash[0]):
-                    log("File now exists " + hash[0])
+                if xbmcvfs.exists(_hash[0]):
+                    log("File now exists " + _hash[0])
                     return True
 
         # Set or clear the FullMenu skin bool
@@ -739,47 +739,47 @@ class XMLFunctions:
         # Additional properties
         properties = eval(item.find("additional-properties").text)
         if len(properties) != 0:
-            for property in properties:
-                if property[0] == "node.visible":
+            for prop in properties:
+                if prop[0] == "node.visible":
                     visibleProperty = xmltree.SubElement(newelement, "visible")
-                    visibleProperty.text = property[1]
+                    visibleProperty.text = prop[1]
                 else:
                     additionalproperty = xmltree.SubElement(newelement, "property")
-                    additionalproperty.set("name", property[0])
-                    additionalproperty.text = property[1]
-                    allProps[property[0]] = additionalproperty
+                    additionalproperty.set("name", prop[0])
+                    additionalproperty.text = prop[1]
+                    allProps[prop[0]] = additionalproperty
 
                     # If this is a widget or background, set a skin setting to say it's enabled
-                    if property[0] == "widget":
-                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-" + property[1] + ")")
+                    if prop[0] == "widget":
+                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-" + prop[1] + ")")
                         # And if it's the main menu, list it
                         if groupName == "mainmenu":
-                            xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-" + str(self.widgetCount) + "," + property[1] + ")")
+                            xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-" + str(self.widgetCount) + "," + prop[1] + ")")
                             self.widgetCount += 1
-                    elif property[0] == "background":
+                    elif prop[0] == "background":
                         try:
-                            xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" + property[1] + ")")
+                            xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" + prop[1] + ")")
                         except UnicodeEncodeError:
-                            xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" + property[1].encode('utf-8') + ")")
+                            xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" + prop[1].encode('utf-8') + ")")
 
                     # If this is the main menu, and we're cloning widgets, backgrounds or properties...
                     if groupName == "mainmenu":
                         if "clonewidgets" in options:
                             widgetProperties = ["widget", "widgetName", "widgetType", "widgetTarget", "widgetPath", "widgetPlaylist"]
-                            if property[0] in widgetProperties:
-                                self.MAINWIDGET[property[0]] = property[1]
+                            if prop[0] in widgetProperties:
+                                self.MAINWIDGET[prop[0]] = prop[1]
                         if "clonebackgrounds" in options:
                             backgroundProperties = ["background", "backgroundName", "backgroundPlaylist", "backgroundPlaylistName"]
-                            if property[0] in backgroundProperties:
-                                self.MAINBACKGROUND[property[0]] = property[1]
+                            if prop[0] in backgroundProperties:
+                                self.MAINBACKGROUND[prop[0]] = prop[1]
                         if "cloneproperties" in options:
-                            self.MAINPROPERTIES[property[0]] = property[1]
+                            self.MAINPROPERTIES[prop[0]] = prop[1]
 
                     # For backwards compatibility, save widgetPlaylist as widgetPath too
-                    if property[0] == "widgetPlaylist":
+                    if prop[0] == "widgetPlaylist":
                         additionalproperty = xmltree.SubElement(newelement, "property")
                         additionalproperty.set("name", "widgetPath")
-                        additionalproperty.text = property[1]
+                        additionalproperty.text = prop[1]
 
         # Get fallback properties, property requirements, templateOnly value of properties
         fallbackProperties, fallbacks = DATA._getCustomPropertyFallbacks(groupName)
@@ -795,8 +795,8 @@ class XMLFunctions:
                         matches = True
                     else:
                         # This has an attribute and a value to match against
-                        for property in properties:
-                            if property[0] == propertyMatch[1] and property[1] == propertyMatch[2]:
+                        for prop in properties:
+                            if prop[0] == propertyMatch[1] and prop[1] == propertyMatch[2]:
                                 matches = True
                                 break
 
@@ -1009,8 +1009,8 @@ class XMLFunctions:
         return False
 
     @staticmethod
-    def findIncludePosition(list, item):
+    def findIncludePosition(source_list, item):
         try:
-            return list.index(item)
+            return source_list.index(item)
         except:
             return None

@@ -562,21 +562,21 @@ class Template:
                     searchProperties += searchGroup.findall("property")
 
         # Loop through all the properties
-        for property in searchProperties:
-            if "name" not in property.attrib or property.attrib.get("name") in properties:
+        for prop in searchProperties:
+            if "name" not in prop.attrib or prop.attrib.get("name") in properties:
                 # Name attrib required, or we've already got a property with this name
                 continue
-            name = property.attrib.get("name")
+            name = prop.attrib.get("name")
 
             #  Pull out the tag, attribute and value attribs into an array of tuples
             rules = []
             matchAny = True
             propertyValue = None
-            if "propertyValue" in property.attrib:
-                propertyValue = property.attrib.get("propertyValue")
+            if "propertyValue" in prop.attrib:
+                propertyValue = prop.attrib.get("propertyValue")
 
             # Check for multiple items to match against this single value
-            for singleMatch in property.findall("rule"):
+            for singleMatch in prop.findall("rule"):
                 attribute = None
                 value = None
                 if "tag" in singleMatch.attrib:
@@ -591,14 +591,14 @@ class Template:
                     value = singleMatch.attrib.get("value").split("|")
                 rules.append((tag, attribute, value, propertyValue))
 
-            matchAll = property.find("match")
+            matchAll = prop.find("match")
             if matchAll is not None and matchAll.text.lower() == "all":
                 matchAny = False
 
             # If we haven't grabbed anything to match against yet
             if len(rules) == 0:
-                if "tag" in property.attrib:
-                    tag = property.attrib.get("tag")
+                if "tag" in prop.attrib:
+                    tag = prop.attrib.get("tag")
 
                     # Special case for the ID of the main menu item
                     if tag.lower() == "mainmenuid":
@@ -609,17 +609,17 @@ class Template:
                     attribute = None
                     value = None
                     propertyValue = None
-                    if "attribute" in property.attrib:
-                        attribute = property.attrib.get("attribute").split("|")
-                    if "value" in property.attrib:
-                        value = property.attrib.get("value").split("|")
-                    if property.text:
-                        propertyValue = property.text
+                    if "attribute" in prop.attrib:
+                        attribute = prop.attrib.get("attribute").split("|")
+                    if "value" in prop.attrib:
+                        value = prop.attrib.get("value").split("|")
+                    if prop.text:
+                        propertyValue = prop.text
                     rules.append((tag, attribute, value, propertyValue))
                 else:
                     # No tag property, so this will always match (so let's just use it!)
-                    if property.text:
-                        properties[name] = property.text
+                    if prop.text:
+                        properties[name] = prop.text
                     else:
                         properties[name] = ""
                     continue
@@ -728,17 +728,17 @@ class Template:
 
                 # Get existing attributes, text and tag
                 attribs = []
-                type = ""
+                item_type = ""
                 for singleAttrib in elem.attrib:
                     if singleAttrib == "skinshortcuts":
-                        type = elem.attrib.get("skinshortcuts")
+                        item_type = elem.attrib.get("skinshortcuts")
                     else:
                         attribs.append((singleAttrib, elem.attrib.get(singleAttrib)))
                 text = elem.text
                 tag = elem.tag
 
-                # Don't continue is type = visibility, and no visibilityCondition
-                if type == "visibility" and visibilityCondition is None:
+                # Don't continue is item_type = visibility, and no visibilityCondition
+                if item_type == "visibility" and visibilityCondition is None:
                     continue
 
                 # Remove the existing element
@@ -752,7 +752,7 @@ class Template:
                     newElement.set(singleAttrib[0], singleAttrib[1])
 
                 # Make replacements
-                if type == "visibility" and visibilityCondition is not None:
+                if item_type == "visibility" and visibilityCondition is not None:
                     newElement.set("condition", visibilityCondition)
 
                 # Insert it
@@ -832,28 +832,28 @@ class Template:
                 # Get index of the element
                 index = list(tree).index(elem)
 
-                # Get the type of replacement
-                type = elem.text
+                # Get the item_type of replacement
+                item_type = elem.text
 
-                # Don't continue is type = visibility, and no visibilityCondition
-                if type == "visibility" and visibilityCondition is None:
+                # Don't continue is item_type = visibility, and no visibilityCondition
+                if item_type == "visibility" and visibilityCondition is None:
                     continue
 
                 # Remove the existing element
                 tree.remove(elem)
 
                 # Make replacements
-                if type == "visibility" and visibilityCondition is not None:
+                if item_type == "visibility" and visibilityCondition is not None:
                     # Create a new visible element
                     newelement = xmltree.Element("visible")
                     newelement.text = visibilityCondition
                     # Insert it
                     tree.insert(index, newelement)
-                elif type == "items" and customitems is not None and elem.attrib.get("insert"):
+                elif item_type == "items" and customitems is not None and elem.attrib.get("insert"):
                     for element in self.buildSubmenuCustomItems(customitems, items.findall("item"), elem.attrib.get("insert"), properties):
                         for child in element:
                             tree.insert(index, child)
-                elif type == "items":
+                elif item_type == "items":
                     # Firstly, go through and create an array of all items in reverse order, without
                     # their existing visible element, if it matches our visibilityCondition
                     newelements = []

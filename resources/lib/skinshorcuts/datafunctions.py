@@ -899,7 +899,7 @@ class DataFunctions:
 
         return ""
 
-    def checkVersionEquivalency(self, version, action, type="shortcuts"):
+    def checkVersionEquivalency(self, version, action, check_type="shortcuts"):
         # Check whether the version specified for a shortcut has an equivalency
         # to the version of Kodi we're running
         trees = [self._get_overrides_skin(), self._get_overrides_script()]
@@ -907,14 +907,14 @@ class DataFunctions:
         # Set up so we can handle both groupings and shortcuts in one
         findElem = ""
         findAttrib = ""
-        if type == "shortcuts":
+        if check_type == "shortcuts":
             if action is None:
                 action = ""
             else:
                 action = action.text
             findElem = "shortcutEquivalent"
             findAttrib = "action"
-        elif type == "groupings":
+        elif check_type == "groupings":
             if action is None:
                 action = ""
             findElem = "groupEquivalent"
@@ -1067,13 +1067,13 @@ class DataFunctions:
 
         canImport = False
         skinName = None
-        for hash in hashes:
-            if hash[0] == "::FULLMENU::":
+        for _hash in hashes:
+            if _hash[0] == "::FULLMENU::":
                 canImport = True
                 if skinName:
                     return True, skinName
-            if hash[0] == "::SKINDIR::":
-                skinName = hash[1]
+            if _hash[0] == "::SKINDIR::":
+                skinName = _hash[1]
                 if canImport is True:
                     return True, skinName
 

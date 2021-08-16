@@ -478,7 +478,7 @@ class LibraryFunctions:
                     if group == elem.attrib.get("grouping"):
                         # We want to add this shortcut
                         label = elem.attrib.get("label")
-                        type = elem.attrib.get("type")
+                        item_type = elem.attrib.get("type")
                         thumb = elem.attrib.get("thumbnail")
                         icon = elem.attrib.get("icon")
 
@@ -487,17 +487,17 @@ class LibraryFunctions:
                         # if label.isdigit():
                         #    label = "::LOCAL::" + label
 
-                        if type is None:
-                            type = "32024"
-                        # elif type.isdigit():
-                        #    type = "::LOCAL::" + type
+                        if item_type is None:
+                            item_type = "32024"
+                        # elif item_type.isdigit():
+                        #    item_type = "::LOCAL::" + item_type
 
                         if icon is None:
                             icon = ""
                         if thumb is None:
                             thumb = ""
 
-                        listitem = self._create([action, label, type, {
+                        listitem = self._create([action, label, item_type, {
                             "icon": icon,
                             "thumb": thumb
                         }])
@@ -511,7 +511,7 @@ class LibraryFunctions:
                 elif group == "common":
                     # We want to add this shortcut
                     label = elem.attrib.get("label")
-                    type = elem.attrib.get("type")
+                    item_type = elem.attrib.get("type")
                     thumb = elem.attrib.get("thumbnail")
                     icon = elem.attrib.get("icon")
 
@@ -520,13 +520,13 @@ class LibraryFunctions:
                     # if label.isdigit():
                     #    label = "::LOCAL::" + label
 
-                    if type is None:
-                        type = "32024"
-                    # elif type.isdigit():
-                    #    type = "::LOCAL::" + type
+                    if item_type is None:
+                        item_type = "32024"
+                    # elif item_type.isdigit():
+                    #    item_type = "::LOCAL::" + item_type
 
-                    if type is None or type == "":
-                        type = "Skin Provided"
+                    if item_type is None or item_type == "":
+                        item_type = "Skin Provided"
 
                     if icon is None:
                         icon = ""
@@ -534,7 +534,7 @@ class LibraryFunctions:
                     if thumb is None:
                         thumb = ""
 
-                    listitem = self._create([action, label, type, {
+                    listitem = self._create([action, label, item_type, {
                         "icon": icon,
                         "thumb": thumb
                     }])
@@ -734,7 +734,7 @@ class LibraryFunctions:
                 log("Failed to load default video nodes")
                 print_exc()
 
-    def _parse_libraryNodes(self, library, type):
+    def _parse_libraryNodes(self, library, node_type):
         # items = {"video":[], "movies":[], "tvshows":[], "musicvideos":[], "custom":{}}
         if library == "video":
             windowID = "Videos"
@@ -748,7 +748,7 @@ class LibraryFunctions:
             return
 
         rootdir = os.path.join(xbmcvfs.translatePath("special://profile"), "library", library)
-        if type == "custom":
+        if node_type == "custom":
             log("Listing custom %s nodes..." % library)
         else:
             rootdir = os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", library)
@@ -2060,21 +2060,21 @@ class LibraryFunctions:
                 rule.set("operator", "doesnotcontain")
                 xmltree.SubElement(rule, "value").text = item
 
-        id = 1
-        while xbmcvfs.exists(os.path.join(DATA_PATH, str(id) + ".xsp")):
-            id += 1
+        _id = 1
+        while xbmcvfs.exists(os.path.join(DATA_PATH, str(_id) + ".xsp")):
+            _id += 1
 
         # Write playlist we'll link to the menu item
         DATA.indent(tree.getroot())
-        tree.write(os.path.join(DATA_PATH, str(id) + ".xsp"), encoding="utf-8")
+        tree.write(os.path.join(DATA_PATH, str(_id) + ".xsp"), encoding="utf-8")
 
         # Add a random property, and save this for use in playlists/backgrounds
         order = xmltree.SubElement(root, "order")
         order.text = "random"
         DATA.indent(tree.getroot())
-        tree.write(os.path.join(DATA_PATH, str(id) + "-randomversion.xsp"), encoding="utf-8")
+        tree.write(os.path.join(DATA_PATH, str(_id) + "-randomversion.xsp"), encoding="utf-8")
 
-        return str(id) + ".xsp"
+        return str(_id) + ".xsp"
 
     @staticmethod
     def _delete_playlist(target):
