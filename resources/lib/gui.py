@@ -1,22 +1,22 @@
 # coding=utf-8
-import os, sys, datetime, unicodedata
-import xbmc, xbmcaddon, xbmcgui, xbmcvfs
-import xml.etree.ElementTree as xmltree
-from xml.dom.minidom import parse
-from xml.sax.saxutils import escape as escapeXML
-from traceback import print_exc
-import calendar
-from time import gmtime, strftime
-import random
-import json as simplejson
-import urllib.request, urllib.parse, urllib.error
 import _thread as thread
+import calendar
+import json
+import os
+import random
+import xml.etree.ElementTree as xmltree
+from time import gmtime
+from traceback import print_exc
 
-from resources.lib.common import log
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcvfs
 from resources.lib import datafunctions
-DATA = datafunctions.DataFunctions()
-
 from resources.lib import library
+from resources.lib.common import log
+
+DATA = datafunctions.DataFunctions()
 LIBRARY = library.LibraryFunctions()
 
 ADDON        = xbmcaddon.Addon()
@@ -580,7 +580,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Enable any debug logging needed
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Settings.getSettings" }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         enabledSystemDebug = False
         enabledScriptDebug = False

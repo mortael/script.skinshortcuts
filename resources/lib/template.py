@@ -1,15 +1,14 @@
-import os, sys
-import xbmc, xbmcvfs
+import ast
+import operator
+import os
 import xml.etree.ElementTree as xmltree
-import hashlib
-import copy
-from traceback import print_exc
-import simpleeval
-import operator, ast
-from simpleeval import simple_eval
 
+import xbmc
+import xbmcvfs
 from resources.lib.common import get_hash
 from resources.lib.common import log
+from simpleeval import SimpleEval
+from simpleeval import simple_eval
 
 SKINPATH = xbmcvfs.translatePath("special://skin/shortcuts/")
 
@@ -61,7 +60,7 @@ class Template():
         self.finalize = []
 
         # Initialize simple eval
-        self.simple_eval = simpleeval.SimpleEval()
+        self.simple_eval = SimpleEval()
         self.simple_eval.operators[ast.In] = operator.contains
 
     def parseItems( self, menuType, level, items, profile, profileVisibility, visibilityCondition, menuName, mainmenuID = None, buildOthers = False, mainmenuitems = None ):

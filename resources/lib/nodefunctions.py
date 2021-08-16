@@ -1,13 +1,14 @@
-import os, sys, datetime, unicodedata, re, types
-import xbmc, xbmcaddon, xbmcgui, xbmcvfs, urllib
+import json
+import os
+import re
 import xml.etree.ElementTree as xmltree
-import hashlib
-from xml.dom.minidom import parse
-from traceback import print_exc
-from unidecode import unidecode
-import json as simplejson
-import pickle
 from html.entities import name2codepoint
+from traceback import print_exc
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcvfs
 from resources.lib.common import log
 
 ADDON        = xbmcaddon.Addon()
@@ -297,7 +298,7 @@ class NodeFunctions():
 
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "' + jsonPath + '", "media": "files" } }')
         json_query = unicode(json_query, 'utf-8', errors='ignore')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         labels = []
         paths = []
@@ -315,7 +316,7 @@ class NodeFunctions():
         else:
             # Unable to add to get directory listings
             log( "Invalid JSON response returned" )
-            log( repr( simplejson ) )
+            log( repr( json ) )
             # And tell the user it failed
             xbmcgui.Dialog().ok( ADDON.getAddonInfo( "name" ), ADDON.getLocalizedString(32115) )
             return

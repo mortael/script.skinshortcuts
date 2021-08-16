@@ -1,17 +1,24 @@
-import os, sys
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, xbmcvfs
-import xml.etree.ElementTree as xmltree
-import pstats
-import random
-import time
-import calendar
-from time import gmtime, strftime
-from datetime import datetime
-from traceback import print_exc
-import json as simplejson
-import urllib.request, urllib.parse, urllib.error
-import pickle
 import _thread as thread
+import calendar
+import os
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from time import gmtime
+from time import strftime
+from traceback import print_exc
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcplugin
+import xbmcvfs
+from resources.lib import datafunctions
+from resources.lib import library
+from resources.lib import nodefunctions
+from resources.lib import xmlfunctions
+from resources.lib.common import log
 
 ADDON        = xbmcaddon.Addon()
 ADDONID      = ADDON.getAddonInfo('id')
@@ -23,8 +30,6 @@ RESOURCE     = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'lib'))
 DATAPATH     = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_data", ADDONID)
 MASTERPATH   = os.path.join(xbmcvfs.translatePath("special://masterprofile/"), "addon_data", ADDONID)
 
-from resources.lib.common import log
-from resources.lib import xmlfunctions, datafunctions, library, nodefunctions
 XML = xmlfunctions.XMLFunctions()
 DATA = datafunctions.DataFunctions()
 LIBRARY = library.LibraryFunctions()

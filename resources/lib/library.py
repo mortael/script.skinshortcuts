@@ -1,14 +1,20 @@
-import os, sys, datetime, unicodedata
-import xbmc, xbmcaddon, xbmcgui, xbmcvfs
+import json
+import os
+import urllib.error
+import urllib.parse
+import urllib.request
 import xml.etree.ElementTree as xmltree
-from xml.dom.minidom import parse
-from xml.sax.saxutils import escape as escapeXML
 from traceback import print_exc
-from unidecode import unidecode
-from resources.lib import datafunctions, nodefunctions
-import json as simplejson
-import urllib.request, urllib.parse, urllib.error
+from xml.dom.minidom import parse
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcvfs
+from resources.lib import datafunctions
+from resources.lib import nodefunctions
 from resources.lib.common import log
+
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
 ADDON        = xbmcaddon.Addon()
@@ -21,7 +27,7 @@ KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 
 def kodiwalk(path, stringForce = False):
     json_query = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Files.GetDirectory","params":{"directory":"%s","media":"files"},"id":1}' % str(path))
-    json_response = simplejson.loads(json_query)
+    json_response = json.loads(json_query)
     files = []
     if 'result' in json_response and 'files' in json_response['result'] and json_response['result']['files'] is not None:
         for item in json_response['result']['files']:
@@ -844,7 +850,7 @@ class LibraryFunctions():
         # Add tv channels
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "PVR.GetChannels", "params": { "channelgroupid": "alltv", "properties": ["thumbnail", "channeltype", "hidden", "locked", "channel", "lastplayed"] } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'channels' in json_response['result'] and json_response['result']['channels'] is not None:
@@ -856,7 +862,7 @@ class LibraryFunctions():
         # Add radio channels
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "PVR.GetChannels", "params": { "channelgroupid": "allradio", "properties": ["thumbnail", "channeltype", "hidden", "locked", "channel", "lastplayed"] } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'channels' in json_response['result'] and json_response['result']['channels'] is not None:
@@ -909,7 +915,7 @@ class LibraryFunctions():
         # Add video sources
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetSources", "params": { "media": "video" } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'sources' in json_response['result'] and json_response['result']['sources'] is not None:
@@ -922,7 +928,7 @@ class LibraryFunctions():
         # Add audio sources
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetSources", "params": { "media": "music" } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'sources' in json_response['result'] and json_response['result']['sources'] is not None:
@@ -935,7 +941,7 @@ class LibraryFunctions():
         # Add picture sources
         listitems = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetSources", "params": { "media": "pictures" } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'sources' in json_response['result'] and json_response['result']['sources'] is not None:
@@ -1123,7 +1129,7 @@ class LibraryFunctions():
                 shortcutType = "::SCRIPT::32012"
 
             json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Addons.Getaddons", "params": { "content": "%s", "properties": ["name", "path", "thumbnail", "enabled"] } }' % contenttype)
-            json_response = simplejson.loads(json_query)
+            json_response = json.loads(json_query)
 
             if 'result' in json_response and 'addons' in json_response['result'] and json_response['result']['addons'] is not None:
                 for item in json_response['result']['addons']:
@@ -1336,7 +1342,7 @@ class LibraryFunctions():
 
         #we retrieve a whole bunch of properties, needed to guess the content type properly
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail", "episode", "showtitle", "season", "album", "artist", "imdbnumber", "firstaired", "mpaa", "trailer", "studio", "art"], "directory": "' + location + '", "media": "files" } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'files' in json_response['result'] and json_response['result']['files']:
@@ -1886,7 +1892,7 @@ class LibraryFunctions():
         #this gets images from a vfs path to be used as backgrounds or icons
         images = []
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "art", "file", "fanart"], "directory": "' + path + '", "media": "files" } }')
-        json_response = simplejson.loads(json_query)
+        json_response = json.loads(json_query)
         if 'result' in json_response and 'files' in json_response['result'] and json_response['result']['files']:
             json_result = json_response['result']['files']
             for item in json_result:

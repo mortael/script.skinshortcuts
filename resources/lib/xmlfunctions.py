@@ -1,11 +1,19 @@
 # coding=utf-8
-import os, sys, datetime, unicodedata, re
-import xbmc, xbmcgui, xbmcvfs, xbmcaddon
-import xml.etree.ElementTree as xmltree
-from xml.sax.saxutils import escape as escapeXML
 import ast
+import json
+import os
+import re
+import xml.etree.ElementTree as xmltree
 from traceback import print_exc
-import json as simplejson
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcvfs
+from resources.lib import datafunctions
+from resources.lib import template
+from resources.lib.common import get_hash
+from resources.lib.common import log
 
 ADDON        = xbmcaddon.Addon()
 ADDONID      = ADDON.getAddonInfo('id')
@@ -14,9 +22,6 @@ KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 LANGUAGE     = ADDON.getLocalizedString
 MASTERPATH   = os.path.join(xbmcvfs.translatePath("special://masterprofile/addon_data/"), ADDONID)
 
-from resources.lib import datafunctions, template
-from resources.lib.common import get_hash
-from resources.lib.common import log
 DATA = datafunctions.DataFunctions()
 
 hashlist = []
@@ -117,7 +122,7 @@ class XMLFunctions():
             else:
                 # Enable any debug logging needed
                 json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Settings.getSettings" }')
-                json_response = simplejson.loads(json_query)
+                json_response = json.loads(json_query)
 
                 enabledSystemDebug = False
                 enabledScriptDebug = False

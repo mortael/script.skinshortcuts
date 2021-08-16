@@ -1,18 +1,19 @@
-import os, sys, datetime, unicodedata, re, types
-import xbmc, xbmcaddon, xbmcgui, xbmcvfs
-import xml.etree.ElementTree as xmltree
-import hashlib
 import ast
-from xml.dom.minidom import parse
-from traceback import print_exc
-from unidecode import unidecode
-import urllib.request, urllib.parse, urllib.error
+import os
+import re
+import unicodedata
+import xml.etree.ElementTree as xmltree
 from html.entities import name2codepoint
+from traceback import print_exc
 
-
+import xbmc
+import xbmcaddon
+import xbmcvfs
 from resources.lib import nodefunctions
 from resources.lib.common import get_hash
 from resources.lib.common import log
+from unidecode import unidecode
+
 NODE = nodefunctions.NodeFunctions()
 
 ADDON        = xbmcaddon.Addon()
