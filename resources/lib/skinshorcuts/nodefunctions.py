@@ -17,6 +17,11 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import LANGUAGE
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 # character entity reference
 CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))
 
@@ -351,10 +356,11 @@ class NodeFunctions():
         DATA._clear_labelID()
         for menuitem in menuitems.findall("shortcut"):
             # Get existing items labelID's
-            allMenuItems.append(xbmcgui.ListItem(label=DATA.local(menuitem.find("label").text)[2]))
+            listitem = xbmcgui.ListItem(label=DATA.local(menuitem.find("label").text)[2])
             listitem.setArt({
                 'icon': menuitem.find("icon").text
             })
+            allMenuItems.append(listitem)
             allLabelIDs.append(DATA._get_labelID(DATA.local(menuitem.find("label").text)[3], menuitem.find("action").text))
 
         # Close progress dialog

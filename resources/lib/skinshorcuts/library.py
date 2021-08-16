@@ -2,9 +2,6 @@
 
 import json
 import os
-import urllib.error
-import urllib.parse
-import urllib.request
 import xml.etree.ElementTree as xmltree
 from traceback import print_exc
 from xml.dom.minidom import parse
@@ -20,6 +17,16 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
+
+try:
+    from urllib import unquote
+except ImportError:
+    from urllib.parse import unquote
+
+try:
+    from urllib import url2pathname
+except ImportError:
+    from urllib.request import url2pathname
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
@@ -1236,7 +1243,7 @@ class LibraryFunctions():
                     xmldata = xmltree.fromstring(contents_data)
                     for line in xmldata.getiterator():
                         if line.tag == "name":
-
+                            name = line.text
                             # Save it for the widgets list
                             # TO-DO - Localize display name
                             returnPlaylists.append([playlist, "(Source) " + name, name])
@@ -2010,7 +2017,7 @@ class LibraryFunctions():
             target = []
             for item in temp_path:
                 if item != "":
-                    target.append(urllib.url2pathname(item))
+                    target.append(url2pathname(item))
         else:
             target = [target]
 
@@ -2118,7 +2125,7 @@ class LibraryFunctions():
                 if not image and item.get("file", ""):
                     image = item["file"]
                 if image:
-                    image = urllib.parse.unquote(image)
+                    image = unquote(image)
                     if "$INFO" in image:
                         image = image.replace("image://", "")
                         if image.endswith("/"):

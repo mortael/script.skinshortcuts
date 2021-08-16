@@ -23,6 +23,11 @@ from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import SKIN_PATH
 
+try:
+    unichr
+except NameError:
+    unichr = chr
+
 NODE = nodefunctions.NodeFunctions()
 
 hashlist = []
@@ -1165,7 +1170,7 @@ class DataFunctions():
         # This isn't anything we can localize, just return it (in triplicate ;))
         return [data, data, data, data]
 
-    def smart_truncate(string, max_length=0, word_boundaries=False, separator=' '):
+    def smart_truncate(self, string, max_length=0, word_boundaries=False, separator=' '):
         string = string.strip(separator)
 
         if not max_length:
@@ -1236,7 +1241,7 @@ class DataFunctions():
 
         # smart truncate if requested
         if max_length > 0:
-            text = smart_truncate(text, max_length, word_boundary, '-')
+            text = self.smart_truncate(text, max_length, word_boundary, '-')
 
         if separator != '-':
             text = text.replace('-', separator)
