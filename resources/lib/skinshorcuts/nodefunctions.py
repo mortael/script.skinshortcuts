@@ -553,6 +553,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         self.windowtitle = kwargs.get("windowtitle")
         self.getmore = kwargs.get("getmore")
         self.result = -1
+        self.fav_list = None
 
     def onInit(self):
         try:

@@ -36,7 +36,7 @@ class XMLFunctions:
 
         self.skinDir = xbmcvfs.translatePath("special://skin")
 
-        self.checkForShorctcuts = []
+        self.checkForShortcuts = []
 
     def buildMenu(self, mainmenuID, groups, numLevels, buildMode, options, minitems, weEnabledSystemDebug=False, weEnabledScriptDebug=False):
         # Entry point for building includes.xml files
@@ -314,8 +314,8 @@ class XMLFunctions:
         # Get any shortcuts we're checking for
         self.checkForShortcuts = []
         overridestree = DATA._get_overrides_skin()
-        checkForShorctcutsOverrides = overridestree.getroot().findall("checkforshortcut")
-        for checkForShortcutOverride in checkForShorctcutsOverrides:
+        checkForShortcutsOverrides = overridestree.getroot().findall("checkforshortcut")
+        for checkForShortcutOverride in checkForShortcutsOverrides:
             if "property" in checkForShortcutOverride.attrib:
                 # Add this to the list of shortcuts we'll check for
                 self.checkForShortcuts.append((checkForShortcutOverride.text.lower(), checkForShortcutOverride.attrib.get("property"), "False"))

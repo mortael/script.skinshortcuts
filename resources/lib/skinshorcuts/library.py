@@ -125,6 +125,10 @@ class LibraryFunctions:
 
         self.useDefaultThumbAsIcon = None
 
+        self.installWidget = False
+        self.loadedFavourites = False
+        self.fav_list = None
+
     def loadLibrary(self, library):
         # Common entry point for loading available shortcuts
 
@@ -2368,6 +2372,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         self.windowtitle = kwargs.get("windowtitle")
         self.getmore = kwargs.get("getmore")
         self.result = -1
+        self.fav_list = None
 
     def onInit(self):
         try:

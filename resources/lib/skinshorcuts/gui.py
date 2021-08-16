@@ -87,6 +87,13 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         self.changeMade = False
 
+        self.window_id = None
+        self.currentWindow = None
+        self.current_dict = {}
+        self.past_dict = {}
+        self.backgrounds = []
+        self.thumbnails = []
+
         log('Management module loaded')
 
     def onInit(self):
