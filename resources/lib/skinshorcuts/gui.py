@@ -455,8 +455,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             if key in list(allProps.keys()) and key in list(requires.keys()) and requires[key] not in list(allProps.keys()):
                 # This properties requirements aren't met
                 allProps.pop(key)
-                if "%s-NUM" % (key) in list(allProps.keys()):
-                    allProps.pop("%s-NUM" % (key))
+                if "%s-NUM" % key in list(allProps.keys()):
+                    allProps.pop("%s-NUM" % key)
 
         # Save the new properties to the listitem
         listitem.setProperty("skinshortcuts-allproperties", repr(allProps))
@@ -487,7 +487,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         intersect = set_current.intersection(set_past)
 
         #       Added                    Removed               Changed
-        return (set_current - intersect, set_past - intersect, set(o for o in intersect if past_dict[o] != current_dict[o]))
+        return set_current - intersect, set_past - intersect, set(o for o in intersect if past_dict[o] != current_dict[o])
 
     def _get_icon_overrides(self, listitem, setToDefault=True, labelID=None):
         # Start by getting the labelID
@@ -754,7 +754,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         if path[1] == "New":
                             tree = xmltree.ElementTree(xmltree.Element("shortcuts"))
                             tree.write(target, encoding="UTF-8")
-                            log("Creating empty file - %s" % (target))
+                            log("Creating empty file - %s" % target)
                             break
 
                         elif xbmcvfs.exists(path[0]):
@@ -1266,7 +1266,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 label = label[::-1]
             keyboard = xbmc.Keyboard(label, xbmc.getLocalizedString(528), False)
             keyboard.doModal()
-            if (keyboard.isConfirmed()):
+            if keyboard.isConfirmed():
                 label = keyboard.getText()
                 if label == "":
                     label = LANGUAGE(32013)
@@ -1606,7 +1606,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self._add_additionalproperty(listitem, "widgetTarget" + widgetID, selectedShortcut.getProperty("widgetTarget"))
                 self._add_additionalproperty(listitem, "widgetPath" + widgetID, widgetPath)
                 if self.currentWindow.getProperty("useWidgetNameAsLabel") == "true" and widgetID == "":
-                    self._set_label(listitem, selectedShortcut.getProperty(("widgetName")))
+                    self._set_label(listitem, selectedShortcut.getProperty("widgetName"))
                     self.currentWindow.clearProperty("useWidgetNameAsLabel")
                 self.changeMade = True
 
@@ -1618,7 +1618,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self._remove_additionalproperty(listitem, "widgetTarget" + widgetID)
                 self._remove_additionalproperty(listitem, "widgetPath" + widgetID)
                 if self.currentWindow.getProperty("useWidgetNameAsLabel") == "true" and widgetID == "":
-                    self._set_label(listitem, selectedShortcut.getProperty(("widgetName")))
+                    self._set_label(listitem, selectedShortcut.getProperty("widgetName"))
                     self.currentWindow.clearProperty("useWidgetNameAsLabel")
                 self.changeMade = True
 
@@ -2281,7 +2281,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             else:
                 listitem.setProperty(propertyName, DATA.local(propertyValue)[2])
                 if propertyValue.isdigit():
-                    listitem.setProperty("%s-NUM" % (propertyName), propertyValue)
+                    listitem.setProperty("%s-NUM" % propertyName, propertyValue)
 
         listitem.setProperty("additionalListItemProperties", repr(properties))
 
@@ -2296,7 +2296,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             hasProperties = True
 
         for property in properties:
-            if property[0] == propertyName or "%s-NUM" % (property[0]) == "%s-NUM" % (propertyName):
+            if property[0] == propertyName or "%s-NUM" % (property[0]) == "%s-NUM" % propertyName:
                 properties.remove(property)
                 listitem.setProperty(property[0], None)
 

@@ -58,7 +58,7 @@ def kodiwalk(path, stringForce=False):
     return files
 
 
-class LibraryFunctions():
+class LibraryFunctions:
     def __init__(self, *args, **kwargs):
 
         # Dictionary to make checking whether things are loaded easier
@@ -211,7 +211,7 @@ class LibraryFunctions():
             elif grouping is None:
                 nodes = tree.find("groupings")
             else:
-                nodes = tree.find("%s-groupings" % (grouping))
+                nodes = tree.find("%s-groupings" % grouping)
 
             if nodes is not None:
                 break
@@ -242,7 +242,7 @@ class LibraryFunctions():
                     self.installWidget = False
                 if count == group:
                     # We found it :)
-                    return (node.attrib.get("label"), self.buildNodeListing(node, True))
+                    return node.attrib.get("label"), self.buildNodeListing(node, True)
 
             return ["Error", []]
 
@@ -399,7 +399,7 @@ class LibraryFunctions():
             else:
                 returnItems.append(item)
 
-        return (returnItems)
+        return returnItems
 
     def loadGrouping(self, content):
         # Display a busy dialog
@@ -672,7 +672,7 @@ class LibraryFunctions():
         if displayIcon != icon:
             listitem.setProperty("untranslatedIcon", icon)
 
-        return (listitem)
+        return listitem
 
     def _get_icon_overrides(self, tree, item, content, setToDefault=True):
         if tree is None:
@@ -749,10 +749,10 @@ class LibraryFunctions():
 
         rootdir = os.path.join(xbmcvfs.translatePath("special://profile"), "library", library)
         if type == "custom":
-            log("Listing custom %s nodes..." % (library))
+            log("Listing custom %s nodes..." % library)
         else:
             rootdir = os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", library)
-            log("Listing default %s nodes..." % (library))
+            log("Listing default %s nodes..." % library)
 
         nodes = NODE.get_nodes(rootdir, prefix)
         if nodes == False or len(nodes) == 0:
@@ -1168,12 +1168,12 @@ class LibraryFunctions():
                                 if not name:
                                     name = label
                                 # Create a list item
-                                listitem = self._create(["::PLAYLIST>%s::" % (mediaLibrary), name, path[1], {
+                                listitem = self._create(["::PLAYLIST>%s::" % mediaLibrary, name, path[1], {
                                     "icon": "DefaultPlaylist.png"
                                 }])
                                 listitem.setProperty("action-play", "PlayMedia(" + playlist + ")")
                                 listitem.setProperty("action-show", "ActivateWindow(" + mediaLibrary + "," + playlist + ",return)")
-                                listitem.setProperty("action-party", "PlayerControl(PartyMode(%s))" % (playlist))
+                                listitem.setProperty("action-party", "PlayerControl(PartyMode(%s))" % playlist)
 
                                 # Add widget information
                                 listitem.setProperty("widget", "Playlist")
@@ -1199,7 +1199,7 @@ class LibraryFunctions():
                         }])
                         listitem.setProperty("action-play", "PlayMedia(" + playlist + ")")
                         listitem.setProperty("action-show", "ActivateWindow(%s,%s,return)" % (path[2], playlist))
-                        listitem.setProperty("action-party", "PlayerControl(PartyMode(%s))" % (playlist))
+                        listitem.setProperty("action-party", "PlayerControl(PartyMode(%s))" % playlist)
 
                         # Add widget information
                         listitem.setProperty("widget", "Playlist")
@@ -1216,7 +1216,7 @@ class LibraryFunctions():
 
                         count += 1
                 except:
-                    log("Failed to load playlist: %s" % (file))
+                    log("Failed to load playlist: %s" % file)
                     print_exc()
 
             log(" - [" + path[0] + "] " + str(count) + " playlists found")
@@ -1432,7 +1432,7 @@ class LibraryFunctions():
                 return "songs"
         else:
             ##### VIDEO ITEMS ####
-            if (item["showtitle"] and not item["artist"]):
+            if item["showtitle"] and not item["artist"]:
                 # this is a tvshow, episode or season...
                 if item["type"] == "season" or (item["season"] > -1 and item["episode"] == -1):
                     return "seasons"
@@ -1440,7 +1440,7 @@ class LibraryFunctions():
                     return "episodes"
                 else:
                     return "tvshows"
-            elif (item["artist"]):
+            elif item["artist"]:
                 # this is a musicvideo
                 return "musicvideos"
             elif item["type"] == "movie" or item["imdbnumber"] or item["mpaa"] or item["trailer"] or item["studio"]:
@@ -1880,7 +1880,7 @@ class LibraryFunctions():
     def _install_widget_provider(self, provider):
         executeAndObserve = ("InstallAddon(%s)", "DialogConfirm.xml", "DialogConfirm.xml")
 
-        xbmc.executebuiltin(executeAndObserve[0] % (provider))
+        xbmc.executebuiltin(executeAndObserve[0] % provider)
 
         if xbmc.Monitor().waitForAbort(0.5):
             return
@@ -2276,7 +2276,7 @@ class LibraryFunctions():
                 keyboard = xbmc.Keyboard(currentAction, LANGUAGE(32027), False)
                 keyboard.doModal()
 
-                if (keyboard.isConfirmed()):
+                if keyboard.isConfirmed():
                     action = keyboard.getText()
                     if action != "":
                         # Create a really simple listitem to return

@@ -129,7 +129,7 @@ class Main:
 
             # Check if we should show the custom option (if the relevant widgetPath skin string is provided and isn't empty)
             showCustom = False
-            if self.WIDGETPATH and xbmc.getCondVisibility("!String.IsEmpty(Skin.String(%s))" % (self.WIDGETPATH)):
+            if self.WIDGETPATH and xbmc.getCondVisibility("!String.IsEmpty(Skin.String(%s))" % self.WIDGETPATH):
                 showCustom = True
 
             if self.GROUPING:
@@ -155,27 +155,27 @@ class Main:
                     if selectedShortcut.getProperty("widget"):
                         xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGET, selectedShortcut.getProperty("widget")))
                     else:
-                        xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGET))
+                        xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGET)
                 if self.WIDGETTYPE:
                     if selectedShortcut.getProperty("widgetType"):
                         xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETTYPE, selectedShortcut.getProperty("widgetType")))
                     else:
-                        xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGETTYPE))
+                        xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETTYPE)
                 if self.WIDGETNAME:
                     if selectedShortcut.getProperty("widgetName"):
                         xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETNAME, selectedShortcut.getProperty("widgetName")))
                     else:
-                        xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGETNAME))
+                        xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETNAME)
                 if self.WIDGETTARGET:
                     if selectedShortcut.getProperty("widgetTarget"):
                         xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETTARGET, selectedShortcut.getProperty("widgetTarget")))
                     else:
-                        xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGETTARGET))
+                        xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETTARGET)
                 if self.WIDGETPATH:
                     if selectedShortcut.getProperty("widgetPath"):
                         xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETPATH, unquote(selectedShortcut.getProperty("widgetPath"))))
                     else:
-                        xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGETPATH))
+                        xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETPATH)
 
             elif selectedShortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
@@ -376,7 +376,7 @@ class Main:
         xbmc.executebuiltin(unquote(action))
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     log('script version %s started' % ADDON_VERSION)
 
     # Uncomment when profiling performance

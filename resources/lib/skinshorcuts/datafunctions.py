@@ -46,7 +46,7 @@ REPLACE2_REXP = re.compile(r'[^-a-z0-9]+')
 REMOVE_REXP = re.compile('-{2,}')
 
 
-class DataFunctions():
+class DataFunctions:
     def __init__(self):
         self.overrides = {}
 
@@ -150,7 +150,7 @@ class DataFunctions():
             paths = [userShortcuts, skinShortcuts, defaultShortcuts]
 
         for path in paths:
-            log(" - Attempting to load file %s" % (path))
+            log(" - Attempting to load file %s" % path)
             tree = None
             if xbmcvfs.exists(path):
                 self._save_hash(path)
@@ -301,7 +301,7 @@ class DataFunctions():
                     # And add the new action with the inverse visibility condition
                     newaction = xmltree.SubElement(node, "override-visibility")
                     newaction.text = override.text
-                    newaction.set("condition", "![%s]" % (visibilityCondition))
+                    newaction.set("condition", "![%s]" % visibilityCondition)
 
                     break
 
@@ -671,7 +671,7 @@ class DataFunctions():
     def _getCustomPropertyFallbacks(self, group):
         if group in self.propertyInformation["fallbacks"]:
             # We've already loaded everything, return it all
-            return (self.propertyInformation["fallbackProperties"][group], self.propertyInformation["fallbacks"][group])
+            return self.propertyInformation["fallbackProperties"][group], self.propertyInformation["fallbacks"][group]
 
         # Get skin overrides
         tree = self._get_overrides_skin()
@@ -706,12 +706,12 @@ class DataFunctions():
         self.propertyInformation["fallbackProperties"][group] = fallbackProperties
         self.propertyInformation["fallbacks"][group] = fallbacks
 
-        return (self.propertyInformation["fallbackProperties"][group], self.propertyInformation["fallbacks"][group])
+        return self.propertyInformation["fallbackProperties"][group], self.propertyInformation["fallbacks"][group]
 
     def _getPropertyRequires(self):
         if self.propertyInformation["requires"] is not None:
             # We've already loaded requires and templateOnly properties, return eveything
-            return (self.propertyInformation["otherProperties"], self.propertyInformation["requires"], self.propertyInformation["templateOnly"])
+            return self.propertyInformation["otherProperties"], self.propertyInformation["requires"], self.propertyInformation["templateOnly"]
 
         # Get skin overrides
         tree = self._get_overrides_skin()
@@ -734,7 +734,7 @@ class DataFunctions():
         self.propertyInformation["requires"] = requires
         self.propertyInformation["templateOnly"] = templateOnly
 
-        return (self.propertyInformation["otherProperties"], self.propertyInformation["requires"], self.propertyInformation["templateOnly"])
+        return self.propertyInformation["otherProperties"], self.propertyInformation["requires"], self.propertyInformation["templateOnly"]
 
     def _getWidgetNameAndType(self, widgetID):
         if widgetID in self.widgetNameAndType:
@@ -1019,7 +1019,7 @@ class DataFunctions():
         for skinName in skinNames:
             matched = False
             for skinFile in skinFiles:
-                if skinFile.startswith("%s-" % (skinName)):
+                if skinFile.startswith("%s-" % skinName):
                     if matched == False:
                         matched = True
                     removeFiles.append(skinFile)
@@ -1034,7 +1034,7 @@ class DataFunctions():
         if len(skinFiles) != 0:
             skinNames.insert(0, LANGUAGE(32111))
 
-        return (skinNames, skinFiles)
+        return skinNames, skinFiles
 
     def getFilesForSkin(self, skinName):
         # This will return a list of all menu files for a particular skin
@@ -1043,7 +1043,7 @@ class DataFunctions():
             # Try deleting all shortcuts
             if files:
                 for file in files:
-                    if file.endswith(".DATA.xml") and file.startswith("%s-" % (skinName)):
+                    if file.endswith(".DATA.xml") and file.startswith("%s-" % skinName):
                         skinFiles.append(file)
 
         return skinFiles
@@ -1053,7 +1053,7 @@ class DataFunctions():
             hashes = ast.literal_eval(xbmcvfs.File(file).read())
         except:
             # There is no hash list, return False
-            return (False, "")
+            return False, ""
 
         canImport = False
         skinName = None
@@ -1061,13 +1061,13 @@ class DataFunctions():
             if hash[0] == "::FULLMENU::":
                 canImport = True
                 if skinName:
-                    return (True, skinName)
+                    return True, skinName
             if hash[0] == "::SKINDIR::":
                 skinName = hash[1]
                 if canImport == True:
-                    return (True, skinName)
+                    return True, skinName
 
-        return (canImport, skinName)
+        return canImport, skinName
 
     def importSkinMenu(self, files, skinName=None):
         # This function copies one skins menus to another
@@ -1285,7 +1285,7 @@ class DataFunctions():
                 return listProperty[1]
             else:
                 # Situation we haven't anticipated - log the issue and return original onclick
-                log("Unable to get 'list' property for shortcut %s" % (onclick))
+                log("Unable to get 'list' property for shortcut %s" % onclick)
                 return onclick
         else:
             # Not an 'ActivateWindow' - return the onclick

@@ -31,7 +31,7 @@ REPLACE2_REXP = re.compile(r'[^-a-z0-9]+')
 REMOVE_REXP = re.compile('-{2,}')
 
 
-class NodeFunctions():
+class NodeFunctions:
     def __init__(self):
         self.indexCounter = 0
 
@@ -328,16 +328,16 @@ class NodeFunctions():
             paths.append("RunScript(script.skinshortcuts,type=launchalbum&album=%s)" % (self.extractID(path)))
         if window == 10002:
             labels.append("Slideshow")
-            paths.append("SlideShow(%s,notrandom)" % (path))
+            paths.append("SlideShow(%s,notrandom)" % path)
             labels.append("Slideshow (random)")
-            paths.append("SlideShow(%s,random)" % (path))
+            paths.append("SlideShow(%s,random)" % path)
             labels.append("Slideshow (recursive)")
-            paths.append("SlideShow(%s,recursive,notrandom)" % (path))
+            paths.append("SlideShow(%s,recursive,notrandom)" % path)
             labels.append("Slideshow (recursive, random)")
-            paths.append("SlideShow(%s,recursive,random)" % (path))
+            paths.append("SlideShow(%s,recursive,random)" % path)
         if path.endswith(".xsp"):
             labels.append("Play")
-            paths.append("PlayMedia(%s)" % (path))
+            paths.append("PlayMedia(%s)" % path)
 
         allMenuItems = [xbmcgui.ListItem(label=LANGUAGE(32112))]  # Main menu
         allLabelIDs = ["mainmenu"]
@@ -505,7 +505,7 @@ class NodeFunctions():
             for key in otherProperties:
                 if key in list(allProps[group][labelID].keys()) and key in list(requires.keys()) and requires[key] not in list(allProps[group][labelID].keys()):
                     # This properties requirements aren't met
-                    log("Removing value %s" % (key))
+                    log("Removing value %s" % key)
                     allProps[group][labelID].pop(key)
 
         # Build the list of all properties to save

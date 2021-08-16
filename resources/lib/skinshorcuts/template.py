@@ -17,7 +17,7 @@ from .constants import SKIN_PATH
 hashlist = []
 
 
-class Template():
+class Template:
     def __init__(self):
         # Load the skins template.xml file
         templatepath = os.path.join(SKIN_PATH, "template.xml")
@@ -94,7 +94,7 @@ class Template():
                 includeName += "-%s" % (template.attrib.get("include"))
 
             treeRoot = self.getInclude(self.includes, includeName, profileVisibility, profile)
-            includeTree = self.getInclude(self.includes, includeName + "-%s" % (profile), None, None)
+            includeTree = self.getInclude(self.includes, includeName + "-%s" % profile, None, None)
 
             # If we've been passed any mainmenu items, retrieve their properties
             properties = {}
@@ -148,7 +148,7 @@ class Template():
                 # Handle auto visibility condition if the labelID is a number that translates to
                 # a localised string
                 if visibilityName.isdigit() and xbmc.getLocalizedString(int(visibilityName)) != "":
-                    visibilityName = "$LOCALIZE[%s]" % (visibilityName)
+                    visibilityName = "$LOCALIZE[%s]" % visibilityName
 
                 finalVisibility = "[%s + String.IsEqual(Container(::SUBMENUCONTAINER::).ListItem.Property(labelID),%s)]" % (visibilityCondition, visibilityName)
 
@@ -158,7 +158,7 @@ class Template():
             if menuType == "mainmenu":
                 self.progress.update(int(self.current + ((float(self.percent) / float(len(items))) * progressCount)))
         if numTemplates != 0:
-            log(" - %d templates" % (numTemplates))
+            log(" - %d templates" % numTemplates)
 
     def writeOthers(self):
         # This will write any 'other' elements we have into the includes file
@@ -177,7 +177,7 @@ class Template():
             name = "skinshortcuts-template"
             if "include" in template.attrib:
                 includeName = template.attrib.get("include")
-                name += "-%s" % (includeName)
+                name += "-%s" % includeName
                 # Remove the include from our list of other templates, as we don't need to build an empty one
                 if name in self.otherTemplates:
                     self.otherTemplates.remove(name)

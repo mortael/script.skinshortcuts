@@ -25,7 +25,7 @@ DATA = datafunctions.DataFunctions()
 hashlist = []
 
 
-class XMLFunctions():
+class XMLFunctions:
     def __init__(self):
         self.MAINWIDGET = {}
         self.MAINBACKGROUND = {}
@@ -67,7 +67,7 @@ class XMLFunctions():
                     dir = xbmcvfs.translatePath(dir)
                 # Base if off of the master profile
                 dir = xbmcvfs.translatePath(os.path.join("special://masterprofile", dir))
-                profilelist.append([dir, "String.IsEqual(System.ProfileName,%s)" % (name), name])
+                profilelist.append([dir, "String.IsEqual(System.ProfileName,%s)" % name, name])
 
         else:
             profilelist = [["special://masterprofile", None]]
@@ -728,7 +728,7 @@ class XMLFunctions():
             # It is, so we set it to be invisible, add an empty onclick and return
             xmltree.SubElement(newelement, "visible").text = "False"
             xmltree.SubElement(newelement, "onclick").text = "noop"
-            return (newelement, allProps)
+            return newelement, allProps
 
         # Clear cloned options if main menu
         if groupName == "mainmenu":
@@ -965,7 +965,7 @@ class XMLFunctions():
                 additionalproperty.text = propertyPattern
                 allProps[propertyName] = additionalproperty
 
-        return (newelement, allProps)
+        return newelement, allProps
 
     def getPropertyPatterns(self, labelID, group):
         propertyPatterns = {}
