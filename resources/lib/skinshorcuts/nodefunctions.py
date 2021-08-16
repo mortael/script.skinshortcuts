@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import os
 import re
@@ -9,7 +11,7 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
-from resources.lib.common import log
+from .common import log
 
 ADDON = xbmcaddon.Addon()
 ADDONID = ADDON.getAddonInfo('id')
@@ -353,8 +355,8 @@ class NodeFunctions():
             # Get existing items labelID's
             allMenuItems.append(xbmcgui.ListItem(label=DATA.local(menuitem.find("label").text)[2]))
             listitem.setArt({
-                                'icon': menuitem.find("icon").text
-                            })
+                'icon': menuitem.find("icon").text
+            })
             allLabelIDs.append(DATA._get_labelID(DATA.local(menuitem.find("label").text)[3], menuitem.find("action").text))
 
         # Close progress dialog
@@ -571,11 +573,11 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         for item in self.listing:
             listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
             listitem.setArt({
-                                'icon': item.getProperty("icon")
-                            })
+                'icon': item.getProperty("icon")
+            })
             listitem.setArt({
-                                'thumb': item.getProperty("thumbnail")
-                            })
+                'thumb': item.getProperty("thumbnail")
+            })
             listitem.setProperty("Addon.Summary", item.getLabel2())
             self.fav_list.addItem(listitem)
 

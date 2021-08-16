@@ -5,7 +5,7 @@
 		<import addon="script.module.unidecode" version="0.4.14"/>
 		<import addon="script.module.simpleeval" version="0.9.10"/>
 	</requires>
-	<extension point="xbmc.python.library" library="default.py"/>
+	<extension point="xbmc.python.library" library="resources/lib/entry_point.py"/>
 	<extension point="xbmc.addon.metadata">
 		<description lang="de_DE">Add-on für Skins für einfache Bearbeitung und Auflistung von benutzerdefinierten Verknüpfungen (erfordert Skin-Unterstützung)</description>
 		<description lang="el_GR">Πρόσθετο για κελύφη, το οποίο παρέχει έναν απλό τρόπο διαχείρισης και κατηγοριοποίησης των συντομεύσεων του χρήστη (πρέπει να υποστηρίζεται από το κέλυφος)</description>

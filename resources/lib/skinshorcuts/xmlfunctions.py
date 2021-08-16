@@ -1,4 +1,5 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
 import ast
 import json
 import os
@@ -10,10 +11,10 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
-from resources.lib import datafunctions
-from resources.lib import template
-from resources.lib.common import get_hash
-from resources.lib.common import log
+from . import datafunctions
+from . import template
+from .common import get_hash
+from .common import log
 
 ADDON = xbmcaddon.Addon()
 ADDONID = ADDON.getAddonInfo('id')

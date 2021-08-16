@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import ast
 import os
 import re
@@ -11,9 +13,9 @@ from unidecode import unidecode
 import xbmc
 import xbmcaddon
 import xbmcvfs
-from resources.lib import nodefunctions
-from resources.lib.common import get_hash
-from resources.lib.common import log
+from . import nodefunctions
+from .common import get_hash
+from .common import log
 
 NODE = nodefunctions.NodeFunctions()
 

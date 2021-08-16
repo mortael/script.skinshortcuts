@@ -1,4 +1,5 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+
 import _thread as thread
 import calendar
 import json
@@ -12,9 +13,9 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
-from resources.lib import datafunctions
-from resources.lib import library
-from resources.lib.common import log
+from . import datafunctions
+from . import library
+from .common import log
 
 DATA = datafunctions.DataFunctions()
 LIBRARY = library.LibraryFunctions()
@@ -286,8 +287,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         if visible == False:
             listitem = xbmcgui.ListItem(LANGUAGE(32013))
             listitem.setArt({
-                                'icon': "DefaultShortcut.png"
-                            })
+                'icon': "DefaultShortcut.png"
+            })
             listitem.setProperty("Path", 'noop')
             listitem.setProperty("icon", "DefaultShortcut.png")
             listitem.setProperty("skinshortcuts-orderindex", str(count))
@@ -328,11 +329,11 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Create the list item
         listitem = xbmcgui.ListItem(label=localLabel[2], label2=localLabel2[2])
         listitem.setArt({
-                            'icon': xbmc.getInfoLabel(icon)
-                        })
+            'icon': xbmc.getInfoLabel(icon)
+        })
         listitem.setArt({
-                            'thumb': xbmc.getInfoLabel(thumb)
-                        })
+            'thumb': xbmc.getInfoLabel(thumb)
+        })
         listitem.setProperty("localizedString", localLabel[0])
         listitem.setProperty("icon", icon)
         listitem.setProperty("thumbnail", thumb)
@@ -357,8 +358,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         overridenIcon = item.find("override-icon")
         if overridenIcon is not None:
             listitem.setArt({
-                                'icon': overridenIcon.text
-                            })
+                'icon': overridenIcon.text
+            })
             listitem.setProperty("icon", overridenIcon.text)
             listitem.setProperty("original-icon", icon)
 
@@ -512,8 +513,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             icon = xbmc.getInfoLabel(icon)
             listitem.setProperty("icon", icon)
             listitem.setArt({
-                                'icon': 'icon'
-                            })
+                'icon': 'icon'
+            })
             iconIsVar = True
         if icon.startswith("resource://"):
             iconIsVar = True
@@ -546,8 +547,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         # If we changed the icon, update the listitem
         if oldicon is not None:
             listitem.setArt({
-                                'icon': 'icon'
-                            })
+                'icon': 'icon'
+            })
             listitem.setProperty("icon", icon)
             listitem.setProperty("original-icon", oldicon)
 
@@ -1291,8 +1292,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                 # Update the thumbnail
                 self.changeMade = True
                 listitem.setArt({
-                                    'thumb': custom_thumbnail
-                                })
+                    'thumb': custom_thumbnail
+                })
                 listitem.setProperty("thumbnail", custom_thumbnail)
             else:
                 return
@@ -1820,8 +1821,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             elif self.thumbnailNone and selectedThumbnail == 0:
                 # User has chosen 'None'
                 listitem.setArt({
-                                    'thumb': None
-                                })
+                    'thumb': None
+                })
                 listitem.setProperty("thumbnail", None)
 
             elif (not self.thumbnailNone and selectedThumbnail == 0) or (self.thumbnailNone and selectedThumbnail == 1):
@@ -1835,8 +1836,8 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 if custom_image:
                     listitem.setArt({
-                                        'thumb': custom_image
-                                    })
+                        'thumb': custom_image
+                    })
                     listitem.setProperty("thumbnail", custom_image)
                 else:
                     # User cancelled
@@ -1845,8 +1846,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             else:
                 # User has selected a normal thumbnail
                 listitem.setArt({
-                                    'thumb': thumbnail[selectedThumbnail]
-                                })
+                    'thumb': thumbnail[selectedThumbnail]
+                })
                 listitem.setProperty("thumbnail", thumbnail[selectedThumbnail])
             self.changeMade = True
 
@@ -2027,11 +2028,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                 if propertyName == "thumb":
                     # Special treatment if we try to set the thumb with the property method
                     listitem.setArt({
-                                        'thumb': xbmc.getInfoLabel(propertyValue)
-                                    })
+                        'thumb': xbmc.getInfoLabel(propertyValue)
+                    })
                     listitem.setArt({
-                                        'icon': xbmc.getInfoLabel(propertyValue)
-                                    })
+                        'icon': xbmc.getInfoLabel(propertyValue)
+                    })
                     listitem.setProperty("thumbnail", propertyValue)
                     listitem.setProperty("icon", propertyValue)
                     if not propertyValue:
@@ -2197,11 +2198,11 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Create a copy of an existing listitem
         listitemCopy = xbmcgui.ListItem(label=listitem.getLabel(), label2=listitem.getLabel2())
         listitem.setArt({
-                            'icon': listitem.getProperty("icon")
-                        })
+            'icon': listitem.getProperty("icon")
+        })
         listitem.setArt({
-                            'thumb': listitem.getProperty("thumbnail")
-                        })
+            'thumb': listitem.getProperty("thumbnail")
+        })
         listitemCopy.setProperty("path", listitem.getProperty("path"))
         listitemCopy.setProperty("displaypath", listitem.getProperty("path"))
         listitemCopy.setProperty("icon", listitem.getProperty("icon"))
@@ -2224,8 +2225,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         if listitem.getProperty("untranslatedIcon"):
             icon = listitem.getProperty("untranslatedIcon")
             listitemCopy.setArt({
-                                    'icon': 'icon'
-                                })
+                'icon': 'icon'
+            })
             listitemCopy.setProperty("icon", icon)
 
         # Revert to original icon (because we'll override it again in a minute!)
@@ -2234,8 +2235,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             if icon == "":
                 icon = None
             listitemCopy.setArt({
-                                    'icon': 'icon'
-                                })
+                'icon': 'icon'
+            })
             listitemCopy.setProperty("icon", icon)
 
         # If we've haven't been passed an originallistitem, set the following from the listitem we were passed

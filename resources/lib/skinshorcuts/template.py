@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import ast
 import operator
 import os
@@ -8,8 +10,8 @@ from simpleeval import simple_eval
 
 import xbmc
 import xbmcvfs
-from resources.lib.common import get_hash
-from resources.lib.common import log
+from .common import get_hash
+from .common import log
 
 SKINPATH = xbmcvfs.translatePath("special://skin/shortcuts/")
 

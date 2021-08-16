@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import _thread as thread
 import calendar
 import os
@@ -14,11 +16,11 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
-from resources.lib import datafunctions
-from resources.lib import library
-from resources.lib import nodefunctions
-from resources.lib import xmlfunctions
-from resources.lib.common import log
+from . import datafunctions
+from . import library
+from . import nodefunctions
+from . import xmlfunctions
+from .common import log
 
 ADDON = xbmcaddon.Addon()
 ADDONID = ADDON.getAddonInfo('id')

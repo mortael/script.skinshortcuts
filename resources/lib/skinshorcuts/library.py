@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import os
 import urllib.error
@@ -11,9 +13,9 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
-from resources.lib import datafunctions
-from resources.lib import nodefunctions
-from resources.lib.common import log
+from . import datafunctions
+from . import nodefunctions
+from .common import log
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
@@ -40,14 +42,14 @@ def kodiwalk(path, stringForce=False):
                 else:
                     if stringForce and item['file'].startswith(stringForce):
                         files.append({
-                                         'path': xbmcvfs.translatePath(item['file']),
-                                         'label': item['label']
-                                     })
+                            'path': xbmcvfs.translatePath(item['file']),
+                            'label': item['label']
+                        })
                     else:
                         files.append({
-                                         'path': item['file'],
-                                         'label': item['label']
-                                     })
+                            'path': item['file'],
+                            'label': item['label']
+                        })
     return files
 
 
@@ -644,17 +646,17 @@ class LibraryFunctions():
         if thumbnail is not None:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({
-                                'icon': displayIcon
-                            })
+                'icon': displayIcon
+            })
             listitem.setArt({
-                                'thumb': thumbnail
-                            })
+                'thumb': thumbnail
+            })
             listitem.setProperty("thumbnail", thumbnail)
         else:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({
-                                'icon': thumbnail
-                            })
+                'icon': thumbnail
+            })
         listitem.setProperty("path", item[0])
         listitem.setProperty("localizedString", localLabel)
         listitem.setProperty("shortcutType", shortcutType)
@@ -698,8 +700,8 @@ class LibraryFunctions():
             # we found an icon override
             item.setProperty("icon", newicon)
             item.setArt({
-                            'icon': 'newicon'
-                        })
+                'icon': 'newicon'
+            })
 
         if setDefault == True:
             item = self._get_icon_overrides(tree, item, content, False)
@@ -1672,11 +1674,11 @@ class LibraryFunctions():
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[len(label) - 1].replace("  >", ""), label2=localItemType)
                 listitem.setArt({
-                                    'icon': "DefaultShortcut.png"
-                                })
+                    'icon': "DefaultShortcut.png"
+                })
                 listitem.setArt({
-                                    'thumb': thumbnail[len(thumbnail) - 1]
-                                })
+                    'thumb': thumbnail[len(thumbnail) - 1]
+                })
 
                 # Build the action
                 if itemType in ["32010", "32014", "32069"]:
@@ -2363,11 +2365,11 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         for item in self.listing:
             listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
             listitem.setArt({
-                                'icon': item.getProperty("icon")
-                            })
+                'icon': item.getProperty("icon")
+            })
             listitem.setArt({
-                                'thumb': item.getProperty("thumbnail")
-                            })
+                'thumb': item.getProperty("thumbnail")
+            })
             listitem.setProperty("Addon.Summary", item.getLabel2())
             self.fav_list.addItem(listitem)
 
