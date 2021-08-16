@@ -1153,7 +1153,11 @@ class LibraryFunctions:
                         contents_data = contents.read()
                         xmldata = xmltree.fromstring(contents_data)
                         mediaType = "unknown"
-                        for line in xmldata.getiterator():
+                        try:
+                            iterator = xmldata.iter()
+                        except:
+                            iterator = xmldata.getiterator()
+                        for line in iterator:
                             if line.tag == "smartplaylist":
                                 mediaType = line.attrib['type']
                                 if mediaType == "movies" or mediaType == "tvshows" or mediaType == "seasons" or mediaType == "episodes" or mediaType == "musicvideos" or mediaType == "sets":
@@ -1241,7 +1245,11 @@ class LibraryFunctions:
                     contents = xbmcvfs.File(playlistfile, 'r')
                     contents_data = contents.read()
                     xmldata = xmltree.fromstring(contents_data)
-                    for line in xmldata.getiterator():
+                    try:
+                        iterator = xmldata.iter()
+                    except:
+                        iterator = xmldata.getiterator()
+                    for line in iterator:
                         if line.tag == "name":
                             name = line.text
                             # Save it for the widgets list
