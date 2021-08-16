@@ -257,7 +257,8 @@ class Template:
             root = self.getInclude(self.includes, otherTemplate, None, None)
             xmltree.SubElement(root, "description").text = "This include was built automatically as the template didn't match any menu items"
 
-    def parseVariables(self, variableName, allVariables):
+    @staticmethod
+    def parseVariables(variableName, allVariables):
         # This function will return all condition/value elements for a given variable, including adding profile conditions
         returnVariables = []
         noCondition = []
@@ -305,7 +306,8 @@ class Template:
 
         return returnVariables + noCondition
 
-    def getInclude(self, tree, name, condition, profile):
+    @staticmethod
+    def getInclude(tree, name, condition, profile):
         # This function gets an existing <include/>, or creates it
         for include in tree.findall("include"):
             if include.attrib.get("name") == name:
@@ -514,7 +516,8 @@ class Template:
 
         return numTemplates
 
-    def checkCondition(self, condition, items):
+    @staticmethod
+    def checkCondition(condition, items):
         # Check if a particular condition is matched for an 'other' template
         if "tag" not in condition.attrib:
             # Tag attrib is required
@@ -897,7 +900,8 @@ class Template:
             newelements.insert(0, newElement)
         return newelements
 
-    def _save_hash(self, filename, none_override=False):
+    @staticmethod
+    def _save_hash(filename, none_override=False):
         if none_override:
             hashlist.append([filename.encode("utf8"), None])
         else:

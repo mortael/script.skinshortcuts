@@ -2295,7 +2295,8 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         self._add_additional_properties(listitem)
 
-    def warnonremoval(self, item):
+    @staticmethod
+    def warnonremoval(item):
         # This function will warn the user before they modify a settings link
         # (if the skin has enabled this function)
         tree = DATA._get_overrides_skin()
@@ -2390,7 +2391,8 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         return None
 
-    def _set_label(self, listitem, label):
+    @staticmethod
+    def _set_label(listitem, label):
         # Update the label, local string and labelID
         listitem.setLabel(label)
         listitem.setProperty("localizedString", None)

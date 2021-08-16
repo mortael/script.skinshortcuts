@@ -146,7 +146,8 @@ class XMLFunctions:
                     else:
                         xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
 
-    def shouldwerun(self, profilelist):
+    @staticmethod
+    def shouldwerun(profilelist):
         try:
             property = xbmcgui.Window(10000).getProperty("skinshortcuts-reloadmainmenu")
             xbmcgui.Window(10000).clearProperty("skinshortcuts-reloadmainmenu")
@@ -987,7 +988,8 @@ class XMLFunctions:
 
         return propertyPatterns
 
-    def getPropertyReplacements(self, element):
+    @staticmethod
+    def getPropertyReplacements(element):
         propertyReplacements = []
         for subElement in list(element):
             if subElement.tag == "property":
@@ -999,13 +1001,15 @@ class XMLFunctions:
 
         return propertyReplacements
 
-    def propertyExists(self, propertyName, element):
+    @staticmethod
+    def propertyExists(propertyName, element):
         for item in element.findall("property"):
             if propertyName in item.attrib:
                 return True
         return False
 
-    def findIncludePosition(self, list, item):
+    @staticmethod
+    def findIncludePosition(list, item):
         try:
             return list.index(item)
         except:

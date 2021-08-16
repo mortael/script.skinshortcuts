@@ -100,7 +100,8 @@ class DataFunctions:
             self.labelIDList.append(labelID)
             return labelID
 
-    def _get_addon_labelID(self, action):
+    @staticmethod
+    def _get_addon_labelID(action):
         # This will check the action to see if this is a program or the root of a plugin and, if so, return that as the labelID
 
         if action is None:
@@ -780,7 +781,8 @@ class DataFunctions:
         for elem in tree.findall("background"):
             xbmc.executebuiltin("Skin.Reset(skinshortcuts-background-" + elem.text + ")")
 
-    def createNiceName(self, item, noNonLocalized=False):
+    @staticmethod
+    def createNiceName(item, noNonLocalized=False):
         # Translate certain localized strings into non-localized form for labelID
         if noNonLocalized is False:
             if item == "3":
@@ -810,7 +812,8 @@ class DataFunctions:
 
         return item.lower().replace(" ", "")
 
-    def checkVisibility(self, action):
+    @staticmethod
+    def checkVisibility(action):
         # Return whether mainmenu items should be displayed
         action = action.lower().replace(" ", "").replace("\"", "")
 
@@ -1041,7 +1044,8 @@ class DataFunctions:
 
         return skinNames, skinFiles
 
-    def getFilesForSkin(self, skinName):
+    @staticmethod
+    def getFilesForSkin(skinName):
         # This will return a list of all menu files for a particular skin
         skinFiles = []
         for files in xbmcvfs.listdir(DATA_PATH):
@@ -1053,7 +1057,8 @@ class DataFunctions:
 
         return skinFiles
 
-    def parseHashFile(self, file):
+    @staticmethod
+    def parseHashFile(file):
         try:
             hashes = ast.literal_eval(xbmcvfs.File(file).read())
         except:
@@ -1074,7 +1079,8 @@ class DataFunctions:
 
         return canImport, skinName
 
-    def importSkinMenu(self, files, skinName=None):
+    @staticmethod
+    def importSkinMenu(files, skinName=None):
         # This function copies one skins menus to another
         for oldFile in files:
             if skinName:
@@ -1092,7 +1098,8 @@ class DataFunctions:
         if xbmcvfs.exists(propFile):
             xbmcvfs.delete(propFile)
 
-    def _save_hash(self, filename, none_override=False):
+    @staticmethod
+    def _save_hash(filename, none_override=False):
         if none_override:
             hashlist.append([filename.encode("utf8"), None])
         else:
@@ -1114,7 +1121,8 @@ class DataFunctions:
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
 
-    def local(self, data):
+    @staticmethod
+    def local(data):
         # This is our function to manage localisation
         # It accepts strings in one of the following formats:
         #   #####, ::LOCAL::#####, ::SCRIPT::#####
@@ -1175,7 +1183,8 @@ class DataFunctions:
         # This isn't anything we can localize, just return it (in triplicate ;))
         return [data, data, data, data]
 
-    def smart_truncate(self, string, max_length=0, word_boundaries=False, separator=' '):
+    @staticmethod
+    def smart_truncate(string, max_length=0, word_boundaries=False, separator=' '):
         string = string.strip(separator)
 
         if not max_length:
@@ -1262,7 +1271,8 @@ class DataFunctions:
     # --- (when xml building functions are revamped/simplified) ------
     # ----------------------------------------------------------------
 
-    def getListProperty(self, onclick):
+    @staticmethod
+    def getListProperty(onclick):
         # For ActivateWindow elements, extract the path property
         if onclick.startswith("ActivateWindow"):
             # An ActivateWindow - Let's start by removing the 'ActivateWindow(' and the ')'
@@ -1296,7 +1306,8 @@ class DataFunctions:
             # Not an 'ActivateWindow' - return the onclick
             return onclick
 
-    def upgradeAction(self, action):
+    @staticmethod
+    def upgradeAction(action):
         # This function looks for actions used in a previous version of Kodi, and upgrades them to the current action
 
         if not action.lower().startswith("activatewindow("):
@@ -1322,14 +1333,16 @@ class DataFunctions:
         # No matching upgrade
         return action
 
-    def upgradeAdditionalProperties(self, propertyName, propertyValue):
+    @staticmethod
+    def upgradeAdditionalProperties(propertyName, propertyValue):
         # This function fixes any changes to additional properties between Kodi versions
         if propertyName.startswith("widgetTarget") and propertyValue == "video":
             propertyValue = "videos"
 
         return [propertyName, propertyValue]
 
-    def buildReplacementMusicAddonAction(self, action, window):
+    @staticmethod
+    def buildReplacementMusicAddonAction(action, window):
         # Builds a replacement action for an Isengard or earlier shortcut to a specific music addon
         splitAction = action.split(",")
         # [0] = ActivateWindow([window]

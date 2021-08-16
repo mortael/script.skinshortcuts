@@ -124,7 +124,8 @@ class NodeFunctions:
         except:
             print_exc()
 
-    def isGrouped(self, path):
+    @staticmethod
+    def isGrouped(path):
         customPathVideo = path.replace("library://video", os.path.join(xbmcvfs.translatePath("special://profile"), "library", "video"))[:-1]
         defaultPathVideo = path.replace("library://video", os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", "video"))[:-1]
         customPathAudio = path.replace("library://music", os.path.join(xbmcvfs.translatePath("special://profile"), "library", "music"))[:-1]
@@ -159,7 +160,8 @@ class NodeFunctions:
     # Function used by DataFunctions.py #
     #####################################
 
-    def get_visibility(self, path):
+    @staticmethod
+    def get_visibility(path):
         path = path.replace("videodb://", "library://video/")
         path = path.replace("musicdb://", "library://music/")
         if path.endswith(".xml"):
@@ -225,7 +227,8 @@ class NodeFunctions:
 
         return ""
 
-    def get_mediaType(self, path):
+    @staticmethod
+    def get_mediaType(path):
         path = path.replace("videodb://", "library://video/")
         path = path.replace("musicdb://", "library://music/")
         if path.endswith(".xml"):
@@ -426,7 +429,8 @@ class NodeFunctions:
         # And tell the user it all worked
         xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32090))
 
-    def extractID(self, path):
+    @staticmethod
+    def extractID(path):
         # Extract the ID of an item from its path
         itemID = path
         if "?" in itemID:
@@ -440,7 +444,8 @@ class NodeFunctions:
     # ### Functions to externally set properties ###
     # ##############################################
 
-    def setProperties(self, properties, values, labelID, group, DATA):
+    @staticmethod
+    def setProperties(properties, values, labelID, group, DATA):
         # This function will take a list of properties and values and apply them to the
         # main menu item with the given labelID
         if not group:

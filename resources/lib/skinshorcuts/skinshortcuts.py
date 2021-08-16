@@ -291,7 +291,8 @@ class Main:
                 if singleAction != "::MULTIPLE::":
                     xbmc.executebuiltin(singleAction)
 
-    def _manage_shortcuts(self, group, defaultGroup, nolabels, groupname):
+    @staticmethod
+    def _manage_shortcuts(group, defaultGroup, nolabels, groupname):
         homeWindow = xbmcgui.Window(10000)
         if homeWindow.getProperty("skinshortcuts-loading") and int(calendar.timegm(gmtime())) - int(homeWindow.getProperty("skinshortcuts-loading")) <= 5:
             return
@@ -353,7 +354,8 @@ class Main:
             xbmcgui.Window(10000).setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
 
     # Functions for providing whoe menu in single list
-    def _hidesubmenu(self, menuid):
+    @staticmethod
+    def _hidesubmenu(menuid):
         count = 0
         while xbmc.getCondVisibility("!String.IsEmpty(Container(%s).ListItem(%i).Property(isSubmenu))" % (menuid, count)):
             count -= 1
@@ -363,7 +365,8 @@ class Main:
 
         xbmc.executebuiltin("ClearProperty(submenuVisibility, 10000)")
 
-    def _resetlist(self, menuid, action):
+    @staticmethod
+    def _resetlist(menuid, action):
         count = 0
         while xbmc.getCondVisibility("!String.IsEmpty(Container(%s).ListItemNoWrap(%i).Label)" % (menuid, count)):
             count -= 1
