@@ -10,21 +10,19 @@ from traceback import print_exc
 from xml.dom.minidom import parse
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcvfs
 from . import datafunctions
 from . import nodefunctions
 from .common import log
+from .constants import ADDON_ID
+from .constants import CWD
+from .constants import DATA_PATH
+from .constants import KODI_VERSION
+from .constants import LANGUAGE
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
-ADDON = xbmcaddon.Addon()
-ADDONID = ADDON.getAddonInfo('id')
-CWD = ADDON.getAddonInfo('path')
-DATAPATH = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_data", ADDONID)
-LANGUAGE = ADDON.getLocalizedString
-KODIVERSION = xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
 
 
 def kodiwalk(path, stringForce=False):
@@ -228,7 +226,7 @@ class LibraryFunctions():
                         continue
                 if "version" in node.attrib:
                     version = node.attrib.get("version")
-                    if KODIVERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") == False:
+                    if KODI_VERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") == False:
                         group += 1
                         continue
                 if "installWidget" in node.attrib and node.attrib.get("installWidget").lower() == "true":
@@ -270,7 +268,7 @@ class LibraryFunctions():
                     continue
             if "version" in subnode.attrib:
                 version = subnode.attrib.get("version")
-                if KODIVERSION != version and DATA.checkVersionEquivalency(version, subnode.attrib.get("condition"), "groupings") == False:
+                if KODI_VERSION != version and DATA.checkVersionEquivalency(version, subnode.attrib.get("condition"), "groupings") == False:
                     number += 1
                     continue
             if "installWidget" in subnode.attrib and subnode.attrib.get("installWidget").lower() == "true":
@@ -291,7 +289,7 @@ class LibraryFunctions():
                     continue
             if "version" in node.attrib:
                 version = node.attrib.get("version")
-                if KODIVERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") == False:
+                if KODI_VERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") == False:
                     continue
             count += 1
             if node.tag == "content":
@@ -447,7 +445,7 @@ class LibraryFunctions():
                 if not xbmc.getCondVisibility(node.attrib.get("condition")):
                     continue
             if "version" in node.attrib:
-                if KODIVERSION != node.attrib.get("version"):
+                if KODI_VERSION != node.attrib.get("version"):
                     continue
 
             count += 1
@@ -1225,7 +1223,7 @@ class LibraryFunctions():
         returnPlaylists = []
         try:
             log('Loading script generated playlists...')
-            path = "special://profile/addon_data/" + ADDONID + "/"
+            path = "special://profile/addon_data/" + ADDON_ID + "/"
             count = 0
             for file in kodiwalk(path):
                 playlist = file['path']
@@ -1995,7 +1993,7 @@ class LibraryFunctions():
 
         # We're going to display it in the library
         filename = self._build_playlist(selectedShortcut.getProperty("location"), mediaType, selectedShortcut.getLabel(), negative)
-        newAction = "ActivateWindow(" + windowID + "," + "special://profile/addon_data/" + ADDONID + "/" + filename + ",return)"
+        newAction = "ActivateWindow(" + windowID + "," + "special://profile/addon_data/" + ADDON_ID + "/" + filename + ",return)"
         selectedShortcut.setProperty("Path", newAction)
         selectedShortcut.setProperty("displayPath", newAction)
         return selectedShortcut
@@ -2035,18 +2033,18 @@ class LibraryFunctions():
                 xmltree.SubElement(rule, "value").text = item
 
         id = 1
-        while xbmcvfs.exists(os.path.join(DATAPATH, str(id) + ".xsp")):
+        while xbmcvfs.exists(os.path.join(DATA_PATH, str(id) + ".xsp")):
             id += 1
 
         # Write playlist we'll link to the menu item
         DATA.indent(tree.getroot())
-        tree.write(os.path.join(DATAPATH, str(id) + ".xsp"), encoding="utf-8")
+        tree.write(os.path.join(DATA_PATH, str(id) + ".xsp"), encoding="utf-8")
 
         # Add a random property, and save this for use in playlists/backgrounds
         order = xmltree.SubElement(root, "order")
         order.text = "random"
         DATA.indent(tree.getroot())
-        tree.write(os.path.join(DATAPATH, str(id) + "-randomversion.xsp"), encoding="utf-8")
+        tree.write(os.path.join(DATA_PATH, str(id) + "-randomversion.xsp"), encoding="utf-8")
 
         return str(id) + ".xsp"
 
@@ -2057,7 +2055,7 @@ class LibraryFunctions():
             try:
                 elements = target.split(",")
                 if len(elements) > 1:
-                    if elements[1].startswith("special://profile/addon_data/" + ADDONID + "/") and elements[1].endswith(".xsp"):
+                    if elements[1].startswith("special://profile/addon_data/" + ADDON_ID + "/") and elements[1].endswith(".xsp"):
                         xbmcvfs.delete(xbmcvfs.translatePath(elements[1]))
                         xbmcvfs.delete(xbmcvfs.translatePath(elements[1].replace(".xsp", "-randomversion.xsp")))
             except:
@@ -2075,7 +2073,7 @@ class LibraryFunctions():
                 return
 
             try:
-                if elements[1].startswith("special://profile/addon_data/" + ADDONID + "/") and elements[1].endswith(".xsp"):
+                if elements[1].startswith("special://profile/addon_data/" + ADDON_ID + "/") and elements[1].endswith(".xsp"):
                     filename = xbmcvfs.translatePath(elements[1])
                 else:
                     return

@@ -8,20 +8,17 @@ import xml.etree.ElementTree as xmltree
 from traceback import print_exc
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcvfs
 from . import datafunctions
 from . import template
 from .common import get_hash
 from .common import log
-
-ADDON = xbmcaddon.Addon()
-ADDONID = ADDON.getAddonInfo('id')
-ADDONVERSION = ADDON.getAddonInfo('version')
-KODIVERSION = xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
-LANGUAGE = ADDON.getLocalizedString
-MASTERPATH = os.path.join(xbmcvfs.translatePath("special://masterprofile/addon_data/"), ADDONID)
+from .constants import ADDON
+from .constants import ADDON_VERSION
+from .constants import KODI_VERSION
+from .constants import LANGUAGE
+from .constants import MASTER_PATH
 
 DATA = datafunctions.DataFunctions()
 
@@ -193,7 +190,7 @@ class XMLFunctions():
                 pass
 
         # Check for the hashes file
-        hashesPath = os.path.join(MASTERPATH, xbmc.getSkinDir() + ".hash")
+        hashesPath = os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash")
         if not xbmcvfs.exists(hashesPath):
             log("Hash list does not exist")
             return True
@@ -217,7 +214,7 @@ class XMLFunctions():
                 if hash[0] == "::XBMCVER::":
                     # Check the skin version is still the same as hash[1]
                     checkedXBMCVer = True
-                    if KODIVERSION != hash[1]:
+                    if KODI_VERSION != hash[1]:
                         log("Now running a different version of Kodi")
                         return True
                 elif hash[0] == "::SKINVER::":
@@ -229,7 +226,7 @@ class XMLFunctions():
                 elif hash[0] == "::SCRIPTVER::":
                     # Check the script version is still the same as hash[1]
                     checkedScriptVer = True
-                    if ADDONVERSION != hash[1]:
+                    if ADDON_VERSION != hash[1]:
                         log("Now running a different script version")
                         return True
                 elif hash[0] == "::PROFILELIST::":
@@ -297,8 +294,8 @@ class XMLFunctions():
         # Reset the hashlist, add the profile list and script version
         hashlist = []
         hashlist.append(["::PROFILELIST::", profilelist])
-        hashlist.append(["::SCRIPTVER::", ADDONVERSION])
-        hashlist.append(["::XBMCVER::", KODIVERSION])
+        hashlist.append(["::SCRIPTVER::", ADDON_VERSION])
+        hashlist.append(["::XBMCVER::", KODI_VERSION])
         hashlist.append(["::HIDEPVR::", ADDON.getSetting("donthidepvr")])
         hashlist.append(["::SHARED::", ADDON.getSetting("shared_menu")])
         hashlist.append(["::SKINDIR::", xbmc.getSkinDir()])
@@ -674,7 +671,7 @@ class XMLFunctions():
         hashlist.append(["::SKINVER::", skinVersion])
 
         # Save the hashes
-        file = xbmcvfs.File(os.path.join(MASTERPATH, xbmc.getSkinDir() + ".hash"), "w")
+        file = xbmcvfs.File(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"), "w")
         file.write(repr(hashlist))
         file.close()
 

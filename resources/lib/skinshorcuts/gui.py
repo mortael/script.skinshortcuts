@@ -10,29 +10,26 @@ from time import gmtime
 from traceback import print_exc
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcvfs
 from . import datafunctions
 from . import library
 from .common import log
+from .constants import ADDON
+from .constants import CWD
+from .constants import DATA_PATH
+from .constants import DEFAULT_PATH
+from .constants import LANGUAGE
+from .constants import SKIN_PATH
 
 DATA = datafunctions.DataFunctions()
 LIBRARY = library.LibraryFunctions()
 
-ADDON = xbmcaddon.Addon()
-ADDONID = ADDON.getAddonInfo('id')
-CWD = ADDON.getAddonInfo('path')
-LANGUAGE = ADDON.getLocalizedString
-DATAPATH = os.path.join(xbmcvfs.translatePath("special://profile/addon_data/"), ADDONID)
-SKINPATH = xbmcvfs.translatePath("special://skin/shortcuts/")
-DEFAULTPATH = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'shortcuts'))
-
 ACTION_CANCEL_DIALOG = (9, 10, 92, 216, 247, 257, 275, 61467, 61448,)
 ACTION_CONTEXT_MENU = (117,)
 
-if not xbmcvfs.exists(DATAPATH):
-    xbmcvfs.mkdir(DATAPATH)
+if not xbmcvfs.exists(DATA_PATH):
+    xbmcvfs.mkdir(DATA_PATH)
 
 
 def is_hebrew(text):
@@ -710,7 +707,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Save the shortcuts
             DATA.indent(root)
-            path = os.path.join(DATAPATH, DATA.slugify(self.group, True, isSubLevel=isSubLevel) + ".DATA.xml")
+            path = os.path.join(DATA_PATH, DATA.slugify(self.group, True, isSubLevel=isSubLevel) + ".DATA.xml")
 
             tree.write(path.replace(".shortcuts", ".DATA.xml"), encoding="UTF-8")
 
@@ -743,13 +740,13 @@ class GUI(xbmcgui.WindowXMLDialog):
                 for i in range(0, 6):
                     if i == 0:
                         groupName = labelIDFrom
-                        paths = [[os.path.join(DATAPATH, DATA.slugify(labelIDFrom, True) + ".DATA.xml"), "Move"], [os.path.join(SKINPATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [os.path.join(DEFAULTPATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [None, "New"]]
-                        target = os.path.join(DATAPATH, DATA.slugify(labelIDTo, True) + ".DATA.xml")
+                        paths = [[os.path.join(DATA_PATH, DATA.slugify(labelIDFrom, True) + ".DATA.xml"), "Move"], [os.path.join(SKIN_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [os.path.join(DEFAULT_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [None, "New"]]
+                        target = os.path.join(DATA_PATH, DATA.slugify(labelIDTo, True) + ".DATA.xml")
                     else:
                         groupName = "%s.%s" % (labelIDFrom, str(i))
-                        paths = [[os.path.join(DATAPATH, DATA.slugify("%s.%s" % (labelIDFrom, str(i)), True, isSubLevel=True) + ".DATA.xml"), "Move"], [os.path.join(SKINPATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"],
-                                 [os.path.join(DEFAULTPATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"]]
-                        target = os.path.join(DATAPATH, DATA.slugify("%s.%s" % (labelIDTo, str(i)), True, isSubLevel=True) + ".DATA.xml")
+                        paths = [[os.path.join(DATA_PATH, DATA.slugify("%s.%s" % (labelIDFrom, str(i)), True, isSubLevel=True) + ".DATA.xml"), "Move"], [os.path.join(SKIN_PATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"],
+                                 [os.path.join(DEFAULT_PATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"]]
+                        target = os.path.join(DATA_PATH, DATA.slugify("%s.%s" % (labelIDTo, str(i)), True, isSubLevel=True) + ".DATA.xml")
 
                     for path in paths:
 
@@ -805,7 +802,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         currentProperties = []
 
         # Get previously loaded properties
-        path = os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties")
+        path = os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties")
         if xbmcvfs.exists(path):
             # The properties file exists, load from it
             listProperties = eval(xbmcvfs.File(path).read())
@@ -849,12 +846,12 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Try to save the file
         try:
-            f = xbmcvfs.File(os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties"), 'w')
+            f = xbmcvfs.File(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"), 'w')
             f.write(repr(saveData).replace("],", "],\n"))
             f.close()
         except:
             print_exc()
-            log("### ERROR could not save file %s" % DATAPATH)
+            log("### ERROR could not save file %s" % DATA_PATH)
 
         # Clear saved properties in DATA, so it will pick up any new ones next time we load a file
         DATA.currentProperties = None

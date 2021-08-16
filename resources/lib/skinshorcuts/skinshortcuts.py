@@ -12,7 +12,6 @@ from time import strftime
 from traceback import print_exc
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
@@ -21,16 +20,13 @@ from . import library
 from . import nodefunctions
 from . import xmlfunctions
 from .common import log
-
-ADDON = xbmcaddon.Addon()
-ADDONID = ADDON.getAddonInfo('id')
-ADDONVERSION = ADDON.getAddonInfo('version')
-LANGUAGE = ADDON.getLocalizedString
-CWD = ADDON.getAddonInfo('path')
-ADDONNAME = ADDON.getAddonInfo('name')
-RESOURCE = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'lib'))
-DATAPATH = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_data", ADDONID)
-MASTERPATH = os.path.join(xbmcvfs.translatePath("special://masterprofile/"), "addon_data", ADDONID)
+from .constants import ADDON
+from .constants import ADDON_NAME
+from .constants import ADDON_VERSION
+from .constants import CWD
+from .constants import DATA_PATH
+from .constants import LANGUAGE
+from .constants import MASTER_PATH
 
 XML = xmlfunctions.XMLFunctions()
 DATA = datafunctions.DataFunctions()
@@ -47,15 +43,15 @@ class Main:
         self.WINDOW = xbmcgui.Window(10000)
 
         # Create data and master paths if not exists
-        if not xbmcvfs.exists(DATAPATH):
-            xbmcvfs.mkdir(DATAPATH)
-        if not xbmcvfs.exists(MASTERPATH):
-            xbmcvfs.mkdir(MASTERPATH)
+        if not xbmcvfs.exists(DATA_PATH):
+            xbmcvfs.mkdir(DATA_PATH)
+        if not xbmcvfs.exists(MASTER_PATH):
+            xbmcvfs.mkdir(MASTER_PATH)
 
         # Perform action specified by user
         if not self.TYPE:
             line1 = "This addon is for skin developers, and requires skin support"
-            xbmcgui.Dialog().ok(ADDONNAME, line1)
+            xbmcgui.Dialog().ok(ADDON_NAME, line1)
 
         if self.TYPE == "buildxml":
             xbmc.sleep(100)
@@ -195,7 +191,7 @@ class Main:
         if self.TYPE == "context":
             # Context menu addon asking us to add a folder to the menu
             if not xbmc.getCondVisibility("Skin.HasSetting(SkinShortcuts-FullMenu)"):
-                xbmcgui.Dialog().ok(ADDONNAME, ADDON.getLocalizedString(32116))
+                xbmcgui.Dialog().ok(ADDON_NAME, ADDON.getLocalizedString(32116))
             else:
                 NODE.addToMenu(self.CONTEXTFILENAME, self.CONTEXTLABEL, self.CONTEXTICON, self.CONTEXTCONTENT, self.CONTEXTWINDOW, DATA)
 
@@ -299,7 +295,7 @@ class Main:
             return
 
         homeWindow.setProperty("skinshortcuts-loading", str(calendar.timegm(gmtime())))
-        from resources.lib import gui
+        from . import gui
         ui = gui.GUI("script-skinshortcuts.xml", CWD, "default", group=group, defaultGroup=defaultGroup, nolabels=nolabels, groupname=groupname)
         ui.doModal()
         del ui
@@ -327,7 +323,7 @@ class Main:
 
         if shouldRun:
             isShared = DATA.checkIfMenusShared()
-            for files in xbmcvfs.listdir(DATAPATH):
+            for files in xbmcvfs.listdir(DATA_PATH):
                 # Try deleting all shortcuts
                 if files:
                     for file in files:
@@ -341,7 +337,7 @@ class Main:
 
                         # if file != "settings.xml" and ( not isShared or file.startswith( "%s-" %( xbmc.getSkinDir() ) ) ) or file == "%s.properties" %( xbmc.getSkinDir() ):
                         if deleteFile:
-                            file_path = os.path.join(DATAPATH, file)
+                            file_path = os.path.join(DATA_PATH, file)
                             if xbmcvfs.exists(file_path):
                                 try:
                                     xbmcvfs.delete(file_path)
@@ -379,10 +375,10 @@ class Main:
 
 
 if (__name__ == "__main__"):
-    log('script version %s started' % ADDONVERSION)
+    log('script version %s started' % ADDON_VERSION)
 
     # Uncomment when profiling performance
-    # filename = os.path.join( DATAPATH, strftime( "%Y%m%d%H%M%S",gmtime() ) + "-" + str( random.randrange(0,100000) ) + ".log" )
+    # filename = os.path.join( DATA_PATH, strftime( "%Y%m%d%H%M%S",gmtime() ) + "-" + str( random.randrange(0,100000) ) + ".log" )
     # cProfile.run( 'Main()', filename )
 
     # stream = open( filename + ".txt", 'w')

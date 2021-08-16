@@ -11,22 +11,19 @@ from traceback import print_exc
 from unidecode import unidecode
 
 import xbmc
-import xbmcaddon
 import xbmcvfs
 from . import nodefunctions
 from .common import get_hash
 from .common import log
+from .constants import ADDON
+from .constants import ADDON_ID
+from .constants import DATA_PATH
+from .constants import DEFAULT_PATH
+from .constants import KODI_VERSION
+from .constants import LANGUAGE
+from .constants import SKIN_PATH
 
 NODE = nodefunctions.NodeFunctions()
-
-ADDON = xbmcaddon.Addon()
-ADDONID = ADDON.getAddonInfo('id')
-KODIVERSION = xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
-LANGUAGE = ADDON.getLocalizedString
-CWD = ADDON.getAddonInfo('path')
-DATAPATH = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_data", ADDONID)
-SKINPATH = xbmcvfs.translatePath("special://skin/shortcuts/")
-DEFAULTPATH = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'shortcuts'))
 
 hashlist = []
 
@@ -135,12 +132,12 @@ class DataFunctions():
         if profileDir is None:
             profileDir = xbmcvfs.translatePath("special://profile/")
 
-        userShortcuts = os.path.join(profileDir, "addon_data", ADDONID, self.slugify(group, True, isSubLevel=isSubLevel) + ".DATA.xml")
-        skinShortcuts = os.path.join(SKINPATH, self.slugify(group) + ".DATA.xml")
-        defaultShortcuts = os.path.join(DEFAULTPATH, self.slugify(group) + ".DATA.xml")
+        userShortcuts = os.path.join(profileDir, "addon_data", ADDON_ID, self.slugify(group, True, isSubLevel=isSubLevel) + ".DATA.xml")
+        skinShortcuts = os.path.join(SKIN_PATH, self.slugify(group) + ".DATA.xml")
+        defaultShortcuts = os.path.join(DEFAULT_PATH, self.slugify(group) + ".DATA.xml")
         if defaultGroup is not None:
-            skinShortcuts = os.path.join(SKINPATH, self.slugify(defaultGroup) + ".DATA.xml")
-            defaultShortcuts = os.path.join(DEFAULTPATH, self.slugify(defaultGroup) + ".DATA.xml")
+            skinShortcuts = os.path.join(SKIN_PATH, self.slugify(defaultGroup) + ".DATA.xml")
+            defaultShortcuts = os.path.join(DEFAULT_PATH, self.slugify(defaultGroup) + ".DATA.xml")
 
         if defaultsOnly:
             paths = [skinShortcuts, defaultShortcuts]
@@ -229,7 +226,7 @@ class DataFunctions():
             # Check that any version node matches current XBMC version
             version = node.find("version")
             if version is not None:
-                if KODIVERSION != version.text and self.checkVersionEquivalency(version.text, node.find("action")) == False:
+                if KODI_VERSION != version.text and self.checkVersionEquivalency(version.text, node.find("action")) == False:
                     tree.getroot().remove(node)
                     self._pop_labelID()
                     continue
@@ -336,7 +333,7 @@ class DataFunctions():
                             if (elem.attrib.get("action") == itemToOverride.text and (checkGroup is None or checkGroup == group)) or (elem.attrib.get("action") == "globaloverride" and (checkGroup is None or checkGroup == group)):
                                 # Check the XBMC version matches
                                 if "version" in elem.attrib:
-                                    if elem.attrib.get("version") != KODIVERSION:
+                                    if elem.attrib.get("version") != KODI_VERSION:
                                         continue
 
                                 hasOverriden = True
@@ -475,7 +472,7 @@ class DataFunctions():
         if "script" in self.overrides:
             return self.overrides["script"]
 
-        overridePath = os.path.join(DEFAULTPATH, "overrides.xml")
+        overridePath = os.path.join(DEFAULT_PATH, "overrides.xml")
         try:
             tree = xmltree.parse(overridePath)
             self._save_hash(overridePath)
@@ -496,7 +493,7 @@ class DataFunctions():
         if "skin" in self.overrides:
             return self.overrides["skin"]
 
-        overridePath = os.path.join(SKINPATH, "overrides.xml")
+        overridePath = os.path.join(SKIN_PATH, "overrides.xml")
         try:
             tree = xmltree.parse(overridePath)
             self._save_hash(overridePath)
@@ -542,7 +539,7 @@ class DataFunctions():
         self.currentProperties = []
         self.defaultProperties = []
 
-        path = os.path.join(profileDir, "addon_data", ADDONID, xbmc.getSkinDir() + ".properties")
+        path = os.path.join(profileDir, "addon_data", ADDON_ID, xbmc.getSkinDir() + ".properties")
         if xbmcvfs.exists(path):
             # The properties file exists, load from it
             try:
@@ -652,7 +649,7 @@ class DataFunctions():
                                 self.defaultProperties.append([elem.attrib.get("group"), labelID, "widgetTarget", elem.attrib.get("target"), defaultID])
 
         # Load icons out of mainmenu.DATA.xml
-        path = os.path.join(SKINPATH, "mainmenu.DATA.xml")
+        path = os.path.join(SKIN_PATH, "mainmenu.DATA.xml")
         if xbmcvfs.exists(path):
             file = xbmcvfs.File(path).read()
             self._save_hash(path, file)
@@ -920,7 +917,7 @@ class DataFunctions():
                 if elem.attrib.get(findAttrib) is not None and elem.attrib.get(findAttrib).lower() != action.lower():
                     # Action's don't match
                     continue
-                if int(elem.attrib.get("version")) > int(KODIVERSION):
+                if int(elem.attrib.get("version")) > int(KODI_VERSION):
                     # This version of Kodi is older than the shortcut is intended for
                     continue
 
@@ -929,7 +926,7 @@ class DataFunctions():
                 if elem.text == "All":
                     # This shortcut matches all newer versions
                     return True
-                elif int(elem.text) >= int(KODIVERSION):
+                elif int(elem.text) >= int(KODI_VERSION):
                     return True
 
                 # The version didn't match
@@ -1000,12 +997,12 @@ class DataFunctions():
         # This will return a list of skins the user can import the menu from
         skinNames = []
         skinFiles = []
-        for files in xbmcvfs.listdir(DATAPATH):
+        for files in xbmcvfs.listdir(DATA_PATH):
             # Try deleting all shortcuts
             if files:
                 for file in files:
                     if file.endswith(".hash") and not file.startswith("%s-" % (xbmc.getSkinDir())):
-                        canImport, skinName = self.parseHashFile(os.path.join(DATAPATH, file))
+                        canImport, skinName = self.parseHashFile(os.path.join(DATA_PATH, file))
                         if canImport == True:
                             skinNames.append(skinName)
                     elif file.endswith(".DATA.xml") and not file.startswith("%s-" % (xbmc.getSkinDir())):
@@ -1037,7 +1034,7 @@ class DataFunctions():
     def getFilesForSkin(self, skinName):
         # This will return a list of all menu files for a particular skin
         skinFiles = []
-        for files in xbmcvfs.listdir(DATAPATH):
+        for files in xbmcvfs.listdir(DATA_PATH):
             # Try deleting all shortcuts
             if files:
                 for file in files:
@@ -1074,14 +1071,14 @@ class DataFunctions():
                 newFile = oldFile.replace(skinName, xbmc.getSkinDir())
             else:
                 newFile = "%s-%s" % (xbmc.getSkinDir(), oldFile)
-            oldPath = os.path.join(DATAPATH, oldFile)
-            newPath = os.path.join(DATAPATH, newFile)
+            oldPath = os.path.join(DATA_PATH, oldFile)
+            newPath = os.path.join(DATA_PATH, newFile)
 
             # Copy file
             xbmcvfs.copy(oldPath, newPath)
 
         # Delete any .properties file
-        propFile = os.path.join(DATAPATH, "%s.properties" % (xbmc.getSkinDir()))
+        propFile = os.path.join(DATA_PATH, "%s.properties" % (xbmc.getSkinDir()))
         if xbmcvfs.exists(propFile):
             xbmcvfs.delete(propFile)
 

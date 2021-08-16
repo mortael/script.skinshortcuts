@@ -8,16 +8,14 @@ from html.entities import name2codepoint
 from traceback import print_exc
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcvfs
 from .common import log
-
-ADDON = xbmcaddon.Addon()
-ADDONID = ADDON.getAddonInfo('id')
-LANGUAGE = ADDON.getLocalizedString
-CWD = ADDON.getAddonInfo('path')
-DATAPATH = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_data", ADDONID)
+from .constants import ADDON
+from .constants import ADDON_ID
+from .constants import CWD
+from .constants import DATA_PATH
+from .constants import LANGUAGE
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))
@@ -404,7 +402,7 @@ class NodeFunctions():
         xmltree.SubElement(newelement, "action").text = action
 
         DATA.indent(menuitems.getroot())
-        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDONID, "%s.DATA.xml" % (DATA.slugify(allLabelIDs[selectedMenu], True))))
+        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID, "%s.DATA.xml" % (DATA.slugify(allLabelIDs[selectedMenu], True))))
         menuitems.write(path, encoding="UTF-8")
 
         if isNode and selectedMenu == 1:
@@ -421,7 +419,7 @@ class NodeFunctions():
                     xmltree.SubElement(newelement, "action").text = "ActivateWindow(%s,%s,return)" % (window, item["file"])
 
             DATA.indent(menuitems.getroot())
-            path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDONID, DATA.slugify(newLabelID, True) + ".DATA.xml"))
+            path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID, DATA.slugify(newLabelID, True) + ".DATA.xml"))
             menuitems.write(path, encoding="UTF-8")
 
         # Mark that the menu needs to be rebuilt
@@ -519,20 +517,20 @@ class NodeFunctions():
 
         # Save the new properties
         try:
-            f = xbmcvfs.File(os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties"), 'w')
+            f = xbmcvfs.File(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"), 'w')
             f.write(repr(saveData).replace("],", "],\n"))
             f.close()
             log("Properties file saved succesfully")
         except:
             print_exc()
-            log("### ERROR could not save file %s" % DATAPATH)
+            log("### ERROR could not save file %s" % DATA_PATH)
 
         # The properties will only be used if the .DATA.xml file exists in the addon_data folder( otherwise
         #  the script will use the default values), so we're going to open and write the 'group' that has been
         # passed to us
         menuitems = DATA._get_shortcuts(group, processShortcuts=False)
         DATA.indent(menuitems.getroot())
-        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDONID, "%s.DATA.xml" % (DATA.slugify(group, True))))
+        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID, "%s.DATA.xml" % (DATA.slugify(group, True))))
         menuitems.write(path, encoding="UTF-8")
 
         log("Properties updated")
