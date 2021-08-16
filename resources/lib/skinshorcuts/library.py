@@ -58,6 +58,7 @@ def kodiwalk(path, stringForce=False):
     return files
 
 
+# noinspection PyListCreation
 class LibraryFunctions:
     def __init__(self, *args, **kwargs):
 

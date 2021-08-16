@@ -444,6 +444,7 @@ class NodeFunctions:
     # ### Functions to externally set properties ###
     # ##############################################
 
+    # noinspection PyDictCreation
     @staticmethod
     def setProperties(properties, values, labelID, group, DATA):
         # This function will take a list of properties and values and apply them to the

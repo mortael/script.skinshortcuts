@@ -288,6 +288,7 @@ class XMLFunctions:
         # If we get here, the menu does not need to be rebuilt.
         return False
 
+    # noinspection PyListCreation
     def writexml(self, profilelist, mainmenuID, groups, numLevels, buildMode, progress, options, minitems):
         # Reset the hashlist, add the profile list and script version
         hashlist = []
