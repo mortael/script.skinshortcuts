@@ -23,6 +23,7 @@ RESOURCE     = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'lib'))
 DATAPATH     = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_data", ADDONID)
 MASTERPATH   = os.path.join(xbmcvfs.translatePath("special://masterprofile/"), "addon_data", ADDONID)
 
+from resources.lib.common import log
 from resources.lib import xmlfunctions, datafunctions, library, nodefunctions
 XML = xmlfunctions.XMLFunctions()
 DATA = datafunctions.DataFunctions()
@@ -30,11 +31,6 @@ LIBRARY = library.LibraryFunctions()
 NODE = nodefunctions.NodeFunctions()
 
 hashlist = []
-
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 class Main:
     # MAIN ENTRY POINT

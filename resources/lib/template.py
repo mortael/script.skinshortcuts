@@ -1,5 +1,5 @@
 import os, sys
-import xbmc, xbmcaddon, xbmcvfs
+import xbmc, xbmcvfs
 import xml.etree.ElementTree as xmltree
 import hashlib
 import copy
@@ -8,16 +8,13 @@ import simpleeval
 import operator, ast
 from simpleeval import simple_eval
 
-ADDON    = xbmcaddon.Addon()
-ADDONID  = ADDON.getAddonInfo('id')
+from resources.lib.common import get_hash
+from resources.lib.common import log
+
 SKINPATH = xbmcvfs.translatePath("special://skin/shortcuts/")
 
 hashlist = []
 
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 class Template():
     def __init__( self ):
@@ -39,17 +36,17 @@ class Template():
                     self.otherTemplates.append( includeName )
 
             # Add the template.xml to the hash file
-            self._save_hash( templatepath, xbmcvfs.File( templatepath ).read() )
+            self._save_hash(templatepath)
         except:
             # We couldn't load the template.xml file
             if xbmcvfs.exists( templatepath ):
                 # Unable to parse template.xml
                 log( "Unable to parse template.xml. Invalid xml?" )
-                self._save_hash( templatepath, xbmcvfs.File( templatepath ).read() )
+                self._save_hash(templatepath)
             else:
                 # No template.xml
                 self.tree = None
-                self._save_hash( templatepath, None )
+                self._save_hash(templatepath, none_override=True)
 
         # Empty variable which will contain our base elementree (passed from buildxml)
         self.includes = None
@@ -896,13 +893,11 @@ class Template():
             newelements.insert( 0, newElement )
         return newelements
 
-    def _save_hash( self, filename, file ):
-        if file is not None:
-            hasher = hashlib.md5()
-            hasher.update(file.encode("utf8"))
-            hashlist.append([filename.encode("utf8"), hasher.hexdigest()])
-        else:
+    def _save_hash(self, filename, none_override=False):
+        if none_override:
             hashlist.append([filename.encode("utf8"), None])
+        else:
+            hashlist.append([filename.encode("utf8"), get_hash(filename)])
 
     def copy_tree( self, elem ):
         if elem is None: return None

@@ -15,15 +15,11 @@ LANGUAGE     = ADDON.getLocalizedString
 MASTERPATH   = os.path.join(xbmcvfs.translatePath("special://masterprofile/addon_data/"), ADDONID)
 
 from resources.lib import datafunctions, template
+from resources.lib.common import get_hash
+from resources.lib.common import log
 DATA = datafunctions.DataFunctions()
-import hashlib
 
 hashlist = []
-
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 class XMLFunctions():
     def __init__(self):
@@ -263,16 +259,14 @@ class XMLFunctions():
                     pass
                 else:
                     try:
-                        hasher = hashlib.md5()
-                        hasher.update(xbmcvfs.File(hash[0]).read().encode("utf-8"))
-                        if hasher.hexdigest() != hash[1]:
+                        hexdigest = get_hash(hash[0])
+                        if hexdigest != hash[1]:
                             log("Hash does not match on file " + hash[0])
-                            log( "(" + hash[1] + " > " + hasher.hexdigest() + ")" )
+                            log( "(" + hash[1] + " > " + hexdigest + ")" )
                             return True
                     except:
-                        log( "Unable to generate hash for %s" %( hash[ 0 ] ) )
-                        log( "(%s > ?)" %( hash[ 1 ] ) )
-                        print_exc()
+                        log("(%s > ?)" % hash[ 1 ])
+
             else:
                 if xbmcvfs.exists( hash[0] ):
                     log( "File now exists " + hash[0] )
@@ -669,14 +663,7 @@ class XMLFunctions():
         DATA.indent( tree.getroot() )
         for path in paths:
             tree.write( path, encoding="UTF-8" )
-
-            # Save the hash of the file we've just written
-            hasher = hashlib.md5()
-            hasher.update(xbmcvfs.File(path).read().encode("utf-8"))
-
-            with open(path, "r+", encoding="utf-8") as f:
-                DATA._save_hash( path, f.read() )
-                f.close()
+            DATA._save_hash(path)
 
         # Save the hashes
         # Append the skin version to the hashlist

@@ -8,6 +8,7 @@ from unidecode import unidecode
 import json as simplejson
 import pickle
 from html.entities import name2codepoint
+from resources.lib.common import log
 
 ADDON        = xbmcaddon.Addon()
 ADDONID      = ADDON.getAddonInfo('id')
@@ -27,11 +28,6 @@ HEX_REXP = re.compile('&#x([\da-fA-F]+);')
 REPLACE1_REXP = re.compile(r'[\']+')
 REPLACE2_REXP = re.compile(r'[^-a-z0-9]+')
 REMOVE_REXP = re.compile('-{2,}')
-
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 class NodeFunctions():
     def __init__(self):

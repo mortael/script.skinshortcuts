@@ -12,6 +12,7 @@ import json as simplejson
 import urllib.request, urllib.parse, urllib.error
 import _thread as thread
 
+from resources.lib.common import log
 from resources.lib import datafunctions
 DATA = datafunctions.DataFunctions()
 
@@ -32,12 +33,6 @@ ACTION_CONTEXT_MENU = ( 117, )
 if not xbmcvfs.exists(DATAPATH):
     xbmcvfs.mkdir(DATAPATH)
 
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        if not isinstance (txt,str):
-            txt = txt.decode('utf-8')
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 def is_hebrew(text):
     for chr in text:

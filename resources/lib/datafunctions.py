@@ -11,6 +11,8 @@ from html.entities import name2codepoint
 
 
 from resources.lib import nodefunctions
+from resources.lib.common import get_hash
+from resources.lib.common import log
 NODE = nodefunctions.NodeFunctions()
 
 ADDON        = xbmcaddon.Addon()
@@ -36,11 +38,6 @@ HEX_REXP = re.compile('&#x([\da-fA-F]+);')
 REPLACE1_REXP = re.compile(r'[\']+')
 REPLACE2_REXP = re.compile(r'[^-a-z0-9]+')
 REMOVE_REXP = re.compile('-{2,}')
-
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 class DataFunctions():
     def __init__(self):
@@ -147,8 +144,7 @@ class DataFunctions():
             log( " - Attempting to load file %s" %( path ) )
             tree = None
             if xbmcvfs.exists( path ):
-                file = xbmcvfs.File( path ).read()
-                self._save_hash( path, file )
+                self._save_hash(path)
                 tree = xmltree.parse( path )
 
             if tree is not None and processShortcuts:
@@ -171,7 +167,7 @@ class DataFunctions():
                 log( " - Returning unprocessed shortcuts" )
                 return tree
             else:
-                self._save_hash( path, None )
+                self._save_hash(path, none_override=True)
 
         # No file loaded
         log( " - No shortcuts" )
@@ -477,15 +473,15 @@ class DataFunctions():
         overridePath = os.path.join( DEFAULTPATH, "overrides.xml" )
         try:
             tree = xmltree.parse( overridePath )
-            self._save_hash( overridePath, xbmcvfs.File( overridePath ).read() )
+            self._save_hash(overridePath)
             self.overrides[ "script" ] = tree
             return tree
         except:
             if xbmcvfs.exists( overridePath ):
                 log( "Unable to parse script overrides.xml. Invalid xml?" )
-                self._save_hash( overridePath, xbmcvfs.File( overridePath ).read() )
+                self._save_hash(overridePath)
             else:
-                self._save_hash( overridePath, None )
+                self._save_hash(overridePath, none_override=True)
             tree = xmltree.ElementTree( xmltree.Element( "overrides" ) )
             self.overrides[ "script" ] = tree
             return tree
@@ -498,15 +494,15 @@ class DataFunctions():
         overridePath = os.path.join( SKINPATH, "overrides.xml" )
         try:
             tree = xmltree.parse( overridePath )
-            self._save_hash( overridePath, xbmcvfs.File( overridePath ).read() )
+            self._save_hash(overridePath)
             self.overrides[ "skin" ] = tree
             return tree
         except:
             if xbmcvfs.exists( overridePath ):
                 log( "Unable to parse skin overrides.xml. Invalid xml?" )
-                self._save_hash( overridePath, xbmcvfs.File( overridePath ).read() )
+                self._save_hash(overridePath)
             else:
-                self._save_hash( overridePath, None )
+                self._save_hash(overridePath, none_override=True)
             tree = xmltree.ElementTree( xmltree.Element( "overrides" ) )
             self.overrides[ "skin" ] = tree
             return tree
@@ -519,15 +515,15 @@ class DataFunctions():
         overridePath = os.path.join( profileDir, "overrides.xml" )
         try:
             tree = xmltree.parse( xbmcvfs.translatePath( overridePath ) )
-            self._save_hash( overridePath, xbmcvfs.File( overridePath ).read() )
+            self._save_hash(overridePath)
             self.overrides[ "user" ] = tree
             return tree
         except:
             if xbmcvfs.exists( overridePath ):
                 log( "Unable to parse user overrides.xml. Invalid xml?" )
-                self._save_hash( overridePath, xbmcvfs.File( overridePath ).read() )
+                self._save_hash(overridePath)
             else:
-                self._save_hash( overridePath, None )
+                self._save_hash(overridePath, none_override=True)
             tree = xmltree.ElementTree( xmltree.Element( "overrides" ) )
             self.overrides[ "user" ] = tree
             return tree
@@ -1087,15 +1083,11 @@ class DataFunctions():
         if xbmcvfs.exists( propFile ):
             xbmcvfs.delete( propFile )
 
-
-    def _save_hash( self, filename, file ):
-        if file is not None:
-            hasher = hashlib.md5()
-            hasher.update(xbmcvfs.File(filename).read().encode("utf-8"))
-            hashlist.append([filename, hasher.hexdigest()])
+    def _save_hash( self, filename, none_override=False):
+        if none_override:
+            hashlist.append([filename.encode("utf8"), None])
         else:
-            hashlist.append([filename, None])
-
+            hashlist.append([filename.encode("utf8"), get_hash(filename)])
 
     # in-place prettyprint formatter
     def indent( self, elem, level=0 ):

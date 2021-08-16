@@ -8,7 +8,7 @@ from unidecode import unidecode
 from resources.lib import datafunctions, nodefunctions
 import json as simplejson
 import urllib.request, urllib.parse, urllib.error
-
+from resources.lib.common import log
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
 ADDON        = xbmcaddon.Addon()
@@ -18,10 +18,6 @@ DATAPATH     = os.path.join(xbmcvfs.translatePath("special://profile/"), "addon_
 LANGUAGE     = ADDON.getLocalizedString
 KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 
-def log(txt):
-    if ADDON.getSetting( "enable_logging" ) == "true":
-        message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 def kodiwalk(path, stringForce = False):
     json_query = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Files.GetDirectory","params":{"directory":"%s","media":"files"},"id":1}' % str(path))
