@@ -138,7 +138,7 @@ class NodeFunctions:
                 path = tryPath
                 foundPath = True
                 break
-        if foundPath == False:
+        if foundPath is False:
             return False
 
         # Open the file
@@ -301,8 +301,6 @@ class NodeFunctions:
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "' + jsonPath + '", "media": "files" } }')
         json_response = json.loads(json_query)
 
-        labels = []
-        paths = []
         nodePaths = []
 
         # Add all directories returned by the json query
@@ -559,7 +557,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
             print_exc()
             self.fav_list = self.getControl(3)
 
-        if self.getmore == True:
+        if self.getmore is True:
             self.getControl(5).setLabel(xbmc.getLocalizedString(21452))
         else:
             self.getControl(5).setVisible(False)

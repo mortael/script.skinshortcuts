@@ -5,7 +5,9 @@ import operator
 import os
 import xml.etree.ElementTree as xmltree
 
+# noinspection PyPackageRequirements
 from simpleeval import SimpleEval
+# noinspection PyPackageRequirements
 from simpleeval import simple_eval
 
 import xbmc
@@ -93,7 +95,7 @@ class Template:
             if "include" in template.attrib:
                 includeName += "-%s" % (template.attrib.get("include"))
 
-            treeRoot = self.getInclude(self.includes, includeName, profileVisibility, profile)
+            _ = self.getInclude(self.includes, includeName, profileVisibility, profile)
             includeTree = self.getInclude(self.includes, includeName + "-%s" % profile, None, None)
 
             # If we've been passed any mainmenu items, retrieve their properties
@@ -193,7 +195,7 @@ class Template:
                         visibilityCondition += " | " + condition.text
 
                 # Get the include this will be done under
-                root = self.getInclude(self.includes, name, profile.attrib.get("visible"), profile.attrib.get("profile"))
+                _ = self.getInclude(self.includes, name, profile.attrib.get("visible"), profile.attrib.get("profile"))
                 include = self.getInclude(self.includes, "%s-%s" % (name, profile.attrib.get("profile")), None, None)  # profile.attrib.get( "visible" ) )
 
                 # Create a copy of the node with any changes within (this time it'll be visibility)
@@ -391,10 +393,8 @@ class Template:
                 # First we check if the level matches
                 if "level" in elem.attrib:
                     if menuType != int(elem.attrib.get("level")):
-                        matched = False
                         continue
                 elif menuType != 0:
-                    matched = False
                     continue
 
                 # Next we either extend the visibility condition to also match the submenu
@@ -418,20 +418,20 @@ class Template:
             # Check the conditions
             for condition in template.findall("condition"):
                 if matchType == "all":
-                    if matched == False:
+                    if matched is False:
                         break
-                    if self.checkCondition(condition, item) == False:
+                    if self.checkCondition(condition, item) is False:
                         matched = False
                         break
                 else:
-                    if matched == True:
+                    if matched is True:
                         break
-                    if self.checkCondition(condition, item) == True:
+                    if self.checkCondition(condition, item) is True:
                         matched = True
                         break
 
             # If the conditions didn't match, we're done here
-            if matched == False:
+            if matched is False:
                 continue
 
             numTemplates += 1
@@ -448,7 +448,6 @@ class Template:
             self.replaceElements(template.find("variables"), None, None, [], properties)
 
             # Now we need to check if we've already got a template identical to this
-            textVersion = None
             foundInPrevious = False
             for previous in self.finalize:
                 # Check that the previous template uses the same include
@@ -473,10 +472,11 @@ class Template:
                                     foundInPrevious = True
 
                             # We didn't find it, so add it
-                            xmltree.SubElement(profileMatch, "visible").text = finalVisibility
-                            foundInPrevious = True
+                            if not foundInPrevious:
+                                xmltree.SubElement(profileMatch, "visible").text = finalVisibility
+                                foundInPrevious = True
 
-                    if foundInPrevious == True:
+                    if foundInPrevious is True:
                         break
 
                     # We didn't find this profile, so add it
@@ -491,7 +491,7 @@ class Template:
                     foundTemplateIncludes.append(includeName)
                     foundInPrevious = True
 
-            if foundInPrevious == False:
+            if foundInPrevious is False:
                 # We don't have this template saved, so add our profile details to it
                 newElement = xmltree.SubElement(template, "skinshortcuts-profile")
                 newElement.set("profile", profile)
@@ -527,7 +527,6 @@ class Template:
             attrib = condition.attrib.get("attribute").split("|")
 
         # Find all elements with matching tag
-        matchedRule = False
         for item in items.findall(tag):
             if attrib is not None:
                 if attrib[0] not in item.attrib:
@@ -575,7 +574,6 @@ class Template:
 
             # Check for multiple items to match against this single value
             for singleMatch in property.findall("rule"):
-                tag = None
                 attribute = None
                 value = None
                 if "tag" in singleMatch.attrib:
@@ -662,14 +660,17 @@ class Template:
             else:
                 # Match the property only if all the rules match
                 matchedRule = True
+                matched_value = []
                 for rule in rules:
                     if not matchedRule:
+                        matched_value = []
                         break
 
                     # Let's get looking for any items that match
                     tag = rule[0]
                     attrib = rule[1]
                     value = rule[2]
+                    matched_value = rule
 
                     for item in items.findall(tag):
                         log(repr(attrib))
@@ -694,8 +695,8 @@ class Template:
 
                 if matchedRule:
                     # We've matched a property :)
-                    if rule[3] is not None:
-                        properties[name] = rule[3]
+                    if matched_value[3] is not None:
+                        properties[name] = matched_value[3]
                     else:
                         # This method only supports setting the property value directly, so if it wasn't specified,
                         # include a log error
@@ -724,6 +725,7 @@ class Template:
 
                 # Get existing attributes, text and tag
                 attribs = []
+                type = ""
                 for singleAttrib in elem.attrib:
                     if singleAttrib == "skinshortcuts":
                         type = elem.attrib.get("skinshortcuts")
@@ -811,7 +813,7 @@ class Template:
 
             # <tag attrib="$PYTHON[var]" /> -> <tag attrib="[value]" />
             for attrib in elem.attrib:
-                value = elem.attrib.get(attrib)
+                _ = elem.attrib.get(attrib)
                 while "$PYTHON[" in elem.attrib.get(attrib):
                     # Split the string into its composite parts
                     stringStart = elem.attrib.get(attrib).split("$PYTHON[", 1)
@@ -852,7 +854,7 @@ class Template:
                     # Firstly, go through and create an array of all items in reverse order, without
                     # their existing visible element, if it matches our visibilityCondition
                     newelements = []
-                    if items == []:
+                    if not items:
                         break
                     for item in items.findall("item"):
                         newitem = self.copy_tree(item)

@@ -192,8 +192,8 @@ class LibraryFunctions:
         self.loadLibrary("widgets")
 
         # Do a JSON query for upnp sources (so that they'll show first time the user asks to see them)
-        if self.loaded["upnp"][0] == False:
-            json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "upnp://", "media": "files" } }')
+        if self.loaded["upnp"][0] is False:
+            _ = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "upnp://", "media": "files" } }')
             self.loaded["upnp"][0] = True
 
     # ==============================================
@@ -219,8 +219,6 @@ class LibraryFunctions:
         if nodes is None:
             return ["Error", []]
 
-        returnList = []
-
         if flat:
             # Flat groupings
             count = 0
@@ -233,7 +231,7 @@ class LibraryFunctions:
                         continue
                 if "version" in node.attrib:
                     version = node.attrib.get("version")
-                    if KODI_VERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") == False:
+                    if KODI_VERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") is False:
                         group += 1
                         continue
                 if "installWidget" in node.attrib and node.attrib.get("installWidget").lower() == "true":
@@ -275,7 +273,7 @@ class LibraryFunctions:
                     continue
             if "version" in subnode.attrib:
                 version = subnode.attrib.get("version")
-                if KODI_VERSION != version and DATA.checkVersionEquivalency(version, subnode.attrib.get("condition"), "groupings") == False:
+                if KODI_VERSION != version and DATA.checkVersionEquivalency(version, subnode.attrib.get("condition"), "groupings") is False:
                     number += 1
                     continue
             if "installWidget" in subnode.attrib and subnode.attrib.get("installWidget").lower() == "true":
@@ -296,7 +294,7 @@ class LibraryFunctions:
                     continue
             if "version" in node.attrib:
                 version = node.attrib.get("version")
-                if KODI_VERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") == False:
+                if KODI_VERSION != version and DATA.checkVersionEquivalency(version, node.attrib.get("condition"), "groupings") is False:
                     continue
             count += 1
             if node.tag == "content":
@@ -323,15 +321,15 @@ class LibraryFunctions:
                         shortcutItem.setProperty("widgetTarget", "")
                 returnList.append(shortcutItem)
                 # returnList.append( self._create( [node.text, node.attrib.get( "label" ), node.attrib.get( "type" ), {"icon": node.attrib.get( "icon" )}] ) )
-            if node.tag == "node" and flat == False:
+            if node.tag == "node" and flat is False:
                 returnList.append(self._create(["||NODE||" + str(count), node.attrib.get("label"), "", {
                     "icon": "DefaultFolder.png"
                 }]))
 
         # Override icons
         tree = DATA._get_overrides_skin()
-        for item in returnList:
-            item = self._get_icon_overrides(tree, item, None)
+        for idx, item in enumerate(returnList):
+            returnList[idx] = self._get_icon_overrides(tree, item, None)
 
         return returnList
 
@@ -380,8 +378,8 @@ class LibraryFunctions:
         # Check for any icon overrides for these items
         tree = DATA._get_overrides_skin()
 
-        for item in items:
-            item = self._get_icon_overrides(tree, item, content)
+        for idx, item in enumerate(items):
+            items[idx] = self._get_icon_overrides(tree, item, content)
 
         return items
 
@@ -624,12 +622,10 @@ class LibraryFunctions:
                     self.useDefaultThumbAsIcon = False
 
         usedDefaultThumbAsIcon = False
-        if self.useDefaultThumbAsIcon == True and thumbnail is not None:
+        if self.useDefaultThumbAsIcon is True and thumbnail is not None:
             icon = thumbnail
             thumbnail = None
             usedDefaultThumbAsIcon = True
-
-        oldicon = None
 
         # If the icon starts with a $, ask Kodi to parse it for us
         displayIcon = icon
@@ -696,9 +692,8 @@ class LibraryFunctions:
 
         # If the icon doesn't exist, set icon to default
         setDefault = False
-        if not xbmc.skinHasImage(newicon) and setToDefault == True:
+        if not xbmc.skinHasImage(newicon) and setToDefault is True:
             oldicon = item.getProperty("icon")
-            icon = "DefaultShortcut.png"
             setDefault = True
 
         if oldicon is not None:
@@ -708,7 +703,7 @@ class LibraryFunctions:
                 'icon': 'newicon'
             })
 
-        if setDefault == True:
+        if setDefault is True:
             item = self._get_icon_overrides(tree, item, content, False)
 
         return item
@@ -720,7 +715,7 @@ class LibraryFunctions:
     def videolibrary(self):
         # Try loading custom nodes first
         try:
-            if self._parse_libraryNodes("video", "custom") == False:
+            if self._parse_libraryNodes("video", "custom") is False:
                 log("Failed to load custom video nodes")
                 self._parse_libraryNodes("video", "default")
         except:
@@ -736,8 +731,6 @@ class LibraryFunctions:
 
     def _parse_libraryNodes(self, library, type):
         # items = {"video":[], "movies":[], "tvshows":[], "musicvideos":[], "custom":{}}
-        items = {}
-
         if library == "video":
             windowID = "Videos"
             prefix = "library://video"
@@ -746,6 +739,8 @@ class LibraryFunctions:
             windowID = "music"
             prefix = "library://music"
             action = "||AUDIO||"
+        else:
+            return
 
         rootdir = os.path.join(xbmcvfs.translatePath("special://profile"), "library", library)
         if type == "custom":
@@ -755,7 +750,7 @@ class LibraryFunctions:
             log("Listing default %s nodes..." % library)
 
         nodes = NODE.get_nodes(rootdir, prefix)
-        if nodes == False or len(nodes) == 0:
+        if nodes is False or len(nodes) == 0:
             return False
 
         items = []
@@ -1068,7 +1063,7 @@ class LibraryFunctions:
     def musiclibrary(self):
         # Try loading custom nodes first
         try:
-            if self._parse_libraryNodes("music", "custom") == False:
+            if self._parse_libraryNodes("music", "custom") is False:
                 log("Failed to load custom music nodes")
                 self._parse_libraryNodes("music", "default")
         except:
@@ -1083,8 +1078,8 @@ class LibraryFunctions:
                 print_exc()
 
         # Do a JSON query for upnp sources (so that they'll show first time the user asks to see them)
-        if self.loaded["upnp"][0] == False:
-            json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "upnp://", "media": "files" } }')
+        if self.loaded["upnp"][0] is False:
+            _ = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "upnp://", "media": "files" } }')
             self.loaded["upnp"][0] = True
 
     def librarysources(self):
@@ -1156,8 +1151,11 @@ class LibraryFunctions:
                         try:
                             iterator = xmldata.iter()
                         except:
+                            # noinspection PyDeprecation
                             iterator = xmldata.getiterator()
                         for line in iterator:
+                            mediaContent = ""
+
                             if line.tag == "smartplaylist":
                                 mediaType = line.attrib['type']
                                 if mediaType == "movies" or mediaType == "tvshows" or mediaType == "seasons" or mediaType == "episodes" or mediaType == "musicvideos" or mediaType == "sets":
@@ -1238,7 +1236,6 @@ class LibraryFunctions:
             count = 0
             for file in kodiwalk(path):
                 playlist = file['path']
-                label = file['label']
                 playlistfile = xbmcvfs.translatePath(playlist)
 
                 if playlist.endswith('-randomversion.xsp'):
@@ -1248,6 +1245,7 @@ class LibraryFunctions:
                     try:
                         iterator = xmldata.iter()
                     except:
+                        # noinspection PyDeprecation
                         iterator = xmldata.getiterator()
                     for line in iterator:
                         if line.tag == "name":
@@ -1269,7 +1267,6 @@ class LibraryFunctions:
 
     def favourites(self):
         listitems = []
-        listing = None
 
         fav_file = xbmcvfs.translatePath('special://profile/favourites.xml')
         if xbmcvfs.exists(fav_file):
@@ -1313,28 +1310,30 @@ class LibraryFunctions:
         contenttypes = [("executable", executableItems), ("video", videoItems), ("audio", audioItems), ("image", imageItems)]
         for contenttype, listitems in contenttypes:
             # listitems = {}
+            shortcutType = ""
             if contenttype == "executable":
-                contentlabel = LANGUAGE(32009)
+                _ = LANGUAGE(32009)
                 shortcutType = "::SCRIPT::32009"
             elif contenttype == "video":
-                contentlabel = LANGUAGE(32010)
+                _ = LANGUAGE(32010)
                 shortcutType = "::SCRIPT::32010"
             elif contenttype == "audio":
-                contentlabel = LANGUAGE(32011)
+                _ = LANGUAGE(32011)
                 shortcutType = "::SCRIPT::32011"
             elif contenttype == "image":
-                contentlabel = LANGUAGE(32012)
+                _ = LANGUAGE(32012)
                 shortcutType = "::SCRIPT::32012"
+
+            if not shortcutType:
+                continue
 
             json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Addons.Getaddons", "params": { "content": "%s", "properties": ["name", "path", "thumbnail", "enabled"] } }' % contenttype)
             json_response = json.loads(json_query)
 
             if 'result' in json_response and 'addons' in json_response['result'] and json_response['result']['addons'] is not None:
                 for item in json_response['result']['addons']:
-                    if item['enabled'] == True:
+                    if item['enabled'] is True:
                         path = "RunAddOn(" + item['addonid'] + ")"
-                        action = None
-                        thumb = "DefaultAddon.png"
                         if item['thumbnail'] != "":
                             thumb = item['thumbnail']
                         else:
@@ -1868,11 +1867,11 @@ class LibraryFunctions:
             return False
 
         # Check whether we're in skin.helper.service's widgets
-        if location is not None and ("script.skin.helper.service" not in location or self.skinhelperWidgetInstall == False):
+        if location is not None and ("script.skin.helper.service" not in location or self.skinhelperWidgetInstall is False):
             return False
 
         # OR check whether node has enabled widget browsing
-        if nodeAllows is not None and nodeAllows == False:
+        if nodeAllows is not None and nodeAllows is False:
             return False
 
         # Check whether the user has the various widget providers installed
@@ -1913,6 +1912,7 @@ class LibraryFunctions:
         dialog = xbmcgui.Dialog()
 
         mediaType = None
+        negative = None
         windowID = selectedShortcut.getProperty("windowID")
         # Check if we're going to display this in the files view, or the library view
         if windowID == "Videos":
@@ -1994,6 +1994,7 @@ class LibraryFunctions:
                 selectedShortcut.setProperty("displayPath", newAction)
                 return selectedShortcut
             else:
+                newAction = ""
                 if userChoice == 1:
                     newAction = "SlideShow(" + selectedShortcut.getProperty("location") + ",notrandom)"
                 elif userChoice == 2:
@@ -2002,6 +2003,7 @@ class LibraryFunctions:
                     newAction = "SlideShow(" + selectedShortcut.getProperty("location") + ",recursive,notrandom)"
                 elif userChoice == 4:
                     newAction = "SlideShow(" + selectedShortcut.getProperty("location") + ",recursive,random)"
+
                 selectedShortcut.setProperty("path", newAction)
                 selectedShortcut.setProperty("displayPath", newAction)
                 return selectedShortcut
@@ -2030,13 +2032,13 @@ class LibraryFunctions:
             target = [target]
 
         xmltree.SubElement(root, "name").text = name
-        if negative == False:
+        if negative is False:
             xmltree.SubElement(root, "match").text = "one"
         else:
             xmltree.SubElement(root, "match").text = "all"
 
         for item in target:
-            if negative == False:
+            if negative is False:
                 rule = xmltree.SubElement(root, "rule")
                 rule.set("field", "path")
                 rule.set("operator", "startswith")
@@ -2173,7 +2175,7 @@ class LibraryFunctions:
             availableShortcuts.insert(0, self._create(["::BACK::", "..", "", {}]))
 
         # Show select dialog
-        getMore = self._allow_install_widget_provider(None, isWidget, self.allowWidgetInstall)
+        _ = self._allow_install_widget_provider(None, isWidget, self.allowWidgetInstall)
         w = ShowDialog("DialogSelect.xml", CWD, listing=availableShortcuts, windowtitle=windowTitle)
         w.doModal()
         number = w.result
@@ -2231,7 +2233,6 @@ class LibraryFunctions:
                     selectedShortcut.setProperty("displayPath", newAction)
             elif path == "||UPNP||":
                 selectedShortcut = self.explorer(["upnp://"], "upnp://", [selectedShortcut.getLabel()], [selectedShortcut.getProperty("thumbnail")], selectedShortcut.getProperty("shortcutType"), isWidget=isWidget)
-                path = selectedShortcut.getProperty("Path")
             elif path.startswith("||SOURCE||"):
                 selectedShortcut = self.explorer([path.replace("||SOURCE||", "")], path.replace("||SOURCE||", ""), [selectedShortcut.getLabel()], [selectedShortcut.getProperty("thumbnail")], selectedShortcut.getProperty("shortcutType"), isWidget=isWidget)
                 if selectedShortcut is None or "upnp://" in selectedShortcut.getProperty("Path"):
@@ -2366,7 +2367,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
             print_exc()
             self.fav_list = self.getControl(3)
 
-        if self.getmore == True:
+        if self.getmore is True:
             self.getControl(5).setLabel(xbmc.getLocalizedString(21452))
         else:
             self.getControl(5).setVisible(False)

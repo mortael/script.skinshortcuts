@@ -22,8 +22,6 @@ from .constants import MASTER_PATH
 
 DATA = datafunctions.DataFunctions()
 
-hashlist = []
-
 
 class XMLFunctions:
     def __init__(self):
@@ -72,12 +70,11 @@ class XMLFunctions:
         else:
             profilelist = [["special://masterprofile", None]]
 
-        if self.shouldwerun(profilelist) == False:
+        if self.shouldwerun(profilelist) is False:
             log("Menu is up to date")
             xbmcgui.Window(10000).clearProperty("skinshortcuts-isrunning")
             return
 
-        progress = None
         # Create a progress dialog
         progress = xbmcgui.DialogProgressBG()
         progress.create(ADDON.getAddonInfo("name"), LANGUAGE(32049))
@@ -96,7 +93,7 @@ class XMLFunctions:
         xbmcgui.Window(10000).clearProperty("skinshortcuts-isrunning")
         progress.close()
 
-        if complete == True:
+        if complete is True:
             # Menu is built, reload the skin
             xbmc.executebuiltin("ReloadSkin()")
         else:
@@ -106,7 +103,7 @@ class XMLFunctions:
             if weEnabledSystemDebug or weEnabledScriptDebug:
                 # Disable any logging we enabled
                 if weEnabledSystemDebug:
-                    json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":false} } ')
+                    _ = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":false} } ')
                 if weEnabledScriptDebug:
                     ADDON.setSetting("enable_logging", "false")
 
@@ -129,8 +126,8 @@ class XMLFunctions:
                 if json_response in ['result'] and json_response['settings'] in ['result'] and json_response['result']['settings'] is not None:
                     for item in json_response['result']['settings']:
                         if item["id"] == "debug.showloginfo":
-                            if item["value"] == False:
-                                json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":true} } ')
+                            if item["value"] is False:
+                                _ = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":true} } ')
                                 enabledSystemDebug = True
 
                 if ADDON.getSetting("enable_logging") != "true":
@@ -284,7 +281,7 @@ class XMLFunctions:
 
         # If the skin or script version, or profile list, haven't been checked, we need to rebuild the menu
         # (most likely we're running an old version of the script)
-        if checkedXBMCVer == False or checkedSkinVer == False or checkedScriptVer == False or checkedProfileList == False or checkedPVRVis == False or checkedSharedMenu == False:
+        if checkedXBMCVer is False or checkedSkinVer is False or checkedScriptVer is False or checkedProfileList is False or checkedPVRVis is False or checkedSharedMenu is False:
             return True
 
         # If we get here, the menu does not need to be rebuilt.
@@ -327,7 +324,7 @@ class XMLFunctions:
 
         submenuTrees = []
         for level in range(0, int(numLevels) + 1):
-            subelement = xmltree.SubElement(root, "include")
+            _ = xmltree.SubElement(root, "include")
             subtree = xmltree.SubElement(root, "include")
             if level == 0:
                 subtree.set("name", "skinshortcuts-submenu")
@@ -336,6 +333,7 @@ class XMLFunctions:
             if not subtree in submenuTrees:
                 submenuTrees.append(subtree)
 
+        allmenuTree = []
         if buildMode == "single":
             allmenuTree = xmltree.SubElement(root, "include")
             allmenuTree.set("name", "skinshortcuts-allmenus")
@@ -348,8 +346,6 @@ class XMLFunctions:
         for profile in profilelist:
             log("Building menu for profile %s" % (profile[2]))
             # Load profile details
-            profileDir = profile[0]
-            profileVis = profile[1]
             profileCount += 1
 
             # Reset whether we have settings
@@ -441,6 +437,7 @@ class XMLFunctions:
                     mainmenuItemA = Template.copy_tree(menuitem)
                     mainmenuTree.append(mainmenuItemA)
 
+                    mainmenuItemB = None
                     if buildMode == "single":
                         mainmenuItemB = Template.copy_tree(menuitem)
                         allmenuTree.append(mainmenuItemB)
@@ -464,6 +461,8 @@ class XMLFunctions:
                         submenu = submenu[:-1] + str(count)
                         submenuVisibilityName = submenu[:-2]
 
+                    justmenuTreeA = []
+                    justmenuTreeB = []
                     # Get the tree's we're going to write the menu to
                     if "noGroups" not in options:
                         if submenu in submenuNodes:
@@ -596,7 +595,7 @@ class XMLFunctions:
 
                     count += 1
 
-            if self.hasSettings == False:
+            if self.hasSettings is False:
                 # Check if the overrides asks for a forced settings...
                 overridestree = DATA._get_overrides_skin()
                 forceSettings = overridestree.getroot().find("forcesettings")
@@ -736,9 +735,6 @@ class XMLFunctions:
             self.MAINBACKGROUND = {}
             self.MAINPROPERTIES = {}
 
-        # Get fallback custom properties
-        foundProperties = []
-
         # Additional properties
         properties = eval(item.find("additional-properties").text)
         if len(properties) != 0:
@@ -853,7 +849,7 @@ class XMLFunctions:
                 try:
                     actionParts = onclick.text[15:-1].split(",")
                     actionParts[1] = actionParts[1].replace(xbmcvfs.translatePath("special://skin/"), "")
-                    path = actionParts[1].split(os.sep)
+                    _ = actionParts[1].split(os.sep)
                     newAction = "special://skin"
                     for actionPart in actionParts[1].split(os.sep):
                         if actionPart != "":
@@ -986,7 +982,7 @@ class XMLFunctions:
                 if propertyName not in propertyPatterns:
                     propertyPatterns[propertyName] = [propertyPatternElement.text, False]
             elif propertyLabelID == labelID:
-                if propertyName not in propertyPatterns or propertyPatterns[propertyName][1] == False:
+                if propertyName not in propertyPatterns or propertyPatterns[propertyName][1] is False:
                     propertyPatterns[propertyName] = [propertyPatternElement.text, True]
 
         return propertyPatterns

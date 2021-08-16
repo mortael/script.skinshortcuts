@@ -274,7 +274,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             if listitem.getProperty("visible-condition"):
                 shouldDisplay = xbmc.getCondVisibility(listitem.getProperty("visible-condition"))
 
-            if shouldDisplay == True:
+            if shouldDisplay is True:
                 visible = True
                 listitems.append(listitem)
 
@@ -282,7 +282,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             count += 1
 
         # If there are no shortcuts, add a blank one
-        if visible == False:
+        if visible is False:
             listitem = xbmcgui.ListItem(LANGUAGE(32013))
             listitem.setArt({
                 'icon': "DefaultShortcut.png"
@@ -493,7 +493,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Start by getting the labelID
         if not labelID:
             labelID = listitem.getProperty("localizedString")
-            if labelID == None or labelID == "":
+            if labelID is None or labelID == "":
                 labelID = listitem.getLabel()
             labelID = DATA._get_labelID(DATA.local(labelID)[3], listitem.getProperty("path"))
 
@@ -536,8 +536,8 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # If the skin doesn't have the icon, replace it with DefaultShortcut.png
         setDefault = False
-        if (not xbmc.skinHasImage(icon) and setToDefault == True) and not iconIsVar:
-            if oldicon == None:
+        if (not xbmc.skinHasImage(icon) and setToDefault is True) and not iconIsVar:
+            if oldicon is None:
                 oldicon = icon
             setDefault = True
             icon = "DefaultShortcut.png"
@@ -550,7 +550,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             listitem.setProperty("icon", icon)
             listitem.setProperty("original-icon", oldicon)
 
-        if setDefault == True and setToDefault == True:
+        if setDefault is True and setToDefault is True:
             # We set this to the default icon, so we need to check if /that/ icon is overriden
             self._get_icon_overrides(listitem, False, labelID)
 
@@ -572,7 +572,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         if weEnabledSystemDebug or weEnabledScriptDebug:
             # Disable any logging we enabled
             if weEnabledSystemDebug:
-                json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":false} } ')
+                _ = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":false} } ')
             if weEnabledScriptDebug:
                 ADDON.setSetting("enable_logging", "false")
 
@@ -597,8 +597,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         if 'result' in json_response and 'settings' in json_response['result'] and json_response['result']['settings'] is not None:
             for item in json_response['result']['settings']:
                 if item["id"] == "debug.showloginfo":
-                    if item["value"] == False:
-                        json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":true} } ')
+                    if item["value"] is False:
+                        _ = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method":"Settings.setSettingValue", "params": {"setting":"debug.showloginfo", "value":true} } ')
                         enabledSystemDebug = True
 
         if ADDON.getSetting("enable_logging") != "true":
@@ -620,7 +620,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
     def _save_shortcuts_function(self):
         # Save shortcuts
-        if self.changeMade == True:
+        if self.changeMade is True:
             log("Saving changes")
 
             # Create a new tree
@@ -640,7 +640,6 @@ class GUI(xbmcgui.WindowXMLDialog):
                 if listitem.getLabel() != LANGUAGE(32013) or listitem.getProperty("path") != "noop" or self.hasSaveWithProperty(listitem):
                     # Generate labelID, and mark if it has changed
                     labelID = listitem.getProperty("labelID")
-                    newlabelID = labelID
 
                     # defaultID
                     defaultID = listitem.getProperty("defaultID")
@@ -1046,9 +1045,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             listControl = self.getControl(211)
             itemIndex = listControl.getSelectedPosition()
             orderIndex = int(listControl.getListItem(itemIndex).getProperty("skinshortcuts-orderindex"))
-            altAction = None
 
-            if self.warnonremoval(listControl.getListItem(itemIndex)) == False:
+            if self.warnonremoval(listControl.getListItem(itemIndex)) is False:
                 return
 
             # Copy the new shortcut
@@ -1166,7 +1164,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             num = listControl.getSelectedPosition()
             orderIndex = int(listControl.getListItem(num).getProperty("skinshortcuts-orderindex"))
 
-            if self.warnonremoval(listControl.getListItem(num)) == False:
+            if self.warnonremoval(listControl.getListItem(num)) is False:
                 return
 
             LIBRARY._delete_playlist(listControl.getListItem(num).getProperty("path"))
@@ -1255,7 +1253,6 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Retreive current label and labelID
             label = listitem.getLabel()
-            oldlabelID = listitem.getProperty("labelID")
 
             # If the item is blank, set the current label to empty
             if label == LANGUAGE(32013):
@@ -1302,7 +1299,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             listControl = self.getControl(211)
             listitem = listControl.getSelectedItem()
 
-            if self.warnonremoval(listitem) == False:
+            if self.warnonremoval(listitem) is False:
                 return
 
             # Retrieve current action
@@ -1559,7 +1556,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self.currentWindow.clearProperty("widgetID")
 
             # Get the default widget for this item
-            defaultWidget = self.find_default("widget", listitem.getProperty("labelID"), listitem.getProperty("defaultID"))
+            _ = self.find_default("widget", listitem.getProperty("labelID"), listitem.getProperty("defaultID"))
 
             # Ensure widgets are loaded
             LIBRARY.loadLibrary("widgets")
@@ -1861,7 +1858,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 listitem.setProperty("skinshortcuts-disabled", "False")
             else:
                 # Display any warning
-                if self.warnonremoval(listitem) == False:
+                if self.warnonremoval(listitem) is False:
                     return
 
                 # Toggle to true, add highlighting to label
@@ -1875,7 +1872,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             num = self.getControl(211).getSelectedPosition()
             orderIndex = int(self.getControl(211).getListItem(num).getProperty("skinshortcuts-orderindex"))
 
-            if self.warnonremoval(self.getControl(211).getListItem(num)) == False:
+            if self.warnonremoval(self.getControl(211).getListItem(num)) is False:
                 return
 
             if self.currentWindow.getProperty("custom-grouping"):
@@ -1934,7 +1931,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             launchDefaultGroup = self.getControl(211).getSelectedItem().getProperty("defaultID")
             groupName = self.getControl(211).getSelectedItem().getLabel()
 
-            if launchDefaultGroup == None:
+            if launchDefaultGroup is None:
                 launchDefaultGroup = ""
 
             # If the labelID property is empty, we need to generate one
@@ -2010,9 +2007,6 @@ class GUI(xbmcgui.WindowXMLDialog):
             log("Setting custom property (%s)" % (str(controlID)))
             listControl = self.getControl(211)
             listitem = listControl.getSelectedItem()
-
-            propertyName = ""
-            propertyValue = ""
 
             usePrettyDialog = False
 
@@ -2238,7 +2232,6 @@ class GUI(xbmcgui.WindowXMLDialog):
             listitemCopy.setProperty("icon", icon)
 
         # If we've haven't been passed an originallistitem, set the following from the listitem we were passed
-        foundProperties = []
         if originallistitem is None:
             listitemCopy.setProperty("labelID", listitem.getProperty("labelID"))
             if listitem.getProperty("visible-condition"):
@@ -2271,7 +2264,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 foundProperty = True
                 property[1] = DATA.local(propertyValue)[0]
 
-        if foundProperty == False:
+        if foundProperty is False:
             properties.append([propertyName, DATA.local(propertyValue)[0]])
 
         # translate any INFO labels (if needed) so they will be displayed correctly in the gui
@@ -2290,10 +2283,8 @@ class GUI(xbmcgui.WindowXMLDialog):
     def _remove_additionalproperty(self, listitem, propertyName):
         # Remove an item from the additional properties of a user item
         properties = []
-        hasProperties = False
         if listitem.getProperty("additionalListItemProperties"):
             properties = eval(listitem.getProperty("additionalListItemProperties"))
-            hasProperties = True
 
         for property in properties:
             if property[0] == propertyName or "%s-NUM" % (property[0]) == "%s-NUM" % propertyName:
@@ -2371,7 +2362,7 @@ class GUI(xbmcgui.WindowXMLDialog):
     def find_default(self, backgroundorwidget, labelID, defaultID):
         # This function finds the id of an items default background or widget
 
-        if labelID == None:
+        if labelID is None:
             labelID = defaultID
 
         tree = DATA._get_overrides_skin()

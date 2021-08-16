@@ -8,6 +8,7 @@ import xml.etree.ElementTree as xmltree
 from html.entities import name2codepoint
 from traceback import print_exc
 
+# noinspection PyPackageRequirements
 from unidecode import unidecode
 
 import xbmc
@@ -24,6 +25,7 @@ from .constants import LANGUAGE
 from .constants import SKIN_PATH
 
 try:
+    # noinspection PyUnresolvedReferences
     unichr
 except NameError:
     unichr = chr
@@ -80,7 +82,7 @@ class DataFunctions:
                 labelID = addon_labelID
 
         # If we're getting the defaultID, just return this
-        if getDefaultID == True:
+        if getDefaultID is True:
             return labelID
 
         # Check if the labelID exists in the list
@@ -193,7 +195,7 @@ class DataFunctions:
         # Iterate through all <shortcut/> nodes
         for node in tree.getroot().findall("shortcut"):
             # If not user shortcuts, remove locked nodes (in case of naughty skinners!)
-            if isUserShortcuts == False:
+            if isUserShortcuts is False:
                 searchNode = node.find("locked")
                 if searchNode is not None:
                     node.remove(searchNode)
@@ -231,7 +233,7 @@ class DataFunctions:
             # Check that any version node matches current XBMC version
             version = node.find("version")
             if version is not None:
-                if KODI_VERSION != version.text and self.checkVersionEquivalency(version.text, node.find("action")) == False:
+                if KODI_VERSION != version.text and self.checkVersionEquivalency(version.text, node.find("action")) is False:
                     tree.getroot().remove(node)
                     self._pop_labelID()
                     continue
@@ -305,7 +307,7 @@ class DataFunctions:
 
                     break
 
-                if overriddenVisibility == False:
+                if overriddenVisibility is False:
                     # The skin hasn't overriden the visibility
                     visibilityNode = xmltree.SubElement(node, "visibility")
                     visibilityNode.text = visibilityCondition
@@ -314,7 +316,7 @@ class DataFunctions:
             overrideTrees = [useroverrides, skinoverrides]
             hasOverriden = False
             for overrideTree in overrideTrees:
-                if hasOverriden == True:
+                if hasOverriden is True:
                     continue
                 if overrideTree is not None:
                     for elem in overrideTree.findall("override"):
@@ -335,6 +337,8 @@ class DataFunctions:
                         for itemToOverride in itemsToOverride:
                             # If the action and (if provided) the group match...
                             # OR if we have a global override specified
+                            newaction = None
+
                             if (elem.attrib.get("action") == itemToOverride.text and (checkGroup is None or checkGroup == group)) or (elem.attrib.get("action") == "globaloverride" and (checkGroup is None or checkGroup == group)):
                                 # Check the XBMC version matches
                                 if "version" in elem.attrib:
@@ -371,8 +375,6 @@ class DataFunctions:
                                 if newaction is not None and itemToOverride.get("condition"):
                                     newaction.set("condition", "[%s] + [%s]" % (itemToOverride.get("condition"), newaction.get("condition")))
 
-                                newaction = None
-
             # Sort any visibility overrides
             for elem in node.findall("override-visibility"):
                 if elem.get("overriden") == "True":
@@ -393,7 +395,7 @@ class DataFunctions:
             # Get any visibility conditions in the .DATA.xml file
             additionalVisibility = node.find("visible")
             if additionalVisibility is not None:
-                if visibilityNode == None:
+                if visibilityNode is None:
                     xmltree.SubElement(node, "visibility").text = additionalVisibility.text
                 else:
                     visibilityNode.text = "[" + visibilityNode.text + "] + [" + additionalVisibility.text + "]"
@@ -413,7 +415,6 @@ class DataFunctions:
                 actions.append(action.text)
 
         # Get a list of all skin-required shortcuts
-        requiredShortcuts = []
         for elem in tree.findall("requiredshortcut"):
             if not elem.text in actions:
                 # We need to add this shortcut - add it to the listitems
@@ -467,7 +468,7 @@ class DataFunctions:
                             oldicon = icon
                             newicon = elem.text
 
-        if not (xbmc.skinHasImage(newicon) or xbmcvfs.exists(newicon)) and setToDefault == True:
+        if not (xbmc.skinHasImage(newicon) or xbmcvfs.exists(newicon)) and setToDefault is True:
             newicon = self._get_icon_overrides(tree, "DefaultShortcut.png", group, labelID, False)
 
         return newicon
@@ -782,7 +783,7 @@ class DataFunctions:
 
     def createNiceName(self, item, noNonLocalized=False):
         # Translate certain localized strings into non-localized form for labelID
-        if noNonLocalized == False:
+        if noNonLocalized is False:
             if item == "3":
                 return "videos"
             if item == "2":
@@ -902,6 +903,8 @@ class DataFunctions:
         trees = [self._get_overrides_skin(), self._get_overrides_script()]
 
         # Set up so we can handle both groupings and shortcuts in one
+        findElem = ""
+        findAttrib = ""
         if type == "shortcuts":
             if action is None:
                 action = ""
@@ -909,11 +912,14 @@ class DataFunctions:
                 action = action.text
             findElem = "shortcutEquivalent"
             findAttrib = "action"
-        if type == "groupings":
+        elif type == "groupings":
             if action is None:
                 action = ""
             findElem = "groupEquivalent"
             findAttrib = "condition"
+
+        if not findElem or not findAttrib:
+            return False
 
         for tree in trees:
             if tree.find("versionEquivalency") is None:
@@ -1008,7 +1014,7 @@ class DataFunctions:
                 for file in files:
                     if file.endswith(".hash") and not file.startswith("%s-" % (xbmc.getSkinDir())):
                         canImport, skinName = self.parseHashFile(os.path.join(DATA_PATH, file))
-                        if canImport == True:
+                        if canImport is True:
                             skinNames.append(skinName)
                     elif file.endswith(".DATA.xml") and not file.startswith("%s-" % (xbmc.getSkinDir())):
                         skinFiles.append(file)
@@ -1020,10 +1026,10 @@ class DataFunctions:
             matched = False
             for skinFile in skinFiles:
                 if skinFile.startswith("%s-" % skinName):
-                    if matched == False:
+                    if matched is False:
                         matched = True
                     removeFiles.append(skinFile)
-            if matched == False:
+            if matched is False:
                 # This skin doesn't have a custom menu
                 removeSkins.append(skinName)
 
@@ -1064,7 +1070,7 @@ class DataFunctions:
                     return True, skinName
             if hash[0] == "::SKINDIR::":
                 skinName = hash[1]
-                if canImport == True:
+                if canImport is True:
                     return True, skinName
 
         return canImport, skinName
@@ -1247,7 +1253,7 @@ class DataFunctions:
             text = text.replace('-', separator)
 
         # If this is a shortcut file (.DATA.xml) and user shortcuts aren't shared, add the skin dir
-        if userShortcuts == True and self.checkIfMenusShared(isSubLevel) == False:
+        if userShortcuts is True and self.checkIfMenusShared(isSubLevel) is False:
             text = "%s-%s" % (xbmc.getSkinDir(), text)
 
         return text
