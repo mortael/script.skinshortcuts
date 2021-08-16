@@ -34,7 +34,7 @@ if not xbmcvfs.exists(DATA_PATH):
 
 def is_hebrew(text):
     for chr in text:
-        if ord(chr) >= 1488 and ord(chr) <= 1514:
+        if 1488 <= ord(chr) <= 1514:
             return True
     return False
 

@@ -1144,7 +1144,7 @@ class DataFunctions:
             lasttranslation = splitdata[2]
 
         if data.isdigit():
-            if int(data) >= 31000 and int(data) < 32000:
+            if 31000 <= int(data) < 32000:
                 # A number from a skin - we're going to return a $SKIN[#####|skin.id|last translation] unit
                 if skinid is None:
                     # Set the skinid to the current skin id
@@ -1159,7 +1159,7 @@ class DataFunctions:
                 returnString = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
                 return [returnString, lasttranslation, lasttranslation, data]
 
-            elif int(data) >= 32000 and int(data) < 33000:
+            elif 32000 <= int(data) < 33000:
                 # A number from the script
                 return [data, "$ADDON[script.skinshortcuts " + data + "]", LANGUAGE(int(data)), data]
 
