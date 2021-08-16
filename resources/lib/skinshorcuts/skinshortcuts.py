@@ -4,9 +4,6 @@ import _thread as thread
 import calendar
 import os
 import sys
-import urllib.error
-import urllib.parse
-import urllib.request
 from time import gmtime
 from time import strftime
 from traceback import print_exc
@@ -27,6 +24,11 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import LANGUAGE
 from .constants import MASTER_PATH
+
+try:
+    from urllib import unquote
+except ImportError:
+    from urllib.parse import unquote
 
 XML = xmlfunctions.XMLFunctions()
 DATA = datafunctions.DataFunctions()
@@ -145,7 +147,7 @@ class Main:
 
             elif selectedShortcut.getProperty("Path") and selectedShortcut.getProperty("custom") == "true":
                 # The user updated the path - so we just set that property
-                xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETPATH, urllib.parse.unquote(selectedShortcut.getProperty("Path"))))
+                xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETPATH, unquote(selectedShortcut.getProperty("Path"))))
 
             elif selectedShortcut.getProperty("Path"):
                 # The user selected the widget they wanted
@@ -171,7 +173,7 @@ class Main:
                         xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGETTARGET))
                 if self.WIDGETPATH:
                     if selectedShortcut.getProperty("widgetPath"):
-                        xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETPATH, urllib.parse.unquote(selectedShortcut.getProperty("widgetPath"))))
+                        xbmc.executebuiltin("Skin.SetString(%s,%s)" % (self.WIDGETPATH, unquote(selectedShortcut.getProperty("widgetPath"))))
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % (self.WIDGETPATH))
 
@@ -261,15 +263,15 @@ class Main:
         self.DEFAULTGROUP = params.get("defaultGroup", None)
 
         # Properties from context menu addon
-        self.CONTEXTFILENAME = urllib.parse.unquote(params.get("filename", ""))
+        self.CONTEXTFILENAME = unquote(params.get("filename", ""))
         self.CONTEXTLABEL = params.get("label", "")
         self.CONTEXTICON = params.get("icon", "")
         self.CONTEXTCONTENT = params.get("content", "")
         self.CONTEXTWINDOW = params.get("window", "")
 
         # Properties from external request to set properties
-        self.PROPERTIES = urllib.parse.unquote(params.get("property", ""))
-        self.VALUES = urllib.parse.unquote(params.get("value", ""))
+        self.PROPERTIES = unquote(params.get("property", ""))
+        self.VALUES = unquote(params.get("value", ""))
         self.LABELID = params.get("labelID", "")
 
     # -----------------
@@ -277,7 +279,7 @@ class Main:
     # -----------------
 
     def _launch_shortcut(self, path):
-        action = urllib.parse.unquote(self.PATH)
+        action = unquote(self.PATH)
 
         if action.find("::MULTIPLE::") == -1:
             # Single action, run it
@@ -371,7 +373,7 @@ class Main:
         if count != 0:
             xbmc.executebuiltin("Control.Move(" + menuid + "," + str(count) + " )")
 
-        xbmc.executebuiltin(urllib.parse.unquote(action))
+        xbmc.executebuiltin(unquote(action))
 
 
 if (__name__ == "__main__"):
