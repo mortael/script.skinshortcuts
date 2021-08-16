@@ -845,8 +845,8 @@ class Template():
                     # Insert it
                     tree.insert(index, newelement)
                 elif type == "items" and customitems is not None and elem.attrib.get("insert"):
-                    for elem in self.buildSubmenuCustomItems(customitems, items.findall("item"), elem.attrib.get("insert"), properties):
-                        for child in elem:
+                    for element in self.buildSubmenuCustomItems(customitems, items.findall("item"), elem.attrib.get("insert"), properties):
+                        for child in element:
                             tree.insert(index, child)
                 elif type == "items":
                     # Firstly, go through and create an array of all items in reverse order, without
@@ -866,9 +866,9 @@ class Template():
                         # Add a copy to the array
                         newelements.insert(0, newitem)
                     if len(newelements) != 0:
-                        for elem in newelements:
+                        for element in newelements:
                             # Insert them into the template
-                            tree.insert(index, elem)
+                            tree.insert(index, element)
 
             else:
                 # Iterate through tree

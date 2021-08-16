@@ -550,7 +550,7 @@ class DataFunctions():
             try:
                 file = xbmcvfs.File(path).read()
                 listProperties = ast.literal_eval(file)
-                self._save_hash(path, file)
+                self._save_hash(path)
 
                 for listProperty in listProperties:
                     # listProperty[0] = groupname
@@ -657,7 +657,7 @@ class DataFunctions():
         path = os.path.join(SKIN_PATH, "mainmenu.DATA.xml")
         if xbmcvfs.exists(path):
             file = xbmcvfs.File(path).read()
-            self._save_hash(path, file)
+            self._save_hash(path)
             tree = xmltree.parse(path)
             for node in tree.getroot().findall("shortcut"):
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()

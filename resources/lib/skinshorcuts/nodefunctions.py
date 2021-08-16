@@ -17,11 +17,6 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import LANGUAGE
 
-try:
-    unicode
-except NameError:
-    unicode = str
-
 # character entity reference
 CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))
 
@@ -304,7 +299,6 @@ class NodeFunctions():
         jsonPath = path.replace("\\", "\\\\")
 
         json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "' + jsonPath + '", "media": "files" } }')
-        json_query = unicode(json_query, 'utf-8', errors='ignore')
         json_response = json.loads(json_query)
 
         labels = []
@@ -551,7 +545,7 @@ class NodeFunctions():
 
 class ShowDialog(xbmcgui.WindowXMLDialog):
     def __init__(self, *args, **kwargs):
-        xbmcgui.WindowXMLDialog.__init__(self)
+        xbmcgui.WindowXMLDialog.__init__(self, *args)
         self.listing = kwargs.get("listing")
         self.windowtitle = kwargs.get("windowtitle")
         self.getmore = kwargs.get("getmore")

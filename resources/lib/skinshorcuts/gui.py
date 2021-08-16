@@ -41,6 +41,7 @@ def is_hebrew(text):
 
 class GUI(xbmcgui.WindowXMLDialog):
     def __init__(self, *args, **kwargs):
+        xbmcgui.WindowXMLDialog.__init__(self, *args)
         self.group = kwargs["group"]
         try:
             self.defaultGroup = kwargs["defaultGroup"]
@@ -582,7 +583,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
             else:
                 # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32097), LANGUAGE(32094))
+                xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
 
             # We're done
             return
@@ -615,7 +616,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
             else:
                 # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32097), LANGUAGE(32094))
+                xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
 
     def _save_shortcuts_function(self):
         # Save shortcuts
@@ -2151,9 +2152,9 @@ class GUI(xbmcgui.WindowXMLDialog):
                     # User has chosen to browse for an image/folder
                     imagedialog = xbmcgui.Dialog()
                     if browseSingle:  # Single image
-                        custom_image = imagedialog.browse(2, xbmc.getLocalizedString(1030), 'files', '', True, False, None)
+                        custom_image = imagedialog.browse(2, xbmc.getLocalizedString(1030), 'files', '', True, False)
                     else:  # Multi-image
-                        custom_image = imagedialog.browse(0, xbmc.getLocalizedString(1030), 'files', '', True, False, None)
+                        custom_image = imagedialog.browse(0, xbmc.getLocalizedString(1030), 'files', '', True, False)
 
                     if custom_image:
                         self.changeMade = True

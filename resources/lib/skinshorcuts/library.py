@@ -660,7 +660,7 @@ class LibraryFunctions():
         else:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({
-                'icon': thumbnail
+                'icon': ''
             })
         listitem.setProperty("path", item[0])
         listitem.setProperty("localizedString", localLabel)
@@ -2280,7 +2280,7 @@ class LibraryFunctions():
                     action = keyboard.getText()
                     if action != "":
                         # Create a really simple listitem to return
-                        selectedShortcut = xbmcgui.ListItem(None, LANGUAGE(32024))
+                        selectedShortcut = xbmcgui.ListItem('', LANGUAGE(32024))
                         selectedShortcut.setProperty("Path", action)
                         selectedShortcut.setProperty("custom", "true")
                     else:
@@ -2344,7 +2344,7 @@ class LibraryFunctions():
 
 class ShowDialog(xbmcgui.WindowXMLDialog):
     def __init__(self, *args, **kwargs):
-        xbmcgui.WindowXMLDialog.__init__(self)
+        xbmcgui.WindowXMLDialog.__init__(self, *args)
         self.listing = kwargs.get("listing")
         self.windowtitle = kwargs.get("windowtitle")
         self.getmore = kwargs.get("getmore")
