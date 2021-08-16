@@ -1426,7 +1426,7 @@ class LibraryFunctions:
             # if it's missing it means this is a main directory listing and no need to scan the underlying listitems.
             return "files"
         if "showtitle" not in item and "artist" in item:
-            ##### AUDIO ITEMS ####
+            # AUDIO ITEMS ####
             if len(item["artist"]) != 0:
                 artist = item["artist"][0]
             else:
@@ -1435,10 +1435,10 @@ class LibraryFunctions:
                 return "artists"
             elif item["type"] == "album" or item["album"] == item["title"]:
                 return "albums"
-            elif (item["type"] == "song" and not "play_album" in item["file"]) or (item["artist"] and item["album"]):
+            elif (item["type"] == "song" and "play_album" not in item["file"]) or (item["artist"] and item["album"]):
                 return "songs"
         else:
-            ##### VIDEO ITEMS ####
+            # VIDEO ITEMS ####
             if item["showtitle"] and not item["artist"]:
                 # this is a tvshow, episode or season...
                 if item["type"] == "season" or (item["season"] > -1 and item["episode"] == -1):
@@ -1537,7 +1537,7 @@ class LibraryFunctions:
         listings.append(listitem)
 
         # Default action - create shortcut (do not show when we're looking at the special entries from skinhelper service)
-        if not "script.skin.helper.service" in location:
+        if "script.skin.helper.service" not in location:
             createLabel = "32058"
             if isWidget:
                 createLabel = "32100"
@@ -2248,7 +2248,7 @@ class LibraryFunctions:
                 if isWidget:
                     # Return actionShow as chosenPath
                     selectedShortcut.setProperty("chosenPath", selectedShortcut.getProperty("action-show"))
-                elif not ">" in path or "Videos" in path:
+                elif ">" not in path or "Videos" in path:
                     # Give the user the choice of playing or displaying the playlist
                     dialog = xbmcgui.Dialog()
                     userchoice = dialog.yesno(LANGUAGE(32040), LANGUAGE(32060), LANGUAGE(32061), LANGUAGE(32062))
@@ -2278,7 +2278,6 @@ class LibraryFunctions:
 
                 # Re-call this function
                 return self.selectShortcut(group=group, grouping=grouping, custom=custom, showNone=showNone, currentAction=currentAction)
-
 
             elif path == "||CUSTOM||":
                 # Let the user type a command

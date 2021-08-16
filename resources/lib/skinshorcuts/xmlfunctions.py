@@ -330,7 +330,7 @@ class XMLFunctions:
                 subtree.set("name", "skinshortcuts-submenu")
             else:
                 subtree.set("name", "skinshortcuts-submenu-" + str(level))
-            if not subtree in submenuTrees:
+            if subtree not in submenuTrees:
                 submenuTrees.append(subtree)
 
         allmenuTree = []
@@ -864,7 +864,7 @@ class XMLFunctions:
                 onclickelement.text = onclick.text
 
             # Also add it as a path property
-            if not self.propertyExists("path", newelement) and not "path" in list(allProps.keys()):
+            if not self.propertyExists("path", newelement) and "path" not in list(allProps.keys()):
                 # we only add the path property if there isn't already one in the list because it has to be unique in Kodi lists
                 pathelement = xmltree.SubElement(newelement, "property")
                 pathelement.set("name", "path")
@@ -872,7 +872,7 @@ class XMLFunctions:
                 allProps["path"] = pathelement
 
             # Get 'list' property (the action property of an ActivateWindow shortcut)
-            if not self.propertyExists("list", newelement) and not "list" in list(allProps.keys()):
+            if not self.propertyExists("list", newelement) and "list" not in list(allProps.keys()):
                 # we only add the list property if there isn't already one in the list because it has to be unique in Kodi lists
                 listElement = xmltree.SubElement(newelement, "property")
                 listElement.set("name", "list")

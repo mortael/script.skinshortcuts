@@ -416,7 +416,7 @@ class DataFunctions:
 
         # Get a list of all skin-required shortcuts
         for elem in tree.findall("requiredshortcut"):
-            if not elem.text in actions:
+            if elem.text not in actions:
                 # We need to add this shortcut - add it to the listitems
                 requiredShortcut = xmltree.SubElement(listitems.getroot(), "shortcut")
 

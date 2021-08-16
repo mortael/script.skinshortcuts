@@ -1088,7 +1088,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     listitemCopy = None
             elif path.startswith("::PLAYLIST"):
                 log("Selected playlist")
-                if not ">" in path or "VideoLibrary" in path:
+                if ">" not in path or "VideoLibrary" in path:
                     # Give the user the choice of playing or displaying the playlist
                     dialog = xbmcgui.Dialog()
                     userchoice = dialog.yesno(LANGUAGE(32040), LANGUAGE(32060), "", "", LANGUAGE(32061), LANGUAGE(32062))
