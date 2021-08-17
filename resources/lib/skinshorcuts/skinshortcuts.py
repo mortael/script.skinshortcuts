@@ -78,7 +78,7 @@ class Main:
                     }
                 }
             }
-            json_response = rpc_request(json_payload)
+            _ = rpc_request(json_payload)
         if self.TYPE == "manage":
             self._manage_shortcuts(self.GROUP, self.DEFAULTGROUP, self.NOLABELS, self.GROUPNAME)
 
