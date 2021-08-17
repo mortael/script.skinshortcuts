@@ -7,6 +7,7 @@ import sys
 from time import gmtime
 from time import strftime
 from traceback import print_exc
+from urllib.parse import unquote
 
 import xbmc
 import xbmcgui
@@ -24,11 +25,6 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import LANGUAGE
 from .constants import MASTER_PATH
-
-try:
-    from urllib import unquote
-except ImportError:
-    from urllib.parse import unquote
 
 XML = xmlfunctions.XMLFunctions()
 DATA = datafunctions.DataFunctions()

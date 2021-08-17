@@ -24,12 +24,6 @@ from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import SKIN_PATH
 
-try:
-    # noinspection PyUnresolvedReferences
-    unichr
-except NameError:
-    unichr = chr
-
 NODE = nodefunctions.NodeFunctions()
 
 hashlist = []
@@ -1227,19 +1221,19 @@ class DataFunctions:
 
         # character entity reference
         if entities:
-            text = CHAR_ENTITY_REXP.sub(lambda m: unichr(name2codepoint[m.group(1)]), text)
+            text = CHAR_ENTITY_REXP.sub(lambda m: chr(name2codepoint[m.group(1)]), text)
 
         # decimal character reference
         if decimal:
             try:
-                text = DECIMAL_REXP.sub(lambda m: unichr(int(m.group(1))), text)
+                text = DECIMAL_REXP.sub(lambda m: chr(int(m.group(1))), text)
             except:
                 pass
 
         # hexadecimal character reference
         if hexadecimal:
             try:
-                text = HEX_REXP.sub(lambda m: unichr(int(m.group(1), 16)), text)
+                text = HEX_REXP.sub(lambda m: chr(int(m.group(1), 16)), text)
             except:
                 pass
 

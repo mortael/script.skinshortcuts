@@ -4,6 +4,8 @@ import json
 import os
 import xml.etree.ElementTree as xmltree
 from traceback import print_exc
+from urllib.parse import unquote
+from urllib.request import url2pathname
 from xml.dom.minidom import parse
 
 import xbmc
@@ -17,16 +19,6 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
-
-try:
-    from urllib import unquote
-except ImportError:
-    from urllib.parse import unquote
-
-try:
-    from urllib import url2pathname
-except ImportError:
-    from urllib.request import url2pathname
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
