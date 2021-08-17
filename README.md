@@ -26,9 +26,9 @@ script.skinshortcuts was written with the intention of making user customizable 
 ## With Thanks - Because their names don't deserve to be at the bottom :)
 
 - Huge thanks to Ronie, whose code for listing plugins is used in this script
-- Equally huge thanks to Ronie and 'Black, for their favourites code used in this script
+- Equally, huge thanks to Ronie and 'Black, for their favourites code used in this script
 - More huge thanks to BigNoid, for the ability to edit shortcuts, and Jeroen, for so many suggestions each of which just made the script better.
-- The thanks remain absolutely huge to the translaters on Transifex for localising the script
+- The thanks remain absolutely huge to the translators on Transifex/Weblate for localising the script
 - There almost isn't enough thanks for schimi2k for the icon and fanart
 - Everyone who has contributed even one idea or line of code
 - And the biggest thanks of all to Annie and my family, for feature suggestions, testing and shouting at me when I broke things
@@ -43,7 +43,7 @@ When a question comes up that no-one in the thread can answer, the skinner may d
 
 If you experience an error with the script, you are welcome to ask for help directly in the Skin Shortcuts thread in the skin development forum. However, we _require_ a [debug log](https://kodi.wiki/view/Debug_log).
 
-Please note that this thread is primarily aimed at skin developers - if you haven't already asked in the revelant skins forum, included a debug log or are asking a question related to [banned add-ons](https://kodi.wiki/view/Official:Forum_rules/Banned_add-ons), you are not likely to recieve a warm welcome.
+Please note that this thread is primarily aimed at skin developers - if you haven't already asked in the relevant skin's forum, included a debug log or are asking a question related to [banned add-ons](https://kodi.wiki/view/Official:Forum_rules/Banned_add-ons), you are not likely to receive a warm welcome.
 
 ## Where To Get Help - Skinners
 
@@ -57,9 +57,9 @@ To help, it includes a lot of documentation covering the various features of the
 * [Advanced usage topics](./resources/docs/advanced/Advanced%20Usage.md)
 * [labelID and localisation](./resources/docs/labelID%20and%20Localisation.md)
 
-It's highly recommended to take time to read through these documents before you begin.
+It's highly recommended taking the time to read through these documents before you begin.
 
-If you require any assistance post on the Kodi forum and I'll do my best to assist:
+If you require any assistance post on the Kodi forum, and I'll do my best to assist:
 
 [http://forum.kodi.tv/showthread.php?tid=178294](https://forum.kodi.tv/showthread.php?tid=178294)
 
@@ -67,4 +67,4 @@ If you require any assistance post on the Kodi forum and I'll do my best to assi
 
 The documentation with Skin Shortcuts is generally updated as features are added or changed. Therefore, the docs on Git refer to the latest build, and will include details of features that are not yet on the repo.
 
-If you are targetting the repo version of the script you can use the tags to browse the documentation for that particular release.
+If you are targeting the repo version of the script you can use the tags to browse the documentation for that particular release.
