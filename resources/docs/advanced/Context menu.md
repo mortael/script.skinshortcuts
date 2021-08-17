@@ -2,7 +2,7 @@
 
 **The context menu relies on additions to the Python api made in Krypton. It will not function on earlier versions.**
 
-Rather than including all the controls directly within your management dialog, you can choose to make some available via the context menu. The context menu optoins are defined in [the skins overrides.xml file](../advanced/overrides.md), with all controls within a single `<contextmenu />` element.
+Rather than including all the controls directly within your management dialog, you can choose to make some available via the context menu. The context menu options are defined in [the skins overrides.xml file](../advanced/overrides.md), with all controls within a single `<contextmenu />` element.
 
 ## Choosing which control the context menu appears on
 

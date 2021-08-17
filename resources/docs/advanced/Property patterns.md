@@ -1,6 +1,6 @@
 # Custom shortcut property patterns
 
-You can define custom properties patterns in the skins [overrides.xml](./overrides.md) file. Its variables are then filled with real values during include XML building. As opposed to regular custom properties, patterns can't be modified from skin so they aren't saved as custom configuration.
+You can define custom properties patterns in the skins [overrides.xml](./overrides.md) file. Its variables are then filled with real values during include XML building. As opposed to regular custom properties, patterns can't be modified from skin, so they are not saved as custom configuration.
 
 ## Getting properties from shortcuts
 
@@ -19,7 +19,7 @@ For example, the following shortcut:-
 </item>
 ```
 
-Has the following variable available (case insensitive):-
+Has the following variable available (case-insensitive):-
 
 * `::LABEL::`
 * `::ICON::`
@@ -33,7 +33,7 @@ Has the following variable available (case insensitive):-
 	
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
-| [LabelID] | Yes | The labelID of item you are providing a pattern for. If ommited, pattern is used for all items in group. |
+| [LabelID] | Yes | The labelID of item you are providing a pattern for. If omitted, pattern is used for all items in group. |
 | [GroupName] | Yes | The group you are providing a pattern for. |
 | [PropertyName] | | The string used to identify the property |
 | [PropertyPattern] | | The pattern for the property |

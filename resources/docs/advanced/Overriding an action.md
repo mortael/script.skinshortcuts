@@ -6,7 +6,7 @@ There are three methods available to override an action, all of which are based 
 
 * Override a specific action - useful to provide extra functionality, such as CinemaVision for example
 * Override all shortcuts action in a menu - useful to provide a 'first click' function, for example
-* Add a supplemantary action to all shortcuts in a menu - useful for a power menu, for example
+* Add a supplementary action to all shortcuts in a menu - useful for a power menu, for example
 
 ## Override a specific action
 
@@ -31,7 +31,7 @@ Users can also provide an overrides.xml file to override actions in special://pr
 
 ## Override all actions in a menu (global override)
 
-It is possible to override all shortcuts in the list with a custom action. This can be usefull for example when you want to launch something in your skin when a shortcut is pressed when a specific condition is applies.
+It is possible to override all shortcuts in the list with a custom action. This can be useful for example when you want to launch something in your skin when a shortcut is pressed when a specific condition is applies.
 
 This is done by setting the `[Action]` of an `<override />` element to `globaloverride`.
 
@@ -61,7 +61,7 @@ You can include multiple `<action>` elements. If you want to run the original co
 ## Add a supplemental action to all shortcuts in a menu.
 
 It is possible to supply an additional onclick action for all shortcuts in the list.
-Note that this doesn't override the action, it just adds an additional action to the menu item.
+Note that this doesn't override the action, it adds an action to the menu item.
 
 `<groupoverride group="[GroupName]" condition="[Boolean condition]">[Action]</groupoverride>`
 
@@ -92,6 +92,6 @@ Skin Shortcuts adds automatic visibility conditions to relevant shortcuts - such
 
 #### Respecting user choice
 
-It's always expected that user choice will be respected. That means that if a user has selected a particular shortcut, if it is overriden it should be clear why this is being done, or the option should be tied to a skin setting.
+It's always expected that user choice will be respected. That means that if a user has selected a particular shortcut, if it is overridden it should be clear why this is being done, or the option should be tied to a skin setting.
 
 ***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

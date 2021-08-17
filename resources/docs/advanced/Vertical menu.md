@@ -20,7 +20,7 @@ Remember to replace `mainmenuID=9000` with the ID of the list container you are 
 
 #### Displaying different layout for main menu and submenu items
 
-You will probably wish to skin the main menu and the submenu items differently from each other, to ensure its clear to the user what they are. This is done by having a visibility condition on the controls in the layout so they only display for the correct menu:-
+You will probably wish to skin the main menu and the submenu items differently from each other, to ensure its clear to the user what they are. This is done by having a visibility condition on the controls in the layout, so they only display for the correct menu:-
 
 `<visible>IsEmpty(ListItem.Property(isSubmenu))</visible>` - a main menu item
 `<visible>!IsEmpty(ListItem.Property(isSubmenu))</visible>` - a submenu item

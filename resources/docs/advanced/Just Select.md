@@ -29,7 +29,7 @@ You can also use the Just Select method to allow the user to select a widget and
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
 | `[True/False]` | Yes | A boolean saying whether a 'None' option will be shown |
-| `[grouping]`| Yes | The custom groupings that will be shown to the user ([more details](../advanced/Custom%20groupings.md)). If ommitted, this will default to the 'widget' grouping. To use the standard grouping, set to `default` |
+| `[grouping]`| Yes | The custom groupings that will be shown to the user ([more details](../advanced/Custom%20groupings.md)). If omitted, this will default to the 'widget' grouping. To use the standard grouping, set to `default` |
 | `[skinWidget]` | Yes | The skin string the script will save the `widget` property of the selected widget to |
 | `[skinWidgetType]` | Yes | The skin string the script will save the `widgetType` property of the selected widget to |
 | `[skinWidgetName]` | Yes | The skin string the script will save the `widgetName` property of the selected widget to |

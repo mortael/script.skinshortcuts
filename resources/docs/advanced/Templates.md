@@ -2,7 +2,7 @@
 
 Templates are an alternative way to integrate user customizable menus into your skin. They allow you to provide one or more templates containing any Kodi GUI controls you like, and insert information from the menu items into them.
 
-They have a number of advantages over the traditional Skin Shortcuts implementation. For example, all submenu's can be in their own lists and so can have visible/hidden animation. Similarly widgets can be built individually, allowing them to be switched between without the contents having to be reloaded.
+They have a number of advantages over the traditional Skin Shortcuts implementation. For example, all submenu's can be in their own lists and so can have visible/hidden animation. Similarly, widgets can be built individually, allowing them to be switched between without the contents having to be reloaded.
 
 ## templates.xml
 
@@ -44,7 +44,7 @@ Skin Shortcuts supports three types of templates - one for submenu's; one for an
 
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
-| `[include]` | Yes | The name of the include this will be added to, appended to skinshortcuts-templates-. If ommitted, it will be added to skinshortcuts-template |
+| `[include]` | Yes | The name of the include this will be added to, appended to skinshortcuts-templates-. If omitted, it will be added to skinshortcuts-template |
 | `[level]` | Yes | If building multiple sub-menu levels, specifies which level this applies to. Omit for the default level (0). |
 | `[name]` | Yes | For use with additional groups, the name of the group |
 | `<property />` | Yes | [Read More](#property-elements). Note that properties in the main template will be generated from the main menu item. Properties in the sub-template (`<items />`) will be generated from the submenu item |
@@ -98,7 +98,7 @@ They are inserted into the submenu template by including `<skinshortcuts insert=
 
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
-| `[include]` | Yes | The name of the include this will be added to, appended to skinshortcuts-templates-. If ommitted, it will be added to skinshortcuts-template |
+| `[include]` | Yes | The name of the include this will be added to, appended to skinshortcuts-templates-. If omitted, it will be added to skinshortcuts-template |
 | `<condition />` | Yes | [Read More](#condition-elements) |
 | `<match />` | Yes | [Read More](#match-elements) |
 | `<property />` | Yes | [Read More](#property-elements) |
@@ -121,14 +121,14 @@ Submenu-other templates act just as a regular other template except that they bu
 
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
-| `[container]` | Yes | The ID of the container holding the submenu. This is used to build visibilty conditions and, if ommited, these won't be available. |
+| `[container]` | Yes | The ID of the container holding the submenu. This is used to build visibility conditions and, if omitted, these won't be available. |
 | `[level]` | Yes | If building multiple sub-menu levels, specifies which level this applies to. Omit for the default level (0). |
 
 For usage, see 'Other' templates documentation, above.
 
 ## Condition elements
 
-Condition elements are used to decide whether an Other template should be built, dependant on the items in the main menu. You may use multiple Condition elements - unless you specify a `<match />` element, the template will only be built if they all match.
+Condition elements are used to decide whether an Other template should be built, dependent on the items in the main menu. You may use multiple Condition elements - unless you specify a `<match />` element, the template will only be built if they all match.
 
 `<condition tag="[tag]" attribute="[attributeName]|[attributeValue]">[textValue]</condition>`
 
@@ -148,14 +148,14 @@ The `<condition />` would be
 
 ## Match elements
 
-If you are using multiple condition elements, you can include a match element to speicify whether any or all of the conditions must be met for the template to be built
+If you are using multiple condition elements, you can include a match element to specify whether any or all of the conditions must be met for the template to be built
 
 `<match>[any/all]</match>`
 
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
 | [any/all] | | set as 'any' for the template to be built if any of the conditions match|
-| | | set as 'all' for the temlate to be built if all of the conditions match (default behaviour) |
+| | | set as 'all' for the template to be built if all of the conditions match (default behaviour) |
 
 e.g.
 
@@ -187,7 +187,7 @@ The `<property />` would be
 
 #### Set a property based on the value of a main menu item
 
-You can set a property to a custom value, dependant on what the value of a property in the main menu item is. For example, you could set an artwork property to the image you want to display, based on the widgetType property of the main menu item.
+You can set a property to a custom value, dependent on what the value of a property in the main menu item is. For example, you could set an artwork property to the image you want to display, based on the widgetType property of the main menu item.
 
 `<property name="[propertyName]" tag="[tag]" attribute="[attributeName]|[attributeValue]" value="[textValue]">[propertyValue]</property>`
 
@@ -196,7 +196,7 @@ You can set a property to a custom value, dependant on what the value of a prope
 | `[name]` | | The name of the property you are setting |
 | `[tag]` | Yes | The main menu must have an element with this tag
 | `[attributeName]|[attributeValue]` | Yes | The element must have an attribute with the name `[attributeName]` and the value `[attributeValue]` |
-| `[textValue]` | Yes | The elment must have this value - you may match against multiple values by splitting them with a pipe - `|` - symbol |
+| `[textValue]` | Yes | The element must have this value - you may match against multiple values by splitting them with a pipe - `|` - symbol |
 | `[propertyValue]` | Yes | What you are setting the property to. |
 
 For example, to set `$SKINSHORTCUTS[artwork]` to `ListItem.Art(tvshow.poster)` for the following main menu property:-
@@ -221,7 +221,7 @@ You can set a property to a single value based on different matching elements wi
 
 Would set the property `$SKINSHORTCUTS[leftartwork]`to the value of `5` if any of the three rules match.
 
-By default, this property will match if any of the rules match. To only match the property if all of the rules match, include `<match>all</match>` as a sub element.
+By default, this property will match if any of the rules match. To only match the property if all the rules match, include `<match>all</match>` as a sub element.
 
 Note, when setting a property based on multiple elements, you /must/ specify the propertyValue you want assigned - you cannot assign the property to the value of the menu items element that you are checking against.
 
@@ -286,14 +286,14 @@ Another example, it can be useful to know if a widgetPath has a '?' character in
 #### Notes
 
 * All expressions must be valid Python
-* Only basic operators are available. Whilst consideration will be given to requests to enable additional operators, this limitation is for security reasons.
+* Only basic operators are available. Whilst consideration will be given to request to enable additional operators, this limitation is for security reasons.
 * Whilst 'in' is available, for technical reasons its operation is reversed, so if you want to know if `x` is in `y`, you'd use `if y in x`.
 * All properties are passed into your Python script as strings. To use them in mathematical expressions, they must be converted to integers.
 
 ## Moving properties to an include using `$PARAM` (KODI 15+)
 
 You can move any `$SKINSHORTCUTS[propertyName]` to an include inside your skin's xml files using `$PARAM[paramName]`.
-For more informations about params : [Use params in includes](https://kodi.wiki/view/Skinning_Manual#Use_params_in_includes).
+For more information about params : [Use params in includes](https://kodi.wiki/view/Skinning_Manual#Use_params_in_includes).
 
 When using `$PARAM[paramName]` in your skin's xml, it will be automatically replaced by the corresponding `$SKINSHORTCUTS[propertyName]` you set.
 
@@ -341,8 +341,8 @@ For example, to move a dynamic id, content and target, you can use the following
 </other>
 ```
 
-NOTE - `$PARAM[Id]` has here the value `80$SKINSHORTCUTS[id]` : This will return for item n° 10 the value `8010`. It's useful when using the same container for multiple contents since an include doesn't refresh.
-You can then use the properties moved to params inside an includes file (includes.xml or wathever name you used) like :
+NOTE - `$PARAM[Id]` has here the value `80$SKINSHORTCUTS[id]` : This will return for item n° 10 the value `8010`. It's useful when using the same container for multiple contents since an include does not refresh.
+You can then use the properties moved to params inside an includes file (includes.xml or whatever name you used) like :
 
 ```
 <include name="MyincludesInclude">

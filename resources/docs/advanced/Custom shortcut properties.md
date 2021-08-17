@@ -23,7 +23,7 @@ The available options the user will be able to choose from are defined in the sk
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
 | `[Property]` | | The property of the shortcut that will be set |
-| `[label]` | Yes | The label that will be displayed to the user. If ommitted, the [Property value] will be used. |
+| `[label]` | Yes | The label that will be displayed to the user. If omitted, the [Property value] will be used. |
 | `[icon]` | Yes | The icon that will be displayed to the user |
 | `[condition]` | Yes | A Kodi boolean condition that must evaluate to True for the property to be shown to the user |
 | `[Property Value]` | | The value that will be set to the property |
@@ -37,7 +37,7 @@ You can optionally use a `<propertySettings />` element in your overrides.xml to
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
 | `[Property]` | | The property of the shortcut that will be set |
-| `[buttonID]` | Yes | The ID of the button that will be used to set this property. If ommitted, you must set the window property 'chooseProperty' to `[Property]` and send a click to 404 |
+| `[buttonID]` | Yes | The ID of the button that will be used to set this property. If omitted, you must set the window property 'chooseProperty' to `[Property]` and send a click to 404 |
 | `[Requires]` | Yes | The name of another property that must be present in the shortcut for this property to be added to it |
 | templateonly `[True/False]` | Yes | A boolean indicating whether a property is only used by templates. If True, the property will not be written to the shortcut in the includes file. Defaults to False. |
 | `[Dialog title]` | Yes | The title of the dialog that will be shown to the user |
@@ -53,7 +53,7 @@ You can use a `<propertySettings />` element to define a button to toggle a give
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
 | `[Property]` | | The property of the shortcut that will be set |
-| `[buttonID]` | Yes | The ID of the button that will be used to set this property. If ommitted, you must set the window property 'chooseProperty' to `[Property]` and send a click to 404 |
+| `[buttonID]` | Yes | The ID of the button that will be used to set this property. If omitted, you must set the window property 'chooseProperty' to `[Property]` and send a click to 404 |
 | `[Requires]` | Yes | The name of another property that must be present in the shortcut for this property to be added to it |
 | `[True/False]` | Yes | A boolean indicating whether a property is only used by templates. If True, the property will not be written to the shortcut in the includes file. Defaults to False. |
 

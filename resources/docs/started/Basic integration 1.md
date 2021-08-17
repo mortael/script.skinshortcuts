@@ -26,7 +26,7 @@ In both cases, remember to replace mainmenuID=9000 with the id of the list you w
 
 ## Including the script-skinshortcuts-includes.xml file
 
-Now the sript is building its includes file, we need to tell Kodi to load it. To do so, we add the following line to Includes.xml
+Now the script is building its includes file, we need to tell Kodi to load it. To do so, we add the following line to Includes.xml
 
 `<include file="script-skinshortcuts-includes.xml"/>`
 
@@ -55,7 +55,7 @@ It's also generally a good idea to let the user reset all shortcuts to default w
 
 ## Customising the Management Dialog
 
-The management dialog included with Skin Shortcuts isn't particularly well designed or useful, so chances are you're going to want to include your own. See [Management Dialog](./Management%20Dialog.md) for details.
+The management dialog included with Skin Shortcuts isn't particularly well-designed or useful, so chances are you're going to want to include your own. See [Management Dialog](./Management%20Dialog.md) for details.
 
 ## Where to go from here
 

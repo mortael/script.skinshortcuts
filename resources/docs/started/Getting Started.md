@@ -38,7 +38,7 @@ Shortcuts provided by Skin Shortcuts provide lots of properties you can make use
 | Label2 | Type of shortcut |
 | Icon | Icon image |
 | Thumbnail | Thumbnail image |
-| property(labelID) | Unlocalized string used for sub-menu and for displaying more controls depending on the main menu item |
+| property(labelID) | Un-localized string used for sub-menu and for displaying more controls depending on the main menu item |
 | property(defaultID) | Permanent form of the labelID |
 | property(action) | The action that will be run when the shortcut is selected |
 | property(list) | The action of the shortcut, without any 'ActivateWindow' elements |
@@ -52,7 +52,7 @@ Various other properties will be returned if you are using Skin Shortcuts to man
 
 One of the features of Skin Shortcuts is that the users custom menu is shared between all skins that use Skin Shortcuts to manage the whole menu. There are some users who prefer not to have this feature, so it is worth being aware that this can be switched off in the skins settings.
 
-Additionally, sometimes a skin uses Skin Shortcuts in a very unusual way which means that it is preferable for its menu's not to be shared with other skins as they wouldn't display properly. In this case, you can add the following to your [overrides.xml](../advanced/overrides.md):-
+Additionally, sometimes a skin uses Skin Shortcuts in a very unusual way which means that it is preferable for its menu's not to be shared with other skins as they would not display properly. In this case, you can add the following to your [overrides.xml](../advanced/overrides.md):-
 
 `<doNotShareMenu />`
 
@@ -60,9 +60,9 @@ However, it is expected that this will only be used in rare circumstances, and i
 
 #### Shared additional submenu
 
-It is possible to use the additional sub-menu's in a way that means that they shouldn't be shared with other skins - for example, using them to manage a list of widgets rather than a list of shortcuts.
+It is possible to use the additional sub-menu's in a way that means that they should not be shared with other skins - for example, using them to manage a list of widgets rather than a list of shortcuts.
 
-In this case you can indicate that the additional submenu's shouldn't be shared with other skins by adding the following to your :-
+In this case you can indicate that the additional submenu's should not be shared with other skins by adding the following to your :-
 
 <doNotShareLevels />
 
@@ -78,13 +78,13 @@ Skin Shortcuts automatically adds visibility conditions to shortcuts when they a
 
 #### Shortcut to Settings
 
-One side-effect of using Skin Shortcuts to manage the whole menu is that the user has the possibility to delete any shortcut, including those that they may later decide they do want. In general, this is no issue as they can also add any shortcut, but if they delete a shortcut to settings it can lead to them being unable to edit the menu to add it back.
+One side effect of using Skin Shortcuts to manage the whole menu is that the user has the possibility to delete any shortcut, including those that they may later decide they do want. In general, this is no issue as they can also add any shortcut, but if they delete a shortcut to settings it can lead to them being unable to edit the menu to add it back.
 
 There are a few methods you can use to prevent (or at least warn) the user deleted settings (see [Advanced Usage](../advanced/Advanced%20Usage.md)) but it's also worth considering adding alternative access to settings - such as on the shutdown menu - and be prepared to offer support to users who have deleted the link.
 
 #### Don't build individual groups
 
-By default, along with the main and submenu's, skin shortcuts will build `skinshortcuts-group-[groupname]`and `skinshortcuts-group-alt-[groupname]` (to be used depending on whether you want visibility conditions.
+By default, along with the main and submenu's, skin shortcuts will build `skinshortcuts-group-[groupname]`and `skinshortcuts-group-alt-[groupname]` to be used depending on whether you want visibility conditions.
 
 If you don't want these groups, you can tell Skin Shortcuts not to build them by including `&amp;options=noGroups` in your build command.
 

@@ -73,7 +73,7 @@ icon - DefaultPlaylist.png
 
 #### Favourites
 
-labelID - Name of the the favourite (lowercase, without spaces)
+labelID - Name of the favourite (lowercase, without spaces)
 icon	- DefaultPlaylist.png
 		  DefaultShortcut.png
 thumbnail - the favourites thumbnail
@@ -91,11 +91,11 @@ Whilst the labelID for a given menu item will change if the shortcut changes, th
 
 ## Localising strings
 
-Skin Shortcuts has code to ensure that you can use localised strings from your skin throughout. When the menu's are saved, any string provided by a skin is saved in a special format so that the script knows which skin it came from and what its last translation was.
+Skin Shortcuts has code to ensure that you can use localised strings from your skin throughout. When the menus are saved, any string provided by a skin is saved in a special format so that the script knows which skin it came from and what its last translation was.
 
 This means that if the user switches skins, the label from the previous skin is still available, though it will no longer localise if the user changes language.
 
-One limitation of it, though, is that it can't manage multiple skin strings combined together, so you should ensure that you are only using a single string at a time.
+One limitation of it, though, is that it can't manage multiple skin strings combined, so you should ensure that you are only using a single string at a time.
 
 It's also worth noting that only menu items - not the additional properties associated with the menu items - are shared between skins. This means it is totally safe to use localised strings for backgrounds, widgets, custom properties and so forth.
 

@@ -45,7 +45,7 @@ The way that Skin Shortcuts saves your customised menus are not designed to be s
 
 If the skin you are using has the functions integrated, use the options provided to create and then restore a backup of your skin settings, which will include your custom menu items and associated properties.
 
-If it is not integrated, you can create your own shortcuts to the settings. To backup, create a shortcut with the following actions:
+If it is not integrated, you can create your own shortcuts to the settings. To back up, create a shortcut with the following actions:
 
 `RunScript(script.skin.helper.service,action=backup)`
 
@@ -73,7 +73,7 @@ This file is not able to be directly edited - if it is, Skin Shortcuts will dete
 
 ## Cannot Build or Save Menu error
 
-If you get this error you will need to provide a debug log in order to recieve assistance. If you have the Debug Log Uploaded add-on installed, the script will prompt you to upload a log after the error occurs. Otherwise, see here for details on providing a debug log.
+If you get this error you will need to provide a debug log in order to receive assistance. If you have the Debug Log Uploaded add-on installed, the script will prompt you to upload a log after the error occurs. Otherwise, see here for details on providing a debug log.
 
 Most common causes for this is either the skin has been installed to a read-only location (such at Kodi's system-Addons folder, rather than the profiles Addons folder), or you have found a bug in the script.
 

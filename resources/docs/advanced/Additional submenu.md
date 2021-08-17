@@ -33,12 +33,12 @@ If you require more than 5 additional submenu's, set the `level` window property
 
 #### Adjust the build line
 
-If you want to build a menu unlinked to the main menu, you need to adjust the build line to tell Skin Shortcuts to build it. This is done by including the group parameter, and including `mainmenu` and the id of any additional group you want, seperated by a pipe - | - symbol.
+If you want to build a menu unlinked to the main menu, you need to adjust the build line to tell Skin Shortcuts to build it. This is done by including the group parameter, and including `mainmenu` and the id of any additional group you want, separated by a pipe - | - symbol.
 
 `RunScript(script.skinshortcuts,type=buildxml&amp;mainmenuID=9000&amp;group=mainmenu|[groupname]|[groupname]|[groupname]...`
 
 Note, `mainmenu` must be the first item in the group property.
 
-The additional groups will be treated completely seperately from the main menu. See [integration details for Submenu Only](../started/Basic%20integration%202.md) for examples of how to use them.
+The additional groups will be treated completely separately from the main menu. See [integration details for Submenu Only](../started/Basic%20integration%202.md) for examples of how to use them.
 
 ***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

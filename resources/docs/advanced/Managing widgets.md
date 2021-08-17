@@ -13,7 +13,7 @@ By default, Skin Shortcuts provides a large array of available widgets which can
 | `[label]` | | The display name of the widget, to be shown when choosing widgets (can be a localised string) |
 | `[icon]` | Yes | An image provided by your skin to be used when selecting widgets |
 | `[Condition]` | Yes | Boolean condition that must be true for the background to show in the management dialogs Background Select (evaluated when management dialog is loaded) | 
-| `[name]` | Yes | The string that will be assigned to `<property name="widgetName">`. If ommitted, this will be set to the value of `[label]` |
+| `[name]` | Yes | The string that will be assigned to `<property name="widgetName">`. If omitted, this will be set to the value of `[label]` |
 | `[type]` | Yes | The string that will be assigned to `<property name="widgetType">` |
 | `[path]` | Yes | The string that will be assigned to `<property name="widgetPath">` |
 | `[target]` | Yes | The string that will be assigned to `<property name="widgetTarget">` |
@@ -90,7 +90,7 @@ If your skin doesn't show the widgetName property, you can disable this function
 
 ## Returned properties
 
-For every widget that is selected, five properties will be added to the menu item. For widgets you have defined, or for defaults set via `<widgetdefaultnode />`, they will be the values you have defined.
+For every widget that is selected, five properties will be added to the menu item. For widgets, you have defined, or for defaults set via `<widgetdefaultnode />`, they will be the values you have defined.
 
 All other widgets will return a widgetTarget property, which is designed to be used in the `target` element of a lists content tag. Other properties returned are:-
 
@@ -150,7 +150,7 @@ For example, the list used to display movie content may look like this:-
 
 ## Notes
 
-#### Updating from previous widget implementaton
+#### Updating from previous widget implementation
 
 When upgrading from the previous Skin Shortcuts implementation (gui button 309), due to the additional properties that the new method returns, there is no upgrade path implemented. This means users will need to reset their widgets.
 
@@ -158,7 +158,7 @@ When upgrading from the previous Skin Shortcuts implementation (gui button 309),
 
 Skin Shortcuts own widgets groupings provides a 'Default Widgets' node (or the option to install the 'Default Widgets' node) which is powered by the Skin Helper Service, and lets the user choose from widgets provided by the Skin Helper Service itself, the Library Data Provider script, the Extended Info script and the Smart(ish) Widgets script.
 
-To allow the user the chance to install aditional widget providers when browsing the 'Default Widgets', Skin Shortcuts enables the 'Get More...' button of the select dialog and manages installation of the additional widget providers. If you are customising how the widgets presented by Skin Helper Service are displayed, you may wish to remove this link. This is done by including the following in the skins [overrides.xml](./overrides.md) file:-
+To allow the user the chance to install additional widget providers when browsing the 'Default Widgets', Skin Shortcuts enables the 'Get More...' button of the select dialog and manages installation of the additional widget providers. If you are customising how the widgets presented by Skin Helper Service are displayed, you may wish to remove this link. This is done by including the following in the skins [overrides.xml](./overrides.md) file:-
 
 `<defaultwidgetsGetMore>False</defaultwidgetsGetMore>`
 

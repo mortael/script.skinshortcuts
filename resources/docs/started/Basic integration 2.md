@@ -28,7 +28,7 @@ You need to include a [groupname] for each submenu that you want to build, separ
 
 ## Including the script-skinshortcuts-includes.xml file
 
-Now the sript is building its includes file, we need to tell Kodi to load it. To do so, we add the following line to Includes.xml
+Now the script is building its includes file, we need to tell Kodi to load it. To do so, we add the following line to Includes.xml
 
 `<include file="script-skinshortcuts-includes.xml"/>`
 
@@ -55,7 +55,7 @@ Now we have a skin that has a menu system provided by Skin Shortcuts, but as yet
 
 ## Customising the Management Dialog
 
-The management dialog included with Skin Shortcuts isn't particularly well designed or useful, so chances are you're going to want to include your own. See [Management Dialog](./Management%20Dialog.md) for details.
+The management dialog included with Skin Shortcuts isn't particularly well-designed or useful, so chances are you're going to want to include your own. See [Management Dialog](./Management%20Dialog.md) for details.
 
 ## Recommended [groupname]'s
 
@@ -70,7 +70,7 @@ In order to share users customised submenu's across different skins using Skin S
 - musicvideos
 - pictures
 - weather
-- progras
+- programs
 - dvd
 - settings
 

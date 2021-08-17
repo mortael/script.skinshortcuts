@@ -1,6 +1,6 @@
 ## External Editing
 
-Skin Shortcuts is based around the user using the management dialog to customise their menu. However, there is limited support for aspects of the menu to be edited from outside of the management dialog.
+Skin Shortcuts is based around the user using the management dialog to customise their menu. However, there is limited support for aspects of the menu to be edited from outside the management dialog.
 
 ## Context menu add-on
 
@@ -8,7 +8,7 @@ There is a context menu add-on available in the official repo. This allows any n
 
 ## Change properties of menu items
 
-If you have the `[labelID]` of a given menu item, you can change any additional property of the main menu item from outside of the management dialog:-
+If you have the `[labelID]` of a given menu item, you can change any additional property of the main menu item from outside the management dialog:-
 
 `<onclick>RunScript(script.skinshortcuts,type=setProperty&amp;property=[Property]&amp;value=[Value]&amp;labelID=[labelID]&amp;group=[GroupName])</onclick>`
 
@@ -17,7 +17,7 @@ If you have the `[labelID]` of a given menu item, you can change any additional 
 | `[Property]` |  | The property of the menu item you want to change |
 | `[Value]` |  | The new value of the property you are changing |
 | `[labelID]` |  | The labelID of the menu item you are changing |
-| `[GroupName]` | Yes | The group that the menu item must be in. If ommitted defaults to the main menu ]
+| `[GroupName]` | Yes | The group that the menu item must be in. If omitted defaults to the main menu ]
 
 To change multiple properties for multiple menu items, separate each `[Property]` and `[Value]` with a pipe - | - symbol. If you want to change multiple individual menu items, separate the `[labelID]`'s with a pipe - | - symbol.
 

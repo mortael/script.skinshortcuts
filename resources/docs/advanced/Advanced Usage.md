@@ -114,9 +114,9 @@ Details of how to customise the groupings that are shown to the user when they s
 
 [Read more](./Custom%20groupings.md)
 
-## Changing menu items from outside of the management dialog
+## Changing menu items from outside the management dialog
 
-Details of methods available for customising menu items outside of the management dialog.
+Details of methods available for customising menu items outside the management dialog.
 
 [Read More](./External%20editing.md)
 

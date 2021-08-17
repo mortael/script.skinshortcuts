@@ -8,6 +8,6 @@ Additionally, it can manage a main menu and its submenu's. In this case, it can 
 
 Skin Shortcuts writes an additional file into the skins directory - script-skinshortcuts-includes.xml. In this file are a variety of `<include />`'s that the skin can use to fill content element of the list control they wish to show the users controls in.
 
-The additional properties - for widgets, backgrounds and so forth - can be used by the skinner to decide what other 'furniture' should be displayed, and to fill the contents of it, such as the texture in an image control.
+The additional properties - for widgets, backgrounds and so forth - can be used by the skinner to decide what other 'furniture' should be displayed, and to fill the contents with it, such as the texture in an image control.
 
 ***Quick links*** - [Readme](../../README.md) - [Getting Started](./started/Getting%20Started.md) - [Advanced Usage](./advanced/Advanced%20Usage.md)
