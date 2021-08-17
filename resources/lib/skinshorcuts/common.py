@@ -15,7 +15,6 @@ from .constants import ADDON
 from .constants import ADDON_ID
 
 
-# noinspection PyUnresolvedReferences
 def log(txt):
     if ADDON.getSetting("enable_logging") == "true":
         if isinstance(txt, bytes):
