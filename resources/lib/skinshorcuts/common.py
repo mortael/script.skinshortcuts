@@ -21,9 +21,10 @@ def log(txt):
 def get_hash(filename):
     try:
         md5 = hashlib.md5()
-        with open(filename, 'r') as file_handle:
+        with open(filename, 'rb') as file_handle:
             file_contents = file_handle.read()
-            md5.update(file_contents.encode('utf-8'))
+        md5.update(file_contents)
+        return md5.hexdigest()
     except:
         log("Unable to generate hash for %s" % filename)
         traceback.print_exc()
