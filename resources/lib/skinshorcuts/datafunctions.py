@@ -16,6 +16,7 @@ import xbmcvfs
 from . import nodefunctions
 from .common import get_hash
 from .common import log
+from .common import read_file
 from .constants import ADDON
 from .constants import ADDON_ID
 from .constants import DATA_PATH
@@ -544,7 +545,7 @@ class DataFunctions:
         if xbmcvfs.exists(path):
             # The properties file exists, load from it
             try:
-                file = xbmcvfs.File(path).read()
+                file = read_file(path)
                 listProperties = ast.literal_eval(file)
                 self._save_hash(path)
 
@@ -1054,7 +1055,7 @@ class DataFunctions:
     @staticmethod
     def parseHashFile(file):
         try:
-            hashes = ast.literal_eval(xbmcvfs.File(file).read())
+            hashes = ast.literal_eval(read_file(file))
         except:
             # There is no hash list, return False
             return False, ""

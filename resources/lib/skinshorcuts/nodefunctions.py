@@ -11,6 +11,7 @@ import xbmc
 import xbmcgui
 import xbmcvfs
 from .common import log
+from .common import write_file
 from .constants import ADDON
 from .constants import ADDON_ID
 from .constants import CWD
@@ -521,9 +522,8 @@ class NodeFunctions:
 
         # Save the new properties
         try:
-            f = xbmcvfs.File(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"), 'w')
-            f.write(repr(saveData).replace("],", "],\n"))
-            f.close()
+            write_file(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"),
+                       repr(saveData).replace("],", "],\n"))
             log("Properties file saved succesfully")
         except:
             print_exc()

@@ -14,6 +14,7 @@ import xbmcvfs
 from . import datafunctions
 from . import nodefunctions
 from .common import log
+from .common import read_file
 from .constants import ADDON_ID
 from .constants import CWD
 from .constants import DATA_PATH
@@ -1142,8 +1143,7 @@ class LibraryFunctions:
                     mediaLibrary = path[2]
 
                     if playlist.endswith('.xsp'):
-                        contents = xbmcvfs.File(playlistfile, 'r')
-                        contents_data = contents.read()
+                        contents_data = read_file(playlistfile)
                         xmldata = xmltree.fromstring(contents_data)
                         mediaType = "unknown"
                         try:
@@ -1238,8 +1238,7 @@ class LibraryFunctions:
                 playlistfile = xbmcvfs.translatePath(playlist)
 
                 if playlist.endswith('-randomversion.xsp'):
-                    contents = xbmcvfs.File(playlistfile, 'r')
-                    contents_data = contents.read()
+                    contents_data = read_file(playlistfile)
                     xmldata = xmltree.fromstring(contents_data)
                     try:
                         iterator = xmldata.iter()

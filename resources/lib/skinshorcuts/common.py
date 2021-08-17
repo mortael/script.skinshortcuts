@@ -18,11 +18,20 @@ def log(txt):
         xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 
+def read_file(filename, mode='r'):
+    with open(filename, mode) as file_handle:
+        return file_handle.read()
+
+
+def write_file(filename, contents, mode='w'):
+    with open(filename, mode) as file_handle:
+        file_handle.write(contents)
+
+
 def get_hash(filename):
     try:
         md5 = hashlib.md5()
-        with open(filename, 'rb') as file_handle:
-            file_contents = file_handle.read()
+        file_contents = read_file(filename, 'rb')
         md5.update(file_contents)
         return md5.hexdigest()
     except:

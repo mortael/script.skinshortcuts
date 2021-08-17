@@ -14,6 +14,8 @@ from . import datafunctions
 from . import template
 from .common import get_hash
 from .common import log
+from .common import read_file
+from .common import write_file
 from .constants import ADDON
 from .constants import ADDON_VERSION
 from .constants import KODI_VERSION
@@ -49,8 +51,8 @@ class XMLFunctions:
         fav_file = xbmcvfs.translatePath('special://userdata/profiles.xml')
         tree = None
         if xbmcvfs.exists(fav_file):
-            f = xbmcvfs.File(fav_file)
-            tree = xmltree.fromstring(f.read())
+            contents = read_file(fav_file)
+            tree = xmltree.fromstring(contents)
 
         profilelist = []
         if tree is not None:
@@ -193,7 +195,7 @@ class XMLFunctions:
             log("Hash list does not exist")
             return True
         try:
-            hashes = ast.literal_eval(xbmcvfs.File(hashesPath).read())
+            hashes = ast.literal_eval(read_file(hashesPath))
         except:
             log("Unable to parse hash list")
             print_exc()
@@ -672,9 +674,7 @@ class XMLFunctions:
         hashlist.append(["::SKINVER::", skinVersion])
 
         # Save the hashes
-        file = xbmcvfs.File(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"), "w")
-        file.write(repr(hashlist))
-        file.close()
+        write_file(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"), repr(hashlist))
 
     def buildElement(self, item, groupName, visibilityCondition, profileVisibility, submenuVisibility=None, itemid=-1, mainmenuid=None, options=[]):
         # This function will build an element for the passed Item in

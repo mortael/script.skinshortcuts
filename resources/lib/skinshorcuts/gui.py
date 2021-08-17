@@ -15,6 +15,8 @@ import xbmcvfs
 from . import datafunctions
 from . import library
 from .common import log
+from .common import read_file
+from .common import write_file
 from .constants import ADDON
 from .constants import CWD
 from .constants import DATA_PATH
@@ -812,7 +814,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         path = os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties")
         if xbmcvfs.exists(path):
             # The properties file exists, load from it
-            listProperties = eval(xbmcvfs.File(path).read())
+            listProperties = eval(read_file(path))
             for listProperty in listProperties:
                 # listProperty[0] = groupname
                 # listProperty[1] = labelID
@@ -853,9 +855,8 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Try to save the file
         try:
-            f = xbmcvfs.File(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"), 'w')
-            f.write(repr(saveData).replace("],", "],\n"))
-            f.close()
+            write_file(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"),
+                       repr(saveData).replace("],", "],\n"))
         except:
             print_exc()
             log("### ERROR could not save file %s" % DATA_PATH)
