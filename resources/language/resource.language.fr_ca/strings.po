@@ -12,6 +12,10 @@ msgstr ""
 "Language: fr_CA\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgctxt "Addon Description"
+msgid "Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)"
+msgstr "Addiciel pour habillages qui fournit une gestion simple et un listage des raccourcis utilisateurs (exige la prise en charge de l'habillage)"
+
 msgctxt "#32000"
 msgid "Add"
 msgstr "Ajouter"

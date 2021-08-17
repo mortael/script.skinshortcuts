@@ -12,6 +12,10 @@ msgstr ""
 "Language: hi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgctxt "Addon Description"
+msgid "Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)"
+msgstr ""
+
 msgctxt "#32001"
 msgid "Delete"
 msgstr "मिटाना"

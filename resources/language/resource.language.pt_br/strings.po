@@ -12,6 +12,10 @@ msgstr ""
 "Language: pt_BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgctxt "Addon Description"
+msgid "Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)"
+msgstr "Add-on para que as skins possam prover gerenciamento de lista de atalhos para o menu principal (requer suporte da skin)"
+
 msgctxt "#32000"
 msgid "Add"
 msgstr "Adicionar"
