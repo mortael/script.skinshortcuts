@@ -1,11 +1,7 @@
-# Kodi Media Center language file
-# Addon Name: Skin Shortcuts
-# Addon id: script.skinshortcuts
-# Addon Provider: Unfledged
 msgid ""
 msgstr ""
-"Project-Id-Version: XBMC Addons\n"
-"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: noreply@noreply.com\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2020-09-13 00:00+ZONE\n"
 "Last-Translator: roliverosc (2020)\n"

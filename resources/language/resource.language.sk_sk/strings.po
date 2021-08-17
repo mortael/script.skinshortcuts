@@ -1,15 +1,11 @@
-# Addon id: script.skinshortcuts
-# Addon Provider: Unfledged
-# Translators:
-# Miro Valec Valko <mvalec@atlas.sk>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: XBMC Addons\n"
-"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: noreply@noreply.com\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2018-05-17 12:12+0200\n"
 "Last-Translator: Miro Valko <mvalec@atlas.sk>\n"
-"Language-Team: Slovak (http://www.transifex.com/teamxbmc/xbmc-addons/language/sk/)\n"
+"Language-Team: Slovak\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
