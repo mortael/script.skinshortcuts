@@ -21,7 +21,7 @@ from . import datafunctions
 from . import library
 from .common import log
 from .common import read_file
-from .common import rpc_request
+from .common import toggle_debug_logging
 from .common import write_file
 from .constants import ADDON
 from .constants import CWD
@@ -610,16 +610,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         if weEnabledSystemDebug or weEnabledScriptDebug:
             # Disable any logging we enabled
             if weEnabledSystemDebug:
-                json_payload = {
-                    "jsonrpc": "2.0",
-                    "id": 0,
-                    "method": "Settings.setSettingValue",
-                    "params": {
-                        "setting": "debug.showloginfo",
-                        "value": False
-                    }
-                }
-                _ = rpc_request(json_payload)
+                toggle_debug_logging(enable=False)
+
             if weEnabledScriptDebug:
                 ADDON.setSetting("enable_logging", "false")
 
@@ -638,31 +630,10 @@ class GUI(xbmcgui.WindowXMLDialog):
             return
 
         # Enable any debug logging needed
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Settings.getSettings"
-        }
-        json_response = rpc_request(json_payload)
-
         enabledSystemDebug = False
         enabledScriptDebug = False
-        if 'result' in json_response and 'settings' in json_response['result'] and \
-                json_response['result']['settings'] is not None:
-            for item in json_response['result']['settings']:
-                if item["id"] == "debug.showloginfo":
-                    if item["value"] is False:
-                        json_payload = {
-                            "jsonrpc": "2.0",
-                            "id": 0,
-                            "method": "Settings.setSettingValue",
-                            "params": {
-                                "setting": "debug.showloginfo",
-                                "value": True
-                            }
-                        }
-                        _ = rpc_request(json_payload)
-                        enabledSystemDebug = True
+        if toggle_debug_logging(enable=True):
+            enabledSystemDebug = True
 
         if ADDON.getSetting("enable_logging") != "true":
             ADDON.setSetting("enable_logging", "true")

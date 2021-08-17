@@ -49,4 +49,61 @@ def get_hash(filename):
 
 def rpc_request(request):
     payload = xbmc.executeJSONRPC(json.dumps(request))
-    return json.loads(payload)
+    response = json.loads(payload)
+    log('JSONRPC: Requested |%s| received |%s|' % (request, str(response)))
+    return response
+
+
+def validate_rpc_response(request, response):
+    if 'result' in response:
+        return True
+
+    if 'error' in response:
+        message = response['error']['message']
+        code = response['error']['code']
+        error = 'JSONRPC: Requested |%s| received error |%s| and code: |%s|' % \
+                (request, message, code)
+    else:
+        error = 'JSONRPC: Requested |%s| received error |%s|' % (request, str(response))
+
+    log(error)
+    return False
+
+
+def toggle_debug_logging(enable=False):
+    # return None on error
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "Settings.getSettings"
+    }
+
+    response = rpc_request(payload)
+    if not validate_rpc_response(payload, response):
+        return None
+
+    logging_enabled = True
+    if 'settings' in response['result'] and response['result']['settings'] is not None:
+        for item in response['result']['settings']:
+            if item['id'] == 'debug.showloginfo':
+                logging_enabled = item['value'] is True
+                break
+
+    if (not enable and logging_enabled) or (enable and not logging_enabled):
+        payload = {
+            "jsonrpc": "2.0",
+            "id": 0,
+            "method": "Settings.setSettingValue",
+            "params": {
+                "setting": "debug.showloginfo",
+                "value": enable is True
+            }
+        }
+
+        response = rpc_request(payload)
+        if not validate_rpc_response(payload, response):
+            return None
+
+        logging_enabled = not logging_enabled
+
+    return logging_enabled == enable
