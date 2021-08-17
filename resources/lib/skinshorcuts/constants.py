@@ -12,8 +12,8 @@ import xbmc
 import xbmcaddon
 import xbmcvfs
 
-ADDON = xbmcaddon.Addon()
-ADDON_ID = ADDON.getAddonInfo('id')
+ADDON_ID = 'script.skinshortcuts'
+ADDON = xbmcaddon.Addon(id=ADDON_ID)
 ADDON_NAME = ADDON.getAddonInfo('name')
 ADDON_VERSION = ADDON.getAddonInfo('version')
 
