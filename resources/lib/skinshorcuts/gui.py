@@ -29,6 +29,7 @@ from .constants import DATA_PATH
 from .constants import DEFAULT_PATH
 from .constants import LANGUAGE
 from .constants import SKIN_PATH
+from .constants import SKIN_SHORTCUTS_PATH
 
 DATA = datafunctions.DataFunctions()
 LIBRARY = library.LibraryFunctions()
@@ -355,7 +356,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         action = item.find("action").text
         self._add_additionalproperty(listitem, "translatedPath", action)
         if "special://skin/" in action:
-            translate = xbmcvfs.translatePath("special://skin/")
+            translate = SKIN_PATH
             action = action.replace("special://skin/", translate)
 
         listitem.setProperty("path", action)
@@ -755,11 +756,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                 for i in range(0, 6):
                     if i == 0:
                         groupName = labelIDFrom
-                        paths = [[os.path.join(DATA_PATH, DATA.slugify(labelIDFrom, True) + ".DATA.xml"), "Move"], [os.path.join(SKIN_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [os.path.join(DEFAULT_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [None, "New"]]
+                        paths = [[os.path.join(DATA_PATH, DATA.slugify(labelIDFrom, True) + ".DATA.xml"), "Move"], [os.path.join(SKIN_SHORTCUTS_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [os.path.join(DEFAULT_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"), "Copy"], [None, "New"]]
                         target = os.path.join(DATA_PATH, DATA.slugify(labelIDTo, True) + ".DATA.xml")
                     else:
                         groupName = "%s.%s" % (labelIDFrom, str(i))
-                        paths = [[os.path.join(DATA_PATH, DATA.slugify("%s.%s" % (labelIDFrom, str(i)), True, isSubLevel=True) + ".DATA.xml"), "Move"], [os.path.join(SKIN_PATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"],
+                        paths = [[os.path.join(DATA_PATH, DATA.slugify("%s.%s" % (labelIDFrom, str(i)), True, isSubLevel=True) + ".DATA.xml"), "Move"], [os.path.join(SKIN_SHORTCUTS_PATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"],
                                  [os.path.join(DEFAULT_PATH, DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) + ".DATA.xml"), "Copy"]]
                         target = os.path.join(DATA_PATH, DATA.slugify("%s.%s" % (labelIDTo, str(i)), True, isSubLevel=True) + ".DATA.xml")
 

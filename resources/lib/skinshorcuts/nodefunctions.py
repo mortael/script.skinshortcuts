@@ -22,7 +22,9 @@ from .constants import ADDON
 from .constants import ADDON_ID
 from .constants import CWD
 from .constants import DATA_PATH
+from .constants import KODI_PATH
 from .constants import LANGUAGE
+from .constants import PROFILE_PATH
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
@@ -133,10 +135,10 @@ class NodeFunctions:
 
     @staticmethod
     def isGrouped(path):
-        customPathVideo = path.replace("library://video", os.path.join(xbmcvfs.translatePath("special://profile"), "library", "video"))[:-1]
-        defaultPathVideo = path.replace("library://video", os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", "video"))[:-1]
-        customPathAudio = path.replace("library://music", os.path.join(xbmcvfs.translatePath("special://profile"), "library", "music"))[:-1]
-        defaultPathAudio = path.replace("library://music", os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", "music"))[:-1]
+        customPathVideo = path.replace("library://video", os.path.join(PROFILE_PATH, "library", "video"))[:-1]
+        defaultPathVideo = path.replace("library://video", os.path.join(KODI_PATH, "system", "library", "video"))[:-1]
+        customPathAudio = path.replace("library://music", os.path.join(PROFILE_PATH, "library", "music"))[:-1]
+        defaultPathAudio = path.replace("library://music", os.path.join(KODI_PATH, "system", "library", "music"))[:-1]
 
         paths = [customPathVideo, defaultPathVideo, customPathAudio, defaultPathAudio]
         foundPath = False
@@ -185,10 +187,10 @@ class NodeFunctions:
         else:
             return ""
 
-        customPath = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://profile"), "library", pathEnd)) + "index.xml"
-        customFile = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://profile"), "library", pathEnd))[:-1] + ".xml"
-        defaultPath = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", pathEnd)) + "index.xml"
-        defaultFile = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", pathEnd))[:-1] + ".xml"
+        customPath = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
+        customFile = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
+        defaultPath = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd)) + "index.xml"
+        defaultFile = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd))[:-1] + ".xml"
 
         # Check whether the node exists - either as a parent node (with an index.xml) or a view node (append .xml)
         # in first custom video nodes, then default video nodes
@@ -206,8 +208,8 @@ class NodeFunctions:
         if path.endswith("/"):
             path = path[:-1]
         path = path.rsplit("/", 1)[0]
-        customPath = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://profile"), "library", pathEnd)) + "/index.xml"
-        defaultPath = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", pathEnd)) + "/index.xml"
+        customPath = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd)) + "/index.xml"
+        defaultPath = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd)) + "/index.xml"
         nodeParent = None
 
         if xbmcvfs.exists(customPath):
@@ -252,10 +254,10 @@ class NodeFunctions:
         else:
             return "unknown"
 
-        customPath = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://profile"), "library", pathEnd)) + "index.xml"
-        customFile = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://profile"), "library", pathEnd))[:-1] + ".xml"
-        defaultPath = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", pathEnd)) + "index.xml"
-        defaultFile = path.replace(pathStart, os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", pathEnd))[:-1] + ".xml"
+        customPath = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
+        customFile = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
+        defaultPath = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd)) + "index.xml"
+        defaultFile = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd))[:-1] + ".xml"
 
         # Check whether the node exists - either as a parent node (with an index.xml) or a view node (append .xml)
         # in first custom video nodes, then default video nodes
@@ -481,7 +483,7 @@ class NodeFunctions:
             return
 
         # Load the properties
-        currentProperties, defaultProperties = DATA._get_additionalproperties(xbmcvfs.translatePath("special://profile/"))
+        currentProperties, defaultProperties = DATA._get_additionalproperties(PROFILE_PATH)
         otherProperties, requires, templateOnly = DATA._getPropertyRequires()
 
         # If there aren't any currentProperties, use the defaultProperties instead

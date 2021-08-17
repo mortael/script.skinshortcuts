@@ -20,7 +20,7 @@ import xbmc
 import xbmcvfs
 from .common import get_hash
 from .common import log
-from .constants import SKIN_PATH
+from .constants import SKIN_SHORTCUTS_PATH
 
 hashlist = []
 
@@ -28,7 +28,7 @@ hashlist = []
 class Template:
     def __init__(self):
         # Load the skins template.xml file
-        templatepath = os.path.join(SKIN_PATH, "template.xml")
+        templatepath = os.path.join(SKIN_SHORTCUTS_PATH, "template.xml")
         self.otherTemplates = []
         try:
             self.tree = xmltree.parse(templatepath)

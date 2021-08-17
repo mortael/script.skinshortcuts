@@ -29,7 +29,8 @@ from .constants import DATA_PATH
 from .constants import DEFAULT_PATH
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
-from .constants import SKIN_PATH
+from .constants import PROFILE_PATH
+from .constants import SKIN_SHORTCUTS_PATH
 
 NODE = nodefunctions.NodeFunctions()
 
@@ -139,13 +140,13 @@ class DataFunctions:
         log("Loading shortcuts for group " + group)
 
         if profileDir is None:
-            profileDir = xbmcvfs.translatePath("special://profile/")
+            profileDir = PROFILE_PATH
 
         userShortcuts = os.path.join(profileDir, "addon_data", ADDON_ID, self.slugify(group, True, isSubLevel=isSubLevel) + ".DATA.xml")
-        skinShortcuts = os.path.join(SKIN_PATH, self.slugify(group) + ".DATA.xml")
+        skinShortcuts = os.path.join(SKIN_SHORTCUTS_PATH, self.slugify(group) + ".DATA.xml")
         defaultShortcuts = os.path.join(DEFAULT_PATH, self.slugify(group) + ".DATA.xml")
         if defaultGroup is not None:
-            skinShortcuts = os.path.join(SKIN_PATH, self.slugify(defaultGroup) + ".DATA.xml")
+            skinShortcuts = os.path.join(SKIN_SHORTCUTS_PATH, self.slugify(defaultGroup) + ".DATA.xml")
             defaultShortcuts = os.path.join(DEFAULT_PATH, self.slugify(defaultGroup) + ".DATA.xml")
 
         if defaultsOnly:
@@ -501,7 +502,7 @@ class DataFunctions:
         if "skin" in self.overrides:
             return self.overrides["skin"]
 
-        overridePath = os.path.join(SKIN_PATH, "overrides.xml")
+        overridePath = os.path.join(SKIN_SHORTCUTS_PATH, "overrides.xml")
         try:
             tree = xmltree.parse(overridePath)
             self._save_hash(overridePath)
@@ -657,7 +658,7 @@ class DataFunctions:
                                 self.defaultProperties.append([elem.attrib.get("group"), labelID, "widgetTarget", elem.attrib.get("target"), defaultID])
 
         # Load icons out of mainmenu.DATA.xml
-        path = os.path.join(SKIN_PATH, "mainmenu.DATA.xml")
+        path = os.path.join(SKIN_SHORTCUTS_PATH, "mainmenu.DATA.xml")
         if xbmcvfs.exists(path):
             self._save_hash(path)
             tree = xmltree.parse(path)

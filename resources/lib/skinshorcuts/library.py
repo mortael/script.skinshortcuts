@@ -24,8 +24,10 @@ from .common import read_file
 from .constants import ADDON_ID
 from .constants import CWD
 from .constants import DATA_PATH
+from .constants import KODI_PATH
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
+from .constants import PROFILE_PATH
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
@@ -747,11 +749,11 @@ class LibraryFunctions:
         else:
             return
 
-        rootdir = os.path.join(xbmcvfs.translatePath("special://profile"), "library", library)
+        rootdir = os.path.join(PROFILE_PATH, "library", library)
         if node_type == "custom":
             log("Listing custom %s nodes..." % library)
         else:
-            rootdir = os.path.join(xbmcvfs.translatePath("special://xbmc"), "system", "library", library)
+            rootdir = os.path.join(KODI_PATH, "system", "library", library)
             log("Listing default %s nodes..." % library)
 
         nodes = NODE.get_nodes(rootdir, prefix)

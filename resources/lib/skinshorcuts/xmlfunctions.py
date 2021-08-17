@@ -27,6 +27,7 @@ from .constants import ADDON_VERSION
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import MASTER_PATH
+from .constants import SKIN_PATH
 
 DATA = datafunctions.DataFunctions()
 
@@ -42,7 +43,7 @@ class XMLFunctions:
         self.loadedPropertyPatterns = False
         self.propertyPatterns = None
 
-        self.skinDir = xbmcvfs.translatePath("special://skin")
+        self.skinDir = SKIN_PATH
 
         self.checkForShortcuts = []
 
@@ -849,11 +850,11 @@ class XMLFunctions:
             if onclick.text.startswith("pvr-channel://"):
                 # PVR action
                 onclickelement.text = "RunScript(script.skinshortcuts,type=launchpvr&channel=" + onclick.text.replace("pvr-channel://", "") + ")"
-            elif onclick.text.startswith("ActivateWindow(") and xbmcvfs.translatePath("special://skin/") in onclick.text:
+            elif onclick.text.startswith("ActivateWindow(") and SKIN_PATH in onclick.text:
                 # Skin-relative links
                 try:
                     actionParts = onclick.text[15:-1].split(",")
-                    actionParts[1] = actionParts[1].replace(xbmcvfs.translatePath("special://skin/"), "")
+                    actionParts[1] = actionParts[1].replace(SKIN_PATH, "")
                     _ = actionParts[1].split(os.sep)
                     newAction = "special://skin"
                     for actionPart in actionParts[1].split(os.sep):

@@ -22,9 +22,11 @@ KODI_VERSION = xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
 CWD = ADDON.getAddonInfo('path')
 
 DEFAULT_PATH = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'shortcuts'))
-DATA_PATH = xbmcvfs.translatePath("special://profile/addon_data/%s" % ADDON_ID)
-SKIN_PATH = xbmcvfs.translatePath("special://skin/shortcuts/")
+DATA_PATH = xbmcvfs.translatePath("special://profile/addon_data/%s/" % ADDON_ID)
+SKIN_SHORTCUTS_PATH = xbmcvfs.translatePath("special://skin/shortcuts/")
 RESOURCE_PATH = xbmcvfs.translatePath(os.path.join(CWD, 'resources', 'lib'))
-MASTER_PATH = xbmcvfs.translatePath("special://masterprofile/addon_data/%s" % ADDON_ID)
-
+MASTER_PATH = xbmcvfs.translatePath("special://masterprofile/addon_data/%s/" % ADDON_ID)
+SKIN_PATH = xbmcvfs.translatePath("special://skin/")
+PROFILE_PATH = xbmcvfs.translatePath("special://profile/")
+KODI_PATH = xbmcvfs.translatePath("special://xbmc/")
 LANGUAGE = ADDON.getLocalizedString
