@@ -34,8 +34,6 @@ from .constants import SKIN_SHORTCUTS_PATH
 
 NODE = nodefunctions.NodeFunctions()
 
-hashlist = []
-
 # character entity reference
 CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
 
@@ -52,6 +50,7 @@ REMOVE_REXP = re.compile(r'-{2,}')
 
 class DataFunctions:
     def __init__(self):
+        self.hashlist = []
         self.overrides = {}
 
         self.widgetNameAndType = {}
@@ -1207,12 +1206,20 @@ class DataFunctions:
         if xbmcvfs.exists(propFile):
             xbmcvfs.delete(propFile)
 
-    @staticmethod
-    def _save_hash(filename, none_override=False):
+    def _save_hash(self, filename, none_override=False):
         if none_override:
-            hashlist.append([filename, None])
+            file_hash = None
         else:
-            hashlist.append([filename, get_hash(filename)])
+            file_hash = get_hash(filename)
+
+        self.hashlist = [
+            [filename, file_hash]
+            if len(item) == 2 and item[0] == filename else
+            item
+            for item in enumerate(self.hashlist)
+        ]
+
+        return file_hash
 
     # in-place prettyprint formatter
     def indent(self, elem, level=0):

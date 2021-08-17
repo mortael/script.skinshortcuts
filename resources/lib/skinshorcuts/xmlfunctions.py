@@ -6,7 +6,7 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import ast
+import json
 import os
 import re
 import xml.etree.ElementTree as xmltree
@@ -80,7 +80,8 @@ class XMLFunctions:
         else:
             profilelist = [["special://masterprofile", None]]
 
-        if self.shouldwerun(profilelist) is False:
+        shouldwerun = self.shouldwerun(profilelist)
+        if shouldwerun is False:
             log("Menu is up to date")
             xbmcgui.Window(10000).clearProperty("skinshortcuts-isrunning")
             return
@@ -206,7 +207,7 @@ class XMLFunctions:
             log("Hash list does not exist")
             return True
         try:
-            hashes = ast.literal_eval(read_file(hashesPath))
+            hashes = json.loads(read_file(hashesPath))
         except:
             log("Unable to parse hash list")
             print_exc()
@@ -723,6 +724,12 @@ class XMLFunctions:
         addonpath = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
         addon = xmltree.parse(addonpath)
         extensionpoints = addon.findall("extension")
+
+        skinVersion = addon.getroot().attrib.get("version")
+        # Append the skin version to the hashlist
+        hashlist.append(["::SKINVER::", skinVersion])
+
+        # add all paths to be hash
         paths = []
         for extensionpoint in extensionpoints:
             if extensionpoint.attrib.get("point") == "xbmc.gui.skin":
@@ -733,20 +740,23 @@ class XMLFunctions:
                                      "script-skinshortcuts-includes.xml")
                     )
                     paths.append(path)
-        skinVersion = addon.getroot().attrib.get("version")
+
+        hashlist.append([Template.templatepath,
+                         Template._save_hash(Template.templatepath)])
 
         # Save the tree
         DATA.indent(tree.getroot())
         for path in paths:
+            if not xbmcvfs.exists(path):
+                with open(path, "a") as _:  # touch to create the file
+                    pass
             tree.write(path, encoding="UTF-8")
-            DATA._save_hash(path)
+            # generate a hash for all paths
+            path_hash = DATA._save_hash(path)
+            hashlist.append([path, path_hash])
 
         # Save the hashes
-        # Append the skin version to the hashlist
-        hashlist.append(["::SKINVER::", skinVersion])
-
-        # Save the hashes
-        write_file(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"), repr(hashlist))
+        write_file(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"), json.dumps(hashlist, indent=4))
 
     def buildElement(self, item, groupName, visibilityCondition, profileVisibility,
                      submenuVisibility=None, itemid=-1, mainmenuid=None, options=[]):

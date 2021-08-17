@@ -22,16 +22,15 @@ from .common import get_hash
 from .common import log
 from .constants import SKIN_SHORTCUTS_PATH
 
-hashlist = []
-
 
 class Template:
     def __init__(self):
         # Load the skins template.xml file
-        templatepath = os.path.join(SKIN_SHORTCUTS_PATH, "template.xml")
+        self.templatepath = os.path.join(SKIN_SHORTCUTS_PATH, "template.xml")
         self.otherTemplates = []
+        self.hashlist = []
         try:
-            self.tree = xmltree.parse(templatepath)
+            self.tree = xmltree.parse(self.templatepath)
 
             log("Loaded template.xml file")
 
@@ -47,17 +46,17 @@ class Template:
                     self.otherTemplates.append(includeName)
 
             # Add the template.xml to the hash file
-            self._save_hash(templatepath)
+            self._save_hash(self.templatepath)
         except:
             # We couldn't load the template.xml file
-            if xbmcvfs.exists(templatepath):
+            if xbmcvfs.exists(self.templatepath):
                 # Unable to parse template.xml
                 log("Unable to parse template.xml. Invalid xml?")
-                self._save_hash(templatepath)
+                self._save_hash(self.templatepath)
             else:
                 # No template.xml
                 self.tree = None
-                self._save_hash(templatepath, none_override=True)
+                self._save_hash(self.templatepath, none_override=True)
 
         # Empty variable which will contain our base elementree (passed from buildxml)
         self.includes = None
@@ -942,12 +941,20 @@ class Template:
             newelements.insert(0, newElement)
         return newelements
 
-    @staticmethod
-    def _save_hash(filename, none_override=False):
+    def _save_hash(self, filename, none_override=False):
         if none_override:
-            hashlist.append([filename, None])
+            file_hash = None
         else:
-            hashlist.append([filename, get_hash(filename)])
+            file_hash = get_hash(filename)
+
+        self.hashlist = [
+            [filename, file_hash]
+            if len(item) == 2 and item[0] == filename else
+            item
+            for item in enumerate(self.hashlist)
+        ]
+
+        return file_hash
 
     def copy_tree(self, elem):
         if elem is None:
