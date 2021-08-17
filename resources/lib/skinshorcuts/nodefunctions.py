@@ -56,7 +56,8 @@ class NodeFunctions:
             for _dir in dirs:
                 self.parse_node(os.path.join(path, _dir), _dir, nodes, prefix)
             for file in files:
-                self.parse_view(os.path.join(path, file), nodes, origPath="%s/%s" % (prefix, file), prefix=prefix)
+                self.parse_view(os.path.join(path, file), nodes,
+                                origPath="%s/%s" % (prefix, file), prefix=prefix)
         except:
             print_exc()
             return False
@@ -66,7 +67,8 @@ class NodeFunctions:
     def parse_node(self, node, directory, nodes, prefix):
         # If the folder we've been passed contains an index.xml, send that file to be processed
         if xbmcvfs.exists(os.path.join(node, "index.xml")):
-            self.parse_view(os.path.join(node, "index.xml"), nodes, True, "%s/%s/" % (prefix, directory), node, prefix=prefix)
+            self.parse_view(os.path.join(node, "index.xml"), nodes, True,
+                            "%s/%s/" % (prefix, directory), node, prefix=prefix)
 
     def parse_view(self, file, nodes, isFolder=False, origFolder=None, origPath=None, prefix=None):
         if not isFolder and file.endswith("index.xml"):
@@ -96,7 +98,8 @@ class NodeFunctions:
                 if not xbmc.getCondVisibility(visibleAttrib):
                     # The node isn't visible
                     return
-                if "Library.HasContent(" in visibleAttrib and "+" not in visibleAttrib and "|" not in visibleAttrib:
+                if "Library.HasContent(" in visibleAttrib and "+" not in visibleAttrib and \
+                        "|" not in visibleAttrib:
                     mediaType = visibleAttrib.split("(")[1].split(")")[0].lower()
 
             # Try to get media type from content node
@@ -135,10 +138,14 @@ class NodeFunctions:
 
     @staticmethod
     def isGrouped(path):
-        customPathVideo = path.replace("library://video", os.path.join(PROFILE_PATH, "library", "video"))[:-1]
-        defaultPathVideo = path.replace("library://video", os.path.join(KODI_PATH, "system", "library", "video"))[:-1]
-        customPathAudio = path.replace("library://music", os.path.join(PROFILE_PATH, "library", "music"))[:-1]
-        defaultPathAudio = path.replace("library://music", os.path.join(KODI_PATH, "system", "library", "music"))[:-1]
+        customPathVideo = path.replace("library://video",
+                                       os.path.join(PROFILE_PATH, "library", "video"))[:-1]
+        defaultPathVideo = path.replace("library://video",
+                                        os.path.join(KODI_PATH, "system", "library", "video"))[:-1]
+        customPathAudio = path.replace("library://music",
+                                       os.path.join(PROFILE_PATH, "library", "music"))[:-1]
+        defaultPathAudio = path.replace("library://music",
+                                        os.path.join(KODI_PATH, "system", "library", "music"))[:-1]
 
         paths = [customPathVideo, defaultPathVideo, customPathAudio, defaultPathAudio]
         foundPath = False
@@ -187,13 +194,21 @@ class NodeFunctions:
         else:
             return ""
 
-        customPath = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
-        customFile = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
-        defaultPath = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd)) + "index.xml"
-        defaultFile = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd))[:-1] + ".xml"
+        customPath = path.replace(pathStart,
+                                  os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
+        customFile = path.replace(pathStart,
+                                  os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
+        defaultPath = path.replace(
+            pathStart,
+            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        ) + "index.xml"
+        defaultFile = path.replace(
+            pathStart,
+            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        )[:-1] + ".xml"
 
-        # Check whether the node exists - either as a parent node (with an index.xml) or a view node (append .xml)
-        # in first custom video nodes, then default video nodes
+        # Check whether the node exists - either as a parent node (with an index.xml)
+        # or a view node (append .xml) in first custom video nodes, then default video nodes
         nodeFile = None
         if xbmcvfs.exists(customPath):
             nodeFile = customPath
@@ -208,8 +223,12 @@ class NodeFunctions:
         if path.endswith("/"):
             path = path[:-1]
         path = path.rsplit("/", 1)[0]
-        customPath = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd)) + "/index.xml"
-        defaultPath = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd)) + "/index.xml"
+        customPath = path.replace(pathStart,
+                                  os.path.join(PROFILE_PATH, "library", pathEnd)) + "/index.xml"
+        defaultPath = path.replace(
+            pathStart,
+            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        ) + "/index.xml"
         nodeParent = None
 
         if xbmcvfs.exists(customPath):
@@ -254,13 +273,21 @@ class NodeFunctions:
         else:
             return "unknown"
 
-        customPath = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
-        customFile = path.replace(pathStart, os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
-        defaultPath = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd)) + "index.xml"
-        defaultFile = path.replace(pathStart, os.path.join(KODI_PATH, "system", "library", pathEnd))[:-1] + ".xml"
+        customPath = path.replace(pathStart,
+                                  os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
+        customFile = path.replace(pathStart,
+                                  os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
+        defaultPath = path.replace(
+            pathStart,
+            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        ) + "index.xml"
+        defaultFile = path.replace(
+            pathStart,
+            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        )[:-1] + ".xml"
 
-        # Check whether the node exists - either as a parent node (with an index.xml) or a view node (append .xml)
-        # in first custom video nodes, then default video nodes
+        # Check whether the node exists - either as a parent node (with an index.xml)
+        # or a view node (append .xml) in first custom video nodes, then default video nodes
         if xbmcvfs.exists(customPath):
             path = customPath
         elif xbmcvfs.exists(customFile):
@@ -281,7 +308,8 @@ class NodeFunctions:
             mediaType = "unknown"
             if "visible" in root.attrib:
                 visibleAttrib = root.attrib.get("visible")
-                if "Library.HasContent(" in visibleAttrib and "+" not in visibleAttrib and "|" not in visibleAttrib:
+                if "Library.HasContent(" in visibleAttrib and "+" not in visibleAttrib and \
+                        "|" not in visibleAttrib:
                     mediaType = visibleAttrib.split("(")[1].split(")")[0].lower()
 
             contentNode = root.find("content")
@@ -309,14 +337,24 @@ class NodeFunctions:
         # Work out if it's a single item, or a node
         isNode = False
         jsonPath = path.replace("\\", "\\\\")
-
-        json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Files.GetDirectory", "params": { "properties": ["title", "file", "thumbnail"], "directory": "' + jsonPath + '", "media": "files" } }')
+        json_payload = {
+            "jsonrpc": "2.0",
+            "id": 0,
+            "method": "Files.GetDirectory",
+            "params": {
+                "properties": ["title", "file", "thumbnail"],
+                "directory": "%s" % jsonPath,
+                "media": "files"
+            }
+        }
+        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
         json_response = json.loads(json_query)
 
         nodePaths = []
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'files' in json_response['result'] and json_response['result']['files'] is not None:
+        if 'result' in json_response and 'files' in json_response['result'] and \
+                json_response['result']['files'] is not None:
             labels = [LANGUAGE(32058)]
             paths = ["ActivateWindow(%s,%s,return)" % (window, path)]
             for item in json_response['result']['files']:
@@ -335,7 +373,8 @@ class NodeFunctions:
         # Add actions based on content
         if content == "albums":
             labels.append("Play")
-            paths.append("RunScript(script.skinshortcuts,type=launchalbum&album=%s)" % (self.extractID(path)))
+            paths.append("RunScript(script.skinshortcuts,type=launchalbum&album=%s)" %
+                         (self.extractID(path)))
         if window == 10002:
             labels.append("Slideshow")
             paths.append("SlideShow(%s,notrandom)" % path)
@@ -352,7 +391,9 @@ class NodeFunctions:
         allMenuItems = [xbmcgui.ListItem(label=LANGUAGE(32112))]  # Main menu
         allLabelIDs = ["mainmenu"]
         if isNode:
-            allMenuItems.append(xbmcgui.ListItem(label=LANGUAGE(32113)))  # Main menu + autofill submenu
+            allMenuItems.append(
+                xbmcgui.ListItem(label=LANGUAGE(32113))  # Main menu + autofill submenu
+            )
             allLabelIDs.append("mainmenu")
 
         # Get main menu items
@@ -365,7 +406,8 @@ class NodeFunctions:
                 'icon': menuitem.find("icon").text
             })
             allMenuItems.append(listitem)
-            allLabelIDs.append(DATA._get_labelID(DATA.local(menuitem.find("label").text)[3], menuitem.find("action").text))
+            allLabelIDs.append(DATA._get_labelID(DATA.local(menuitem.find("label").text)[3],
+                                                 menuitem.find("action").text))
 
         # Close progress dialog
         dialog.close()
@@ -412,7 +454,12 @@ class NodeFunctions:
         xmltree.SubElement(newelement, "action").text = action
 
         DATA.indent(menuitems.getroot())
-        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID, "%s.DATA.xml" % (DATA.slugify(allLabelIDs[selectedMenu], True))))
+        path = xbmcvfs.translatePath(os.path.join("special://profile",
+                                                  "addon_data",
+                                                  ADDON_ID,
+                                                  "%s.DATA.xml" %
+                                                  (DATA.slugify(allLabelIDs[selectedMenu], True)))
+                                     )
         menuitems.write(path, encoding="UTF-8")
 
         if isNode and selectedMenu == 1:
@@ -426,10 +473,13 @@ class NodeFunctions:
                     xmltree.SubElement(newelement, "label2").text = "32024"  # Custom shortcut
                     xmltree.SubElement(newelement, "icon").text = item["thumbnail"]
                     xmltree.SubElement(newelement, "thumb")
-                    xmltree.SubElement(newelement, "action").text = "ActivateWindow(%s,%s,return)" % (window, item["file"])
+                    xmltree.SubElement(newelement, "action").text = \
+                        "ActivateWindow(%s,%s,return)" % (window, item["file"])
 
             DATA.indent(menuitems.getroot())
-            path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID, DATA.slugify(newLabelID, True) + ".DATA.xml"))
+            path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data",
+                                                      ADDON_ID, DATA.slugify(newLabelID, True) +
+                                                      ".DATA.xml"))
             menuitems.write(path, encoding="UTF-8")
 
         # Mark that the menu needs to be rebuilt
@@ -502,7 +552,8 @@ class NodeFunctions:
                 allProps[currentProperty[0]][currentProperty[1]] = {}
             # And add the property to allProps[ group ][ labelID ]
             if currentProperty[3] is not None:
-                allProps[currentProperty[0]][currentProperty[1]][currentProperty[2]] = currentProperty[3]
+                allProps[currentProperty[0]][currentProperty[1]][currentProperty[2]] = \
+                    currentProperty[3]
 
         # Loop through the properties we've been asked to set
         for count, propertyName in enumerate(propertyNames):
@@ -516,7 +567,9 @@ class NodeFunctions:
 
             # Remove any properties whose requirements haven't been met
             for key in otherProperties:
-                if key in list(allProps[group][labelID].keys()) and key in list(requires.keys()) and requires[key] not in list(allProps[group][labelID].keys()):
+                if key in list(allProps[group][labelID].keys()) and \
+                        key in list(requires.keys()) and \
+                        requires[key] not in list(allProps[group][labelID].keys()):
                     # This properties requirements aren't met
                     log("Removing value %s" % key)
                     allProps[group][labelID].pop(key)
@@ -526,7 +579,8 @@ class NodeFunctions:
         for saveGroup in allProps:
             for saveLabelID in allProps[saveGroup]:
                 for saveProperty in allProps[saveGroup][saveLabelID]:
-                    saveData.append([saveGroup, saveLabelID, saveProperty, allProps[saveGroup][saveLabelID][saveProperty]])
+                    saveData.append([saveGroup, saveLabelID, saveProperty,
+                                     allProps[saveGroup][saveLabelID][saveProperty]])
 
         # Save the new properties
         try:
@@ -537,12 +591,13 @@ class NodeFunctions:
             print_exc()
             log("### ERROR could not save file %s" % DATA_PATH)
 
-        # The properties will only be used if the .DATA.xml file exists in the addon_data folder( otherwise
-        #  the script will use the default values), so we're going to open and write the 'group' that has been
-        # passed to us
+        # The properties will only be used if the .DATA.xml file exists in the
+        # addon_data folder( otherwise the script will use the default values),
+        # so we're going to open and write the 'group' that has been passed to us
         menuitems = DATA._get_shortcuts(group, processShortcuts=False)
         DATA.indent(menuitems.getroot())
-        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID, "%s.DATA.xml" % (DATA.slugify(group, True))))
+        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID,
+                                                  "%s.DATA.xml" % (DATA.slugify(group, True))))
         menuitems.write(path, encoding="UTF-8")
 
         log("Properties updated")
