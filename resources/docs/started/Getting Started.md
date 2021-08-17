@@ -64,7 +64,7 @@ It is possible to use the additional sub-menu's in a way that means that they sh
 
 In this case you can indicate that the additional submenu's should not be shared with other skins by adding the following to your :-
 
-<doNotShareLevels />
+`<doNotShareLevels />`
 
 However, it is expected that this will only be used when you are using the additional menu's in an unusual way, and it is preferable if there are issues with your skin using the shared additional submenu's for you to work with us to improve the script.
 
