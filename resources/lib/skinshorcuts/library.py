@@ -2110,24 +2110,22 @@ class LibraryFunctions:
         # User has all widget providers installed
         return False
 
+    def _install_widget_provider(self, provider):
+        xbmc.executebuiltin("InstallAddon(%s)" % provider)
+        self._observe_dialogs(["DialogConfirm.xml", "DialogConfirm.xml"])
+
+    def _enable_widget_provider(self, provider):
+        xbmc.executebuiltin("EnableAddon(%s)" % provider)
+        self._observe_dialogs(["DialogConfirm.xml", "DialogConfirm.xml"])
+
     @staticmethod
-    def _install_widget_provider(provider):
-        executeAndObserve = ("InstallAddon(%s)", "DialogConfirm.xml", "DialogConfirm.xml")
-
-        xbmc.executebuiltin(executeAndObserve[0] % provider)
-
-        if xbmc.Monitor().waitForAbort(0.5):
-            return
-        while xbmc.getCondVisibility("Window.IsActive(%s)" % (executeAndObserve[1])):
+    def _observe_dialogs(dialogs):
+        for dialog_xml in dialogs:
             if xbmc.Monitor().waitForAbort(0.5):
                 return
-
-        # Stage 2 - progress dialog
-        if xbmc.Monitor().waitForAbort(0.5):
-            return
-        while xbmc.getCondVisibility("Window.IsActive(%s)" % (executeAndObserve[2])):
-            if xbmc.Monitor().waitForAbort(0.5):
-                return
+            while xbmc.getCondVisibility("Window.IsActive(%s)" % dialog_xml):
+                if xbmc.Monitor().waitForAbort(0.5):
+                    return
 
     # ======================
     # === AUTO-PLAYLISTS ===
@@ -2611,6 +2609,14 @@ class LibraryFunctions:
             elif path.startswith("::INSTALL::"):
                 # Try to automatically install an addon
                 self._install_widget_provider(path.replace("::INSTALL::", ""))
+
+                # Re-call this function
+                return self.selectShortcut(group=group, grouping=grouping, custom=custom,
+                                           showNone=showNone, currentAction=currentAction)
+
+            elif path.startswith("::ENABLE::"):
+                # Try to automatically enable an addon
+                self._enable_widget_provider(path.replace("::ENABLE::", ""))
 
                 # Re-call this function
                 return self.selectShortcut(group=group, grouping=grouping, custom=custom,
