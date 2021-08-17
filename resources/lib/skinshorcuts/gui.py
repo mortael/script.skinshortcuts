@@ -427,6 +427,9 @@ class GUI(xbmcgui.WindowXMLDialog):
         if listitem is None:
             listitem = self.getControl(211).getSelectedItem()
 
+        if listitem is None:
+            return
+
         # Process current properties
         currentProperties = listitem.getProperty("skinshortcuts-allproperties")
         if currentProperties != "":
