@@ -2589,11 +2589,12 @@ class LibraryFunctions:
                 elif ">" in path:
                     # Give the user the choice of playing, displaying or party more for the playlist
                     dialog = xbmcgui.Dialog()
-                    userchoice = dialog.select(LANGUAGE(32060),
-                                               [LANGUAGE(32061),
-                                                LANGUAGE(32062),
-                                                xbmc.getLocalizedString(589)]
-                                               )
+                    userchoice = dialog.select(
+                        LANGUAGE(32060),
+                        [LANGUAGE(32061),
+                         LANGUAGE(32062),
+                         xbmc.getLocalizedString(589)]
+                    )
                     # 0 - Display
                     # 1 - Play
                     # 2 - Party mode
