@@ -501,7 +501,7 @@ class XMLFunctions:
                     else:
                         submenudata = DATA._get_shortcuts(submenu, None, True, profile[0], isSubLevel=True)
 
-                    if type(submenudata) == list:
+                    if isinstance(submenudata, list):
                         submenuitems = submenudata
                     else:
                         submenuitems = submenudata.findall("shortcut")
