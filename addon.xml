@@ -8,7 +8,24 @@
 	<extension point="xbmc.python.library" library="resources/lib/entry_point.py"/>
 	<extension point="xbmc.addon.metadata">
 		<news>
-Kodi v19 Matrix + Python 3 compatibility
+- restructured (no change to API)
+- added copyright and spdx license headers
+- housekeeping
+	- imports
+	- whitespace
+	- unused variables
+	- line length
+	- shadowed builtins
+	- additional linting
+	- po file comments and metadata
+- moved shared/common constants to their own module
+- refactored json rpc requests and moved to common module
+- refactored logging and moved to common module
+- refactored hash generation and moved to common module
+- refactored file handling and moved to common module
+- removed any unnecessary string encoding/decoding
+- assorted minor fixes
+- added ::ENABLE:: to enable an add-on, used like ::INSTALL::
 		</news>
 		<platform>all</platform>
 		<license>GPL-2.0-only</license>
