@@ -1095,9 +1095,9 @@ class DataFunctions:
     @staticmethod
     def _save_hash(filename, none_override=False):
         if none_override:
-            hashlist.append([filename.encode("utf8"), None])
+            hashlist.append([filename, None])
         else:
-            hashlist.append([filename.encode("utf8"), get_hash(filename)])
+            hashlist.append([filename, get_hash(filename)])
 
     # in-place prettyprint formatter
     def indent(self, elem, level=0):
@@ -1209,15 +1209,11 @@ class DataFunctions:
             text = "NUM-" + text
 
         # text to unicode
-        if type(text) != str:
+        if isinstance(text, bytes):
             text = str(text, 'utf-8', 'ignore')
 
         # decode unicode ( ??? = Ying Shi Ma)
         text = unidecode(text)
-
-        # text back to unicode
-        if type(text) != str:
-            text = str(text, 'utf-8', 'ignore')
 
         # character entity reference
         if entities:

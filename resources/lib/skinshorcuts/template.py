@@ -903,9 +903,9 @@ class Template:
     @staticmethod
     def _save_hash(filename, none_override=False):
         if none_override:
-            hashlist.append([filename.encode("utf8"), None])
+            hashlist.append([filename, None])
         else:
-            hashlist.append([filename.encode("utf8"), get_hash(filename)])
+            hashlist.append([filename, get_hash(filename)])
 
     def copy_tree(self, elem):
         if elem is None:
