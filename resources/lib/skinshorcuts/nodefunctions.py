@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import json
 import os
 import re
 import xml.etree.ElementTree as xmltree
@@ -17,6 +16,7 @@ import xbmc
 import xbmcgui
 import xbmcvfs
 from .common import log
+from .common import rpc_request
 from .common import write_file
 from .constants import ADDON
 from .constants import ADDON_ID
@@ -347,8 +347,7 @@ class NodeFunctions:
                 "media": "files"
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         nodePaths = []
 
@@ -365,7 +364,7 @@ class NodeFunctions:
         else:
             # Unable to add to get directory listings
             log("Invalid JSON response returned")
-            log(repr(json))
+            log(repr(json_response))
             # And tell the user it failed
             xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), ADDON.getLocalizedString(32115))
             return

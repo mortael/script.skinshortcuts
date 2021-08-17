@@ -7,6 +7,7 @@
 """
 
 import hashlib
+import json
 import traceback
 
 import xbmc
@@ -44,3 +45,8 @@ def get_hash(filename):
         log("Unable to generate hash for %s" % filename)
         traceback.print_exc()
         raise
+
+
+def rpc_request(request):
+    payload = xbmc.executeJSONRPC(json.dumps(request))
+    return json.loads(payload)

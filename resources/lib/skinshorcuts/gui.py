@@ -8,7 +8,6 @@
 
 import _thread as thread
 import calendar
-import json
 import os
 import random
 import xml.etree.ElementTree as xmltree
@@ -22,6 +21,7 @@ from . import datafunctions
 from . import library
 from .common import log
 from .common import read_file
+from .common import rpc_request
 from .common import write_file
 from .constants import ADDON
 from .constants import CWD
@@ -619,7 +619,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         "value": False
                     }
                 }
-                _ = xbmc.executeJSONRPC(json.dumps(json_payload))
+                _ = rpc_request(json_payload)
             if weEnabledScriptDebug:
                 ADDON.setSetting("enable_logging", "false")
 
@@ -643,8 +643,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             "id": 0,
             "method": "Settings.getSettings"
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         enabledSystemDebug = False
         enabledScriptDebug = False
@@ -662,7 +661,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                 "value": True
                             }
                         }
-                        _ = xbmc.executeJSONRPC(json.dumps(json_payload))
+                        _ = rpc_request(json_payload)
                         enabledSystemDebug = True
 
         if ADDON.getSetting("enable_logging") != "true":

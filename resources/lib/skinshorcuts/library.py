@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import json
 import os
 import xml.etree.ElementTree as xmltree
 from traceback import print_exc
@@ -21,6 +20,7 @@ from . import datafunctions
 from . import nodefunctions
 from .common import log
 from .common import read_file
+from .common import rpc_request
 from .constants import ADDON_ID
 from .constants import CWD
 from .constants import DATA_PATH
@@ -43,8 +43,7 @@ def kodiwalk(path, stringForce=False):
         },
         "id": 1
     }
-    json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-    json_response = json.loads(json_query)
+    json_response = rpc_request(json_payload)
     files = []
     if 'result' in json_response and 'files' in json_response['result'] and \
             json_response['result']['files'] is not None:
@@ -225,7 +224,7 @@ class LibraryFunctions:
                     "media": "files"
                 }
             }
-            _ = xbmc.executeJSONRPC(json.dumps(json_payload))
+            _ = rpc_request(json_payload)
             self.loaded["upnp"][0] = True
 
     # ==============================================
@@ -1090,8 +1089,7 @@ class LibraryFunctions:
                                "locked", "channel", "lastplayed"]
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'channels' in json_response['result'] and \
@@ -1118,8 +1116,7 @@ class LibraryFunctions:
                                "locked", "channel", "lastplayed"]
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'channels' in json_response['result'] and \
@@ -1196,7 +1193,7 @@ class LibraryFunctions:
                     "media": "files"
                 }
             }
-            _ = xbmc.executeJSONRPC(json.dumps(json_payload))
+            _ = rpc_request(json_payload)
             self.loaded["upnp"][0] = True
 
     def librarysources(self):
@@ -1210,8 +1207,7 @@ class LibraryFunctions:
                 "media": "video"
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'sources' in json_response['result'] and \
@@ -1236,8 +1232,7 @@ class LibraryFunctions:
                 "media": "music"
             }
         }
-        json_query = xbmc.executeJSONRPC(json_payload)
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'sources' in json_response['result'] and \
@@ -1262,8 +1257,7 @@ class LibraryFunctions:
                 "media": "pictures"
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'sources' in json_response['result'] and \
@@ -1506,8 +1500,7 @@ class LibraryFunctions:
                     "properties": ["name", "path", "thumbnail", "enabled"]
                 }
             }
-            json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-            json_response = json.loads(json_query)
+            json_response = rpc_request(json_payload)
 
             if 'result' in json_response and 'addons' in json_response['result'] and \
                     json_response['result']['addons'] is not None:
@@ -1769,8 +1762,7 @@ class LibraryFunctions:
                 "media": "files"
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'files' in json_response['result'] and \
@@ -2413,8 +2405,7 @@ class LibraryFunctions:
                 "media": "files"
             }
         }
-        json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-        json_response = json.loads(json_query)
+        json_response = rpc_request(json_payload)
         if 'result' in json_response and 'files' in json_response['result'] and \
                 json_response['result']['files']:
             json_result = json_response['result']['files']

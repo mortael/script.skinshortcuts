@@ -7,7 +7,6 @@
 """
 
 import ast
-import json
 import os
 import re
 import xml.etree.ElementTree as xmltree
@@ -21,6 +20,7 @@ from . import template
 from .common import get_hash
 from .common import log
 from .common import read_file
+from .common import rpc_request
 from .common import write_file
 from .constants import ADDON
 from .constants import ADDON_VERSION
@@ -123,7 +123,7 @@ class XMLFunctions:
                             "value": False
                         }
                     }
-                    _ = xbmc.executeJSONRPC(json.dumps(json_payload))
+                    _ = rpc_request(json_payload)
                 if weEnabledScriptDebug:
                     ADDON.setSetting("enable_logging", "false")
 
@@ -144,8 +144,7 @@ class XMLFunctions:
                     "id": 0,
                     "method": "Settings.getSettings"
                 }
-                json_query = xbmc.executeJSONRPC(json.dumps(json_payload))
-                json_response = json.loads(json_query)
+                json_response = rpc_request(json_payload)
 
                 enabledSystemDebug = False
                 enabledScriptDebug = False
@@ -164,7 +163,7 @@ class XMLFunctions:
                                         "value": True
                                     }
                                 }
-                                _ = xbmc.executeJSONRPC(json.dumps(json_payload))
+                                _ = rpc_request(json_payload)
                                 enabledSystemDebug = True
 
                 if ADDON.getSetting("enable_logging") != "true":

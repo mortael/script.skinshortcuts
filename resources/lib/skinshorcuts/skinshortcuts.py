@@ -8,7 +8,6 @@
 
 import _thread as thread
 import calendar
-import json
 import os
 import sys
 from time import gmtime
@@ -25,6 +24,7 @@ from . import library
 from . import nodefunctions
 from . import xmlfunctions
 from .common import log
+from .common import rpc_request
 from .constants import ADDON
 from .constants import ADDON_NAME
 from .constants import ADDON_VERSION
@@ -78,7 +78,7 @@ class Main:
                     }
                 }
             }
-            xbmc.executeJSONRPC(json.dumps(json_payload))
+            json_response = rpc_request(json_payload)
         if self.TYPE == "manage":
             self._manage_shortcuts(self.GROUP, self.DEFAULTGROUP, self.NOLABELS, self.GROUPNAME)
 
