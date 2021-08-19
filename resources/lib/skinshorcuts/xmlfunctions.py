@@ -221,71 +221,81 @@ class XMLFunctions:
         checkedSharedMenu = False
         foundFullMenu = False
 
-        for _hash in hashes:
-            if _hash[1] is not None:
-                if _hash[0] == "::XBMCVER::":
-                    # Check the skin version is still the same as _hash[1]
+        for hashed in hashes:
+            hashed_item = '' if not hashed else hashed[0]
+            hashed_value = '' if len(hashed) < 2 else hashed[1]
+
+            log("Comparing hashes of Item: %s Value: %s" %
+                (hashed_item, hashed_value))
+
+            if hashed_value is not None:
+                if hashed_item == "::XBMCVER::":
+                    # Check the skin version is still the same as hashed_value
                     checkedXBMCVer = True
-                    if KODI_VERSION != _hash[1]:
+                    if KODI_VERSION != hashed_value:
                         log("Now running a different version of Kodi")
                         return True
-                elif _hash[0] == "::SKINVER::":
-                    # Check the skin version is still the same as _hash[1]
+                elif hashed_item == "::SKINVER::":
+                    # Check the skin version is still the same as hashed_value
                     checkedSkinVer = True
-                    if skinVersion != _hash[1]:
+                    if skinVersion != hashed_value:
                         log("Now running a different skin version")
                         return True
-                elif _hash[0] == "::SCRIPTVER::":
-                    # Check the script version is still the same as _hash[1]
+                elif hashed_item == "::SCRIPTVER::":
+                    # Check the script version is still the same as hashed_value
                     checkedScriptVer = True
-                    if ADDON_VERSION != _hash[1]:
+                    if ADDON_VERSION != hashed_value:
                         log("Now running a different script version")
                         return True
-                elif _hash[0] == "::PROFILELIST::":
-                    # Check the profilelist is still the same as _hash[1]
+                elif hashed_item == "::PROFILELIST::":
+                    # Check the profilelist is still the same as hashed_value
                     checkedProfileList = True
-                    if profilelist != _hash[1]:
+                    if profilelist != hashed_value:
                         log("Profiles have changes")
                         return True
-                elif _hash[0] == "::HIDEPVR::":
+                elif hashed_item == "::HIDEPVR::":
                     checkedPVRVis = True
-                    if ADDON.getSetting("donthidepvr") != _hash[1]:
+                    if ADDON.getSetting("donthidepvr") != hashed_value:
                         log("PVR visibility setting has changed")
-                elif _hash[0] == "::SHARED::":
+                elif hashed_item == "::SHARED::":
                     # Check whether shared-menu setting has changed
                     checkedSharedMenu = True
-                    if ADDON.getSetting("shared_menu") != _hash[1]:
+                    if ADDON.getSetting("shared_menu") != hashed_value:
                         log("Shared menu setting has changed")
                         return True
-                elif _hash[0] == "::LANGUAGE::":
+                elif hashed_item == "::LANGUAGE::":
                     # We no longer need to rebuild on a system language change
                     pass
-                elif _hash[0] == "::SKINBOOL::":
+                elif hashed_item == "::SKINBOOL::":
                     # A boolean we need to set (if profile matches)
-                    if xbmc.getCondVisibility(_hash[1][0]):
-                        if _hash[1][2] == "True":
-                            xbmc.executebuiltin("Skin.SetBool(%s)" % (_hash[1][1]))
+                    if xbmc.getCondVisibility(hashed_value[0]):
+                        if hashed_value[2] == "True":
+                            xbmc.executebuiltin("Skin.SetBool(%s)" % (hashed_value[1]))
                         else:
-                            xbmc.executebuiltin("Skin.Reset(%s)" % (_hash[1][1]))
-                elif _hash[0] == "::FULLMENU::":
+                            xbmc.executebuiltin("Skin.Reset(%s)" % (hashed_value[1]))
+                elif hashed_item == "::FULLMENU::":
                     # Mark that we need to set the fullmenu bool
                     foundFullMenu = True
-                elif _hash[0] == "::SKINDIR::":
+                elif hashed_item == "::SKINDIR::":
                     # Used to import menus from one skin to another, nothing to check here
                     pass
                 else:
                     try:
-                        hexdigest = get_hash(_hash[0])
-                        if hexdigest != _hash[1]:
-                            log("Hash does not match on file " + _hash[0])
-                            log("(" + _hash[1] + " > " + hexdigest + ")")
+                        hexdigest = get_hash(hashed_item)
+                        if hexdigest != hashed_value:
+                            log("Hash does not match for Filename: %s "
+                                "Stored Hash: %s Actual Hash: %s" %
+                                (hashed_item, hashed_value, hexdigest))
                             return True
                     except:
-                        log("(%s > ?)" % _hash[1])
+                        item = 'UNKNOWN' if not hashed_item else hashed_item
+                        value = 'UNKNOWN' if not hashed_value else hashed_value
+                        log("Failed to compare hash of Item: %s Value: %s" %
+                            (item, value))
 
             else:
-                if xbmcvfs.exists(_hash[0]):
-                    log("File now exists " + _hash[0])
+                if xbmcvfs.exists(hashed_item):
+                    log("File now exists " + hashed_item)
                     return True
 
         # Set or clear the FullMenu skin bool
