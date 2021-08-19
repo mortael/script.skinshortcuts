@@ -72,6 +72,8 @@ class DataFunctions:
             "templateOnly": None
         }
 
+        self.properties_file = os.path.join(DATA_PATH, "%s.properties" % xbmc.getSkinDir())
+
     def _get_labelID(self, labelID, action, getDefaultID=False,
                      includeAddOnID=True, noNonLocalized=False):
         # This gets the unique labelID for the item we've been passed.
@@ -573,13 +575,11 @@ class DataFunctions:
         self.currentProperties = []
         self.defaultProperties = []
 
-        path = os.path.join(profileDir, "addon_data", ADDON_ID, xbmc.getSkinDir() + ".properties")
-        if xbmcvfs.exists(path):
+        if xbmcvfs.exists(self.properties_file):
             # The properties file exists, load from it
             try:
-                file = read_file(path)
-                listProperties = ast.literal_eval(file)
-                self._save_hash(path)
+                listProperties = ast.literal_eval(read_file(self.properties_file))
+                self._save_hash(self.properties_file)
 
                 for listProperty in listProperties:
                     # listProperty[0] = groupname
@@ -1188,8 +1188,7 @@ class DataFunctions:
 
         return canImport, skinName
 
-    @staticmethod
-    def importSkinMenu(files, skinName=None):
+    def importSkinMenu(self, files, skinName=None):
         # This function copies one skins menus to another
         for oldFile in files:
             if skinName:
@@ -1203,9 +1202,8 @@ class DataFunctions:
             xbmcvfs.copy(oldPath, newPath)
 
         # Delete any .properties file
-        propFile = os.path.join(DATA_PATH, "%s.properties" % (xbmc.getSkinDir()))
-        if xbmcvfs.exists(propFile):
-            xbmcvfs.delete(propFile)
+        if xbmcvfs.exists(self.properties_file):
+            xbmcvfs.delete(self.properties_file)
 
     def _save_hash(self, filename, none_override=False):
         if none_override:

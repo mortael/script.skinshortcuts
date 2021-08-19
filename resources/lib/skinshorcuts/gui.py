@@ -103,6 +103,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         self.backgrounds = []
         self.thumbnails = []
 
+        self.properties_file = os.path.join(DATA_PATH, "%s.properties" % xbmc.getSkinDir())
+
         log('Management module loaded')
 
     def onInit(self):
@@ -887,10 +889,9 @@ class GUI(xbmcgui.WindowXMLDialog):
         currentProperties = []
 
         # Get previously loaded properties
-        path = os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties")
-        if xbmcvfs.exists(path):
+        if xbmcvfs.exists(self.properties_file):
             # The properties file exists, load from it
-            listProperties = eval(read_file(path))
+            listProperties = eval(read_file(self.properties_file))
             for listProperty in listProperties:
                 # listProperty[0] = groupname
                 # listProperty[1] = labelID
@@ -935,7 +936,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Try to save the file
         try:
-            write_file(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"),
+            write_file(self.properties_file,
                        repr(saveData).replace("],", "],\n"))
         except:
             print_exc()
