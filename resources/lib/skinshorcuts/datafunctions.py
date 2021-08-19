@@ -205,7 +205,7 @@ class DataFunctions:
         log(" - No shortcuts")
         return xmltree.ElementTree(xmltree.Element("shortcuts"))
 
-    def _process_shortcuts(self, tree, group, profileDir="special:\\profile",
+    def _process_shortcuts(self, tree, group, profileDir="special://profile",
                            isUserShortcuts=False, allowAdditionalRequired=True):
         # This function will process any overrides and add them to the tree ready to be displayed
         #  - We will process graphics overrides, action overrides, visibility conditions
