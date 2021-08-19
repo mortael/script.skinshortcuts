@@ -20,9 +20,7 @@ import xbmcvfs
 from . import datafunctions
 from . import library
 from .common import log
-from .common import read_file
 from .common import toggle_debug_logging
-from .common import write_file
 from .constants import ADDON
 from .constants import CWD
 from .constants import DATA_PATH
@@ -30,6 +28,8 @@ from .constants import DEFAULT_PATH
 from .constants import LANGUAGE
 from .constants import SKIN_PATH
 from .constants import SKIN_SHORTCUTS_PATH
+from .property_utils import read_properties
+from .property_utils import write_properties
 
 DATA = datafunctions.DataFunctions()
 LIBRARY = library.LibraryFunctions()
@@ -102,8 +102,6 @@ class GUI(xbmcgui.WindowXMLDialog):
         self.past_dict = {}
         self.backgrounds = []
         self.thumbnails = []
-
-        self.properties_file = os.path.join(DATA_PATH, "%s.properties" % xbmc.getSkinDir())
 
         log('Management module loaded')
 
@@ -888,18 +886,15 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         currentProperties = []
 
-        # Get previously loaded properties
-        if xbmcvfs.exists(self.properties_file):
-            # The properties file exists, load from it
-            listProperties = eval(read_file(self.properties_file))
-            for listProperty in listProperties:
-                # listProperty[0] = groupname
-                # listProperty[1] = labelID
-                # listProperty[2] = property name
-                # listProperty[3] = property value
-                currentProperties.append(
-                    [listProperty[0], listProperty[1], listProperty[2], listProperty[3]]
-                )
+        listProperties = read_properties()
+        for listProperty in listProperties:
+            # listProperty[0] = groupname
+            # listProperty[1] = labelID
+            # listProperty[2] = property name
+            # listProperty[3] = property value
+            currentProperties.append(
+                [listProperty[0], listProperty[1], listProperty[2], listProperty[3]]
+            )
 
         # Copy any items not in the current group to the array we'll save, and
         # make any labelID changes whilst we're at it
@@ -934,13 +929,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         [group, defaultProperty[1], defaultProperty[2], defaultProperty[3]]
                     )
 
-        # Try to save the file
-        try:
-            write_file(self.properties_file,
-                       repr(saveData).replace("],", "],\n"))
-        except:
-            print_exc()
-            log("### ERROR could not save file %s" % DATA_PATH)
+        write_properties(saveData)
 
         # Clear saved properties in DATA, so it will pick up any new ones next time we load a file
         DATA.currentProperties = None

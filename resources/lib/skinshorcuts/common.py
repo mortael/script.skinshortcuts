@@ -6,10 +6,7 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import hashlib
 import json
-import os
-import traceback
 
 import xbmc
 from .constants import ADDON
@@ -33,21 +30,6 @@ def read_file(filename, mode='r'):
 def write_file(filename, contents, mode='w'):
     with open(filename, mode) as file_handle:
         file_handle.write(contents)
-
-
-def get_hash(filename):
-    if not os.path.isfile(filename):
-        return None
-
-    try:
-        md5 = hashlib.md5()
-        file_contents = read_file(filename, 'rb')
-        md5.update(file_contents)
-        return md5.hexdigest()
-    except:
-        log("Unable to generate hash for %s" % filename)
-        traceback.print_exc()
-        raise
 
 
 def rpc_request(request):

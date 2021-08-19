@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import ast
 import json
 import os
 import re
@@ -30,7 +29,9 @@ from .constants import DEFAULT_PATH
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
+from .constants import PROPERTIES_FILE
 from .constants import SKIN_SHORTCUTS_PATH
+from .property_utils import read_properties
 
 NODE = nodefunctions.NodeFunctions()
 
@@ -70,12 +71,11 @@ class DataFunctions:
             "templateOnly": None
         }
 
-        self.properties_file = os.path.join(DATA_PATH, "%s.properties" % xbmc.getSkinDir())
         self.default_overrides_file = os.path.join(DEFAULT_PATH, "overrides.xml")
         self.skin_overrides_file = os.path.join(SKIN_SHORTCUTS_PATH, "overrides.xml")
 
         self.hashable = set()
-        self.hashable.add(self.properties_file)
+        self.hashable.add(PROPERTIES_FILE)
         self.hashable.add(self.default_overrides_file)
         self.hashable.add(self.skin_overrides_file)
 
@@ -575,10 +575,10 @@ class DataFunctions:
         self.currentProperties = []
         self.defaultProperties = []
 
-        if xbmcvfs.exists(self.properties_file):
+        if xbmcvfs.exists(PROPERTIES_FILE):
             # The properties file exists, load from it
             try:
-                listProperties = ast.literal_eval(read_file(self.properties_file))
+                listProperties = read_properties()
 
                 for listProperty in listProperties:
                     # listProperty[0] = groupname
@@ -1202,8 +1202,8 @@ class DataFunctions:
             xbmcvfs.copy(oldPath, newPath)
 
         # Delete any .properties file
-        if xbmcvfs.exists(self.properties_file):
-            xbmcvfs.delete(self.properties_file)
+        if xbmcvfs.exists(PROPERTIES_FILE):
+            xbmcvfs.delete(PROPERTIES_FILE)
 
     # in-place prettyprint formatter
     def indent(self, elem, level=0):

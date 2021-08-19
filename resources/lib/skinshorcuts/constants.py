@@ -29,4 +29,7 @@ MASTER_PATH = xbmcvfs.translatePath("special://masterprofile/addon_data/%s/" % A
 SKIN_PATH = xbmcvfs.translatePath("special://skin/")
 PROFILE_PATH = xbmcvfs.translatePath("special://profile/")
 KODI_PATH = xbmcvfs.translatePath("special://xbmc/")
+SKIN_DIR = xbmc.getSkinDir()
+PROPERTIES_FILE = os.path.join(DATA_PATH, "%s.properties" % SKIN_DIR)
+HASH_FILE = os.path.join(MASTER_PATH, "%s.hash" % SKIN_DIR)
 LANGUAGE = ADDON.getLocalizedString

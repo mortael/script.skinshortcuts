@@ -5,7 +5,6 @@
     SPDX-License-Identifier: GPL-2.0-only
     See LICENSES/GPL-2.0-only.txt for more information.
 """
-
 import os
 import re
 import xml.etree.ElementTree as xmltree
@@ -17,14 +16,13 @@ import xbmcgui
 import xbmcvfs
 from .common import log
 from .common import rpc_request
-from .common import write_file
 from .constants import ADDON
 from .constants import ADDON_ID
 from .constants import CWD
-from .constants import DATA_PATH
 from .constants import KODI_PATH
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
+from .property_utils import write_properties
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
@@ -581,14 +579,7 @@ class NodeFunctions:
                     saveData.append([saveGroup, saveLabelID, saveProperty,
                                      allProps[saveGroup][saveLabelID][saveProperty]])
 
-        # Save the new properties
-        try:
-            write_file(os.path.join(DATA_PATH, xbmc.getSkinDir() + ".properties"),
-                       repr(saveData).replace("],", "],\n"))
-            log("Properties file saved succesfully")
-        except:
-            print_exc()
-            log("### ERROR could not save file %s" % DATA_PATH)
+        write_properties(saveData)
 
         # The properties will only be used if the .DATA.xml file exists in the
         # addon_data folder( otherwise the script will use the default values),

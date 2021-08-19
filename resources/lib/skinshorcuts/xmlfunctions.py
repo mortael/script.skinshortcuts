@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import json
 import os
 import re
 import xml.etree.ElementTree as xmltree
@@ -17,17 +16,17 @@ import xbmcgui
 import xbmcvfs
 from . import datafunctions
 from . import template
-from .common import get_hash
 from .common import log
 from .common import read_file
 from .common import toggle_debug_logging
-from .common import write_file
 from .constants import ADDON
 from .constants import ADDON_VERSION
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
-from .constants import MASTER_PATH
 from .constants import SKIN_PATH
+from .hash_utils import generate_file_hash
+from .hash_utils import read_hashes
+from .hash_utils import write_hashes
 
 DATA = datafunctions.DataFunctions()
 
@@ -201,16 +200,9 @@ class XMLFunctions:
             else:
                 pass
 
-        # Check for the hashes file
-        hashesPath = os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash")
-        if not xbmcvfs.exists(hashesPath):
-            log("Hash list does not exist")
-            return True
-        try:
-            hashes = json.loads(read_file(hashesPath))
-        except:
-            log("Unable to parse hash list")
-            print_exc()
+        hashes = read_hashes()
+        if not hashes:
+            log("No hashes found")
             return True
 
         checkedXBMCVer = False
@@ -281,7 +273,7 @@ class XMLFunctions:
                     pass
                 else:
                     try:
-                        hexdigest = get_hash(hashed_item)
+                        hexdigest = generate_file_hash(hashed_item)
                         if hexdigest != hashed_value:
                             log("Hash does not match for Filename: %s "
                                 "Stored Hash: %s Actual Hash: %s" %
@@ -759,13 +751,12 @@ class XMLFunctions:
         hashable.update(Template.hashable)
 
         for item in hashable:  # generate a hash for all paths
-            hexdigest = get_hash(item)
+            hexdigest = generate_file_hash(item)
             if hexdigest:
                 hashlist.append([item, hexdigest])
 
         # Save the hashes
-        write_file(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"),
-                   json.dumps(hashlist, indent=4))
+        write_hashes(hashlist)
 
     def buildElement(self, item, groupName, visibilityCondition, profileVisibility,
                      submenuVisibility=None, itemid=-1, mainmenuid=None, options=[]):
