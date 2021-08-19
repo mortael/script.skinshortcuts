@@ -7,6 +7,7 @@
 """
 
 import ast
+import json
 import os
 import re
 import unicodedata
@@ -1168,7 +1169,7 @@ class DataFunctions:
     @staticmethod
     def parseHashFile(file):
         try:
-            hashes = ast.literal_eval(read_file(file))
+            hashes = json.loads(read_file(file))
         except:
             # There is no hash list, return False
             return False, ""
