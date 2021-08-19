@@ -54,7 +54,7 @@ jobs:
           rm -rf .??*
           rm LICENSE.txt
           cd ..
-          filename=${{ github.event.repository.name }}-${steps.variables.outputs.version}.zip
+          filename=${{ github.event.repository.name }}-${{ steps.variables.outputs.version }}.zip
           zip -r $filename ${{ github.event.repository.name }}
           mv .git ${{ github.event.repository.name }}
           echo ::set-output name=filename::$filename
