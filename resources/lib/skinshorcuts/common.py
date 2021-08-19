@@ -8,6 +8,7 @@
 
 import hashlib
 import json
+import os
 import traceback
 
 import xbmc
@@ -35,6 +36,9 @@ def write_file(filename, contents, mode='w'):
 
 
 def get_hash(filename):
+    if not os.path.isfile(filename):
+        return None
+
     try:
         md5 = hashlib.md5()
         file_contents = read_file(filename, 'rb')

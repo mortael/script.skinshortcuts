@@ -21,7 +21,6 @@ from unidecode import unidecode
 import xbmc
 import xbmcvfs
 from . import nodefunctions
-from .common import get_hash
 from .common import log
 from .common import read_file
 from .constants import ADDON
@@ -51,7 +50,6 @@ REMOVE_REXP = re.compile(r'-{2,}')
 
 class DataFunctions:
     def __init__(self):
-        self.hashlist = []
         self.overrides = {}
 
         self.widgetNameAndType = {}
@@ -73,6 +71,13 @@ class DataFunctions:
         }
 
         self.properties_file = os.path.join(DATA_PATH, "%s.properties" % xbmc.getSkinDir())
+        self.default_overrides_file = os.path.join(DEFAULT_PATH, "overrides.xml")
+        self.skin_overrides_file = os.path.join(SKIN_SHORTCUTS_PATH, "overrides.xml")
+
+        self.hashable = set()
+        self.hashable.add(self.properties_file)
+        self.hashable.add(self.default_overrides_file)
+        self.hashable.add(self.skin_overrides_file)
 
     def _get_labelID(self, labelID, action, getDefaultID=False,
                      includeAddOnID=True, noNonLocalized=False):
@@ -163,11 +168,18 @@ class DataFunctions:
             paths = [userShortcuts, skinShortcuts, defaultShortcuts]
 
         for path in paths:
+            self.hashable.add(path)  # add paths to hashable items
+
+        for path in paths:
             log(" - Attempting to load file %s" % path)
             tree = None
+
             if xbmcvfs.exists(path):
-                self._save_hash(path)
-                tree = xmltree.parse(path)
+                try:
+                    tree = xmltree.parse(path)
+                except:
+                    log("Failed attempt to load file %s" % path)
+                    continue
 
             if tree is not None and processShortcuts:
                 # If this is a user-selected list of shortcuts...
@@ -188,8 +200,6 @@ class DataFunctions:
                 log(" - Loaded file " + path)
                 log(" - Returning unprocessed shortcuts")
                 return tree
-            else:
-                self._save_hash(path, none_override=True)
 
         # No file loaded
         log(" - No shortcuts")
@@ -508,18 +518,14 @@ class DataFunctions:
         if "script" in self.overrides:
             return self.overrides["script"]
 
-        overridePath = os.path.join(DEFAULT_PATH, "overrides.xml")
         try:
-            tree = xmltree.parse(overridePath)
-            self._save_hash(overridePath)
+            tree = xmltree.parse(self.default_overrides_file)
             self.overrides["script"] = tree
             return tree
         except:
-            if xbmcvfs.exists(overridePath):
+            if xbmcvfs.exists(self.default_overrides_file):
                 log("Unable to parse script overrides.xml. Invalid xml?")
-                self._save_hash(overridePath)
-            else:
-                self._save_hash(overridePath, none_override=True)
+
             tree = xmltree.ElementTree(xmltree.Element("overrides"))
             self.overrides["script"] = tree
             return tree
@@ -529,18 +535,14 @@ class DataFunctions:
         if "skin" in self.overrides:
             return self.overrides["skin"]
 
-        overridePath = os.path.join(SKIN_SHORTCUTS_PATH, "overrides.xml")
         try:
-            tree = xmltree.parse(overridePath)
-            self._save_hash(overridePath)
+            tree = xmltree.parse(self.skin_overrides_file)
             self.overrides["skin"] = tree
             return tree
         except:
-            if xbmcvfs.exists(overridePath):
+            if xbmcvfs.exists(self.skin_overrides_file):
                 log("Unable to parse skin overrides.xml. Invalid xml?")
-                self._save_hash(overridePath)
-            else:
-                self._save_hash(overridePath, none_override=True)
+
             tree = xmltree.ElementTree(xmltree.Element("overrides"))
             self.overrides["skin"] = tree
             return tree
@@ -551,17 +553,15 @@ class DataFunctions:
             return self.overrides["user"]
 
         overridePath = os.path.join(profileDir, "overrides.xml")
+        self.hashable.add(overridePath)
         try:
             tree = xmltree.parse(xbmcvfs.translatePath(overridePath))
-            self._save_hash(overridePath)
             self.overrides["user"] = tree
             return tree
         except:
             if xbmcvfs.exists(overridePath):
                 log("Unable to parse user overrides.xml. Invalid xml?")
-                self._save_hash(overridePath)
-            else:
-                self._save_hash(overridePath, none_override=True)
+
             tree = xmltree.ElementTree(xmltree.Element("overrides"))
             self.overrides["user"] = tree
             return tree
@@ -579,7 +579,6 @@ class DataFunctions:
             # The properties file exists, load from it
             try:
                 listProperties = ast.literal_eval(read_file(self.properties_file))
-                self._save_hash(self.properties_file)
 
                 for listProperty in listProperties:
                     # listProperty[0] = groupname
@@ -737,8 +736,9 @@ class DataFunctions:
 
         # Load icons out of mainmenu.DATA.xml
         path = os.path.join(SKIN_SHORTCUTS_PATH, "mainmenu.DATA.xml")
+        self.hashable.add(path)
+
         if xbmcvfs.exists(path):
-            self._save_hash(path)
             tree = xmltree.parse(path)
             for node in tree.getroot().findall("shortcut"):
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()
@@ -1204,21 +1204,6 @@ class DataFunctions:
         # Delete any .properties file
         if xbmcvfs.exists(self.properties_file):
             xbmcvfs.delete(self.properties_file)
-
-    def _save_hash(self, filename, none_override=False):
-        if none_override:
-            file_hash = None
-        else:
-            file_hash = get_hash(filename)
-
-        self.hashlist = [
-            [filename, file_hash]
-            if len(item) == 2 and item[0] == filename else
-            item
-            for item in enumerate(self.hashlist)
-        ]
-
-        return file_hash
 
     # in-place prettyprint formatter
     def indent(self, elem, level=0):

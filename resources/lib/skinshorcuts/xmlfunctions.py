@@ -289,7 +289,7 @@ class XMLFunctions:
                             return True
                     except:
                         item = 'UNKNOWN' if not hashed_item else hashed_item
-                        value = 'UNKNOWN' if not hashed_value else hashed_value
+                        value = 'UNKNOWN' if hashed_value == '' else hashed_value
                         log("Failed to compare hash of Item: %s Value: %s" %
                             (item, value))
 
@@ -731,16 +731,19 @@ class XMLFunctions:
         progress.update(100, message=LANGUAGE(32098))
 
         # Get the skins addon.xml file
-        addonpath = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
-        addon = xmltree.parse(addonpath)
+        addon_xml = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
+        addon = xmltree.parse(addon_xml)
         extensionpoints = addon.findall("extension")
 
         skinVersion = addon.getroot().attrib.get("version")
         # Append the skin version to the hashlist
         hashlist.append(["::SKINVER::", skinVersion])
 
-        # add all paths to be hash
-        paths = []
+        # indent the tree
+        DATA.indent(tree.getroot())
+
+        # create a set of hashable files
+        hashable = set()
         for extensionpoint in extensionpoints:
             if extensionpoint.attrib.get("point") == "xbmc.gui.skin":
                 resolutions = extensionpoint.findall("res")
@@ -749,24 +752,20 @@ class XMLFunctions:
                         os.path.join(self.skinDir, resolution.attrib.get("folder"),
                                      "script-skinshortcuts-includes.xml")
                     )
-                    paths.append(path)
+                    tree.write(path, encoding="UTF-8")  # writing includes
+                    hashable.add(path)
 
-        hashlist.append([Template.templatepath,
-                         Template._save_hash(Template.templatepath)])
+        hashable.update(DATA.hashable)
+        hashable.update(Template.hashable)
 
-        # Save the tree
-        DATA.indent(tree.getroot())
-        for path in paths:
-            if not xbmcvfs.exists(path):
-                with open(path, "a") as _:  # touch to create the file
-                    pass
-            tree.write(path, encoding="UTF-8")
-            # generate a hash for all paths
-            path_hash = DATA._save_hash(path)
-            hashlist.append([path, path_hash])
+        for item in hashable:  # generate a hash for all paths
+            hexdigest = get_hash(item)
+            if hexdigest:
+                hashlist.append([item, hexdigest])
 
         # Save the hashes
-        write_file(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"), json.dumps(hashlist, indent=4))
+        write_file(os.path.join(MASTER_PATH, xbmc.getSkinDir() + ".hash"),
+                   json.dumps(hashlist, indent=4))
 
     def buildElement(self, item, groupName, visibilityCondition, profileVisibility,
                      submenuVisibility=None, itemid=-1, mainmenuid=None, options=[]):
