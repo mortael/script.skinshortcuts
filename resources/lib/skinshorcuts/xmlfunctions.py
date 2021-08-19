@@ -137,7 +137,7 @@ class XMLFunctions:
                 if toggle_debug_logging(enable=True):
                     enabledSystemDebug = True
 
-                if ADDON.getSetting("enable_logging") != "true":
+                if not ADDON.getSettingBool("enable_logging"):
                     ADDON.setSetting("enable_logging", "true")
                     enabledScriptDebug = True
 

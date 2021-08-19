@@ -17,7 +17,7 @@ from .constants import ADDON_ID
 
 
 def log(txt):
-    if ADDON.getSetting("enable_logging") == "true":
+    if ADDON.getSettingBool("enable_logging"):
         if isinstance(txt, bytes):
             txt = txt.decode('utf-8')
 

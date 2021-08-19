@@ -973,12 +973,12 @@ class DataFunctions:
         elif action == "activatewindow(weather)":
             return "!String.IsEmpty(Weather.Plugin)"
         elif action.startswith("activatewindowandfocus(mypvr") or action.startswith("playpvr") and \
-                ADDON.getSetting("donthidepvr") == "false":
+                not ADDON.getSettingBool("donthidepvr"):
             return "PVR.HasTVChannels"
-        elif action.startswith("activatewindow(tv") and ADDON.getSetting("donthidepvr") == "false":
+        elif action.startswith("activatewindow(tv") and not ADDON.getSettingBool("donthidepvr"):
             return "System.HasPVRAddon"
         elif action.startswith("activatewindow(radio") and \
-                ADDON.getSetting("donthidepvr") == "false":
+                not ADDON.getSettingBool("donthidepvr"):
             return "System.HasPVRAddon"
         elif action.startswith("activatewindow(videos,movie"):
             return "Library.HasContent(Movies)"
@@ -1110,7 +1110,7 @@ class DataFunctions:
                 return False
 
         # Check if the user has asked for their menus not to be shared
-        if ADDON.getSetting("shared_menu").lower() == "false":
+        if not ADDON.getSettingBool("shared_menu"):
             return False
         return True
 
