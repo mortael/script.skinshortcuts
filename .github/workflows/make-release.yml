@@ -4,7 +4,8 @@ on:
   push:
     tags:
       - 'v*'
-      - '*-dev'
+      - '*.alpha*'
+      - '*.beta*'
 
 jobs:
   release:
@@ -16,7 +17,7 @@ jobs:
         id: release
         run: |
           version=${GITHUB_REF/refs\/tags\//}
-          if [[ $version == *-dev ]] ;
+          if [[ $version == *.alpha* || $version == *.beta* ]] ;
           then
             echo ::set-output name=pre-release::true
           else
