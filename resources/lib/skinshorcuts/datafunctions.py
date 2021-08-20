@@ -9,7 +9,7 @@
 import os
 import re
 import unicodedata
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as ETree
 # noinspection PyCompatibility
 from html.entities import name2codepoint
 from traceback import print_exc
@@ -178,7 +178,7 @@ class DataFunctions:
 
             if xbmcvfs.exists(path):
                 try:
-                    tree = xmltree.parse(path)
+                    tree = ETree.parse(path)
                 except:
                     log("Failed attempt to load file %s" % path)
                     continue
@@ -205,7 +205,7 @@ class DataFunctions:
 
         # No file loaded
         log(" - No shortcuts")
-        return xmltree.ElementTree(xmltree.Element("shortcuts"))
+        return ETree.ElementTree(ETree.Element("shortcuts"))
 
     def _process_shortcuts(self, tree, group, profileDir="special://profile",
                            isUserShortcuts=False):
@@ -240,7 +240,7 @@ class DataFunctions:
             allGroupOverrides = skinoverrides.findall("groupoverride")
             for override in allGroupOverrides:
                 if override.attrib.get("group") == group:
-                    newaction = xmltree.SubElement(node, "additional-action")
+                    newaction = ETree.SubElement(node, "additional-action")
                     newaction.text = override.text
                     newaction.set("condition", override.attrib.get("condition"))
 
@@ -248,13 +248,13 @@ class DataFunctions:
             labelID = self.get_labelID(
                 self.local(node.find("label").text)[3].replace(" ", "").lower(), action.text
             )
-            xmltree.SubElement(node, "labelID").text = labelID
+            ETree.SubElement(node, "labelID").text = labelID
 
             # If there's no defaultID, set it to the labelID
             defaultID = labelID
             if node.find("defaultID") is not None:
                 defaultID = node.find("defaultID").text
-            xmltree.SubElement(node, "defaultID").text = defaultID
+            ETree.SubElement(node, "defaultID").text = defaultID
 
             # Check that any version node matches current XBMC version
             version = node.find("version")
@@ -267,7 +267,7 @@ class DataFunctions:
 
             # Get any disabled element
             if node.find("disabled") is not None:
-                xmltree.SubElement(node, "disabled").text = "True"
+                ETree.SubElement(node, "disabled").text = "True"
 
             # Load additional properties
             additionalProperties = self.checkAdditionalProperties(group, labelID, defaultID,
@@ -283,14 +283,14 @@ class DataFunctions:
                     break
 
             if node.find("thumb") is None:
-                xmltree.SubElement(node, "thumb").text = ""
+                ETree.SubElement(node, "thumb").text = ""
             for additionalProperty in additionalProperties:
                 if additionalProperty[0] == "thumb":
                     node.find("thumb").text = additionalProperty[1]
                     additionalProperties.remove(additionalProperty)
                     break
 
-            xmltree.SubElement(node, "additional-properties").text = repr(additionalProperties)
+            ETree.SubElement(node, "additional-properties").text = repr(additionalProperties)
 
             iconNode = node.find("icon")
             if iconNode.text is None or iconNode.text == "":
@@ -302,7 +302,7 @@ class DataFunctions:
             )
             if overriddenIcon is not None:
                 # Add a new node with the overridden icon
-                xmltree.SubElement(node, "override-icon").text = overriddenIcon
+                ETree.SubElement(node, "override-icon").text = overriddenIcon
 
             # If the action uses the special://skin protocol, translate it
             if "special://skin/" in action.text:
@@ -327,12 +327,12 @@ class DataFunctions:
                     overriddenVisibility = True
 
                     # It's overridden - add the original action with the visibility condition
-                    originalAction = xmltree.SubElement(node, "override-visibility")
+                    originalAction = ETree.SubElement(node, "override-visibility")
                     originalAction.text = action.text
                     originalAction.set("condition", visibilityCondition)
 
                     # And add the new action with the inverse visibility condition
-                    newaction = xmltree.SubElement(node, "override-visibility")
+                    newaction = ETree.SubElement(node, "override-visibility")
                     newaction.text = override.text
                     newaction.set("condition", "![%s]" % visibilityCondition)
 
@@ -340,7 +340,7 @@ class DataFunctions:
 
                 if overriddenVisibility is False:
                     # The skin hasn't overridden the visibility
-                    visibilityNode = xmltree.SubElement(node, "visibility")
+                    visibilityNode = ETree.SubElement(node, "visibility")
                     visibilityNode.text = visibilityCondition
 
             # Get action and visibility overrides
@@ -390,7 +390,7 @@ class DataFunctions:
 
                                 # Get the new action
                                 for actions in elem.findall("action"):
-                                    newaction = xmltree.SubElement(node, "override-action")
+                                    newaction = ETree.SubElement(node, "override-action")
                                     if "::ACTION::" in actions.text:
                                         newaction.text = actions.text.replace("::ACTION::",
                                                                               itemToOverride.text)
@@ -401,7 +401,7 @@ class DataFunctions:
 
                                 # Add visibility if no action specified
                                 if len(elem.findall("action")) == 0:
-                                    newaction = xmltree.SubElement(node, "override-action")
+                                    newaction = ETree.SubElement(node, "override-action")
                                     newaction.text = itemToOverride.text
                                     if overrideVisibility is not None:
                                         newaction.set("condition", overrideVisibility)
@@ -425,7 +425,7 @@ class DataFunctions:
             for elem in skinoverrides.findall("shortcut"):
                 if elem.text == action.text and "condition" in elem.attrib:
                     if not visibilityNode:
-                        xmltree.SubElement(node, "visibility").text = elem.attrib.get("condition")
+                        ETree.SubElement(node, "visibility").text = elem.attrib.get("condition")
                     else:
                         visibilityNode.text = "[" + visibilityNode.text + "] + [" + \
                                               elem.attrib.get("condition") + "]"
@@ -434,7 +434,7 @@ class DataFunctions:
             additionalVisibility = node.find("visible")
             if additionalVisibility is not None:
                 if visibilityNode is None:
-                    xmltree.SubElement(node, "visibility").text = additionalVisibility.text
+                    ETree.SubElement(node, "visibility").text = additionalVisibility.text
                 else:
                     visibilityNode.text = "[" + visibilityNode.text + "] + [" + \
                                           additionalVisibility.text + "]"
@@ -458,28 +458,28 @@ class DataFunctions:
         for elem in tree.findall("requiredshortcut"):
             if elem.text not in actions:
                 # We need to add this shortcut - add it to the listitems
-                requiredShortcut = xmltree.SubElement(listitems.getroot(), "shortcut")
+                requiredShortcut = ETree.SubElement(listitems.getroot(), "shortcut")
 
                 # Label and label2
-                xmltree.SubElement(requiredShortcut, "label").text = elem.attrib.get("label")
-                xmltree.SubElement(requiredShortcut, "label2").text = SKIN_DIR
+                ETree.SubElement(requiredShortcut, "label").text = elem.attrib.get("label")
+                ETree.SubElement(requiredShortcut, "label2").text = SKIN_DIR
 
                 # Icon and thumbnail
                 if "icon" in elem.attrib:
-                    xmltree.SubElement(requiredShortcut, "icon").text = elem.attrib.get("icon")
+                    ETree.SubElement(requiredShortcut, "icon").text = elem.attrib.get("icon")
                 else:
-                    xmltree.SubElement(requiredShortcut, "icon").text = "DefaultShortcut.png"
+                    ETree.SubElement(requiredShortcut, "icon").text = "DefaultShortcut.png"
                 if "thumb" in elem.attrib:
-                    xmltree.SubElement(requiredShortcut, "thumb").text = \
+                    ETree.SubElement(requiredShortcut, "thumb").text = \
                         elem.attrib.get("thumbnail")
 
                 # Action
-                xmltree.SubElement(requiredShortcut, "action").text = elem.text
+                ETree.SubElement(requiredShortcut, "action").text = elem.text
 
                 # Locked
                 # - This is set to the skin directory, so it will only be locked in the
                 # management directory when using this skin
-                xmltree.SubElement(requiredShortcut, "lock").text = SKIN_DIR
+                ETree.SubElement(requiredShortcut, "lock").text = SKIN_DIR
 
     def _get_icon_overrides(self, tree, icon, group, labelID, setToDefault=True):
         # This function will get any icon overrides based on labelID or group
@@ -522,14 +522,14 @@ class DataFunctions:
             return self.overrides["script"]
 
         try:
-            tree = xmltree.parse(self.default_overrides_file)
+            tree = ETree.parse(self.default_overrides_file)
             self.overrides["script"] = tree
             return tree
         except:
             if xbmcvfs.exists(self.default_overrides_file):
                 log("Unable to parse script overrides.xml. Invalid xml?")
 
-            tree = xmltree.ElementTree(xmltree.Element("overrides"))
+            tree = ETree.ElementTree(ETree.Element("overrides"))
             self.overrides["script"] = tree
             return tree
 
@@ -539,14 +539,14 @@ class DataFunctions:
             return self.overrides["skin"]
 
         try:
-            tree = xmltree.parse(self.skin_overrides_file)
+            tree = ETree.parse(self.skin_overrides_file)
             self.overrides["skin"] = tree
             return tree
         except:
             if xbmcvfs.exists(self.skin_overrides_file):
                 log("Unable to parse skin overrides.xml. Invalid xml?")
 
-            tree = xmltree.ElementTree(xmltree.Element("overrides"))
+            tree = ETree.ElementTree(ETree.Element("overrides"))
             self.overrides["skin"] = tree
             return tree
 
@@ -558,14 +558,14 @@ class DataFunctions:
         overridePath = os.path.join(profileDir, "overrides.xml")
         self.hashable.add(overridePath)
         try:
-            tree = xmltree.parse(xbmcvfs.translatePath(overridePath))
+            tree = ETree.parse(xbmcvfs.translatePath(overridePath))
             self.overrides["user"] = tree
             return tree
         except:
             if xbmcvfs.exists(overridePath):
                 log("Unable to parse user overrides.xml. Invalid xml?")
 
-            tree = xmltree.ElementTree(xmltree.Element("overrides"))
+            tree = ETree.ElementTree(ETree.Element("overrides"))
             self.overrides["user"] = tree
             return tree
 
@@ -742,7 +742,7 @@ class DataFunctions:
         self.hashable.add(path)
 
         if xbmcvfs.exists(path):
-            tree = xmltree.parse(path)
+            tree = ETree.parse(path)
             for node in tree.getroot().findall("shortcut"):
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()
                 action = node.find("action.text")

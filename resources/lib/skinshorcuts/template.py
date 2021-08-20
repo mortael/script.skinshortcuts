@@ -9,7 +9,7 @@
 import ast
 import operator
 import os
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as ETree
 
 # noinspection PyPackageRequirements
 from simpleeval import SimpleEval
@@ -29,7 +29,7 @@ class Template:
         self.otherTemplates = []
 
         try:
-            self.tree = xmltree.parse(self.templatepath)
+            self.tree = ETree.parse(self.templatepath)
 
             log("Loaded template.xml file")
 
@@ -262,10 +262,10 @@ class Template:
 
         # And now write the variables
         for variableName in finalVariableNames:
-            element = xmltree.SubElement(self.includes, "variable")
+            element = ETree.SubElement(self.includes, "variable")
             element.set("name", variableName)
             for condition, value in self.parseVariables(variableName, finalVariables):
-                valueElement = xmltree.SubElement(element, "value")
+                valueElement = ETree.SubElement(element, "value")
                 valueElement.text = value
                 if condition != "":
                     valueElement.set("condition", condition)
@@ -274,7 +274,7 @@ class Template:
         for otherTemplate in self.otherTemplates:
             # Get the include this will be built in
             root = self.getInclude(self.includes, otherTemplate, None, None)
-            xmltree.SubElement(root, "description").text = \
+            ETree.SubElement(root, "description").text = \
                 "This include was built automatically as the template didn't match any menu items"
 
     @staticmethod
@@ -343,20 +343,20 @@ class Template:
                         return include
 
                 # We didn't find condition,so create it
-                visInclude = xmltree.SubElement(include, "include")
+                visInclude = ETree.SubElement(include, "include")
                 visInclude.set("condition", condition)
                 visInclude.text = name + "-" + profile
 
                 return include
 
         # We didn't find the node, so create it
-        newInclude = xmltree.SubElement(tree, "include")
+        newInclude = ETree.SubElement(tree, "include")
         newInclude.set("name", name)
 
         # If we've been passed a condition, create an include with that as condition
         # and name as text
         if condition is not None:
-            visInclude = xmltree.SubElement(newInclude, "include")
+            visInclude = ETree.SubElement(newInclude, "include")
             visInclude.set("condition", condition)
             visInclude.text = name + "-" + profile
 
@@ -502,19 +502,19 @@ class Template:
 
                             # We didn't find it, so add it
                             if not foundInPrevious:
-                                xmltree.SubElement(profileMatch, "visible").text = finalVisibility
+                                ETree.SubElement(profileMatch, "visible").text = finalVisibility
                                 foundInPrevious = True
 
                     if foundInPrevious is True:
                         break
 
                     # We didn't find this profile, so add it
-                    newElement = xmltree.SubElement(previous, "skinshortcuts-profile")
+                    newElement = ETree.SubElement(previous, "skinshortcuts-profile")
                     newElement.set("profile", profile)
                     newElement.set("visible", profileVisibility)
 
                     # And save the visibility condition
-                    xmltree.SubElement(newElement, "visible").text = finalVisibility
+                    ETree.SubElement(newElement, "visible").text = finalVisibility
 
                     # And we're done
                     foundTemplateIncludes.append(includeName)
@@ -522,14 +522,14 @@ class Template:
 
             if foundInPrevious is False:
                 # We don't have this template saved, so add our profile details to it
-                newElement = xmltree.SubElement(template, "skinshortcuts-profile")
+                newElement = ETree.SubElement(template, "skinshortcuts-profile")
                 newElement.set("profile", profile)
                 newElement.set("visible", profileVisibility)
 
                 # Save the visibility condition
-                xmltree.SubElement(newElement, "visible").text = finalVisibility
+                ETree.SubElement(newElement, "visible").text = finalVisibility
 
-                newElement = xmltree.SubElement(template, "skinshortcuts-includeName")
+                newElement = ETree.SubElement(template, "skinshortcuts-includeName")
                 if includeName is None:
                     newElement.text = "NONE"
                 else:
@@ -778,7 +778,7 @@ class Template:
                 tree.remove(elem)
 
                 # Make replacement element
-                newElement = xmltree.Element(tag)
+                newElement = ETree.Element(tag)
                 if text is not None:
                     newElement.text = text
                 for singleAttrib in attribs:
@@ -808,7 +808,7 @@ class Template:
                             # Remove text property
                             elem.text = ""
                             # Add include element
-                            includeElement = xmltree.SubElement(elem, "include")
+                            includeElement = ETree.SubElement(elem, "include")
                             includeElement.text = properties[stringEnd[0]][9:-1]
                         else:
                             elem.text = stringStart[0] + properties[stringEnd[0]] + stringEnd[1]
@@ -879,7 +879,7 @@ class Template:
                 # Make replacements
                 if item_type == "visibility" and visibilityCondition is not None:
                     # Create a new visible element
-                    newelement = xmltree.Element("visible")
+                    newelement = ETree.Element("visible")
                     newelement.text = visibilityCondition
                     # Insert it
                     tree.insert(index, newelement)
@@ -945,7 +945,7 @@ class Template:
     def copy_tree(self, elem):
         if elem is None:
             return None
-        ret = xmltree.Element(elem.tag, elem.attrib)
+        ret = ETree.Element(elem.tag, elem.attrib)
         ret.text = elem.text
         ret.tail = elem.tail
         for child in elem:

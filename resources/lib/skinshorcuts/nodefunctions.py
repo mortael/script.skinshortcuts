@@ -7,7 +7,7 @@
 """
 import os
 import re
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as ETree
 # noinspection PyCompatibility
 from html.entities import name2codepoint
 from traceback import print_exc
@@ -75,7 +75,7 @@ class NodeFunctions:
             return
         try:
             # Load the xml file
-            tree = xmltree.parse(file)
+            tree = ETree.parse(file)
             root = tree.getroot()
 
             # Get the item index
@@ -161,7 +161,7 @@ class NodeFunctions:
         # Open the file
         try:
             # Load the xml file
-            tree = xmltree.parse(path)
+            tree = ETree.parse(path)
             root = tree.getroot()
 
             group = root.find("group")
@@ -245,7 +245,7 @@ class NodeFunctions:
             # Open the file
             try:
                 # Load the xml file
-                tree = xmltree.parse(path)
+                tree = ETree.parse(path)
                 root = tree.getroot()
 
                 if "visible" in root.attrib:
@@ -302,7 +302,7 @@ class NodeFunctions:
         # Open the file
         try:
             # Load the xml file
-            tree = xmltree.parse(path)
+            tree = ETree.parse(path)
             root = tree.getroot()
 
             mediaType = "unknown"
@@ -446,12 +446,12 @@ class NodeFunctions:
         newLabelID = data_func.get_labelID(label, action)
 
         # Write the updated mainmenu.DATA.xml
-        newelement = xmltree.SubElement(menuitems.getroot(), "shortcut")
-        xmltree.SubElement(newelement, "label").text = label
-        xmltree.SubElement(newelement, "label2").text = "32024"  # Custom shortcut
-        xmltree.SubElement(newelement, "icon").text = icon
-        xmltree.SubElement(newelement, "thumb")
-        xmltree.SubElement(newelement, "action").text = action
+        newelement = ETree.SubElement(menuitems.getroot(), "shortcut")
+        ETree.SubElement(newelement, "label").text = label
+        ETree.SubElement(newelement, "label2").text = "32024"  # Custom shortcut
+        ETree.SubElement(newelement, "icon").text = icon
+        ETree.SubElement(newelement, "thumb")
+        ETree.SubElement(newelement, "action").text = action
 
         data_func.indent(menuitems.getroot())
         path = data_func.data_xml_filename(DATA_PATH,
@@ -460,16 +460,16 @@ class NodeFunctions:
 
         if isNode and selectedMenu == 1:
             # We're also going to write a submenu
-            menuitems = xmltree.ElementTree(xmltree.Element("shortcuts"))
+            menuitems = ETree.ElementTree(ETree.Element("shortcuts"))
 
             for item in json_response['result']['files']:
                 if item["filetype"] == "directory":
-                    newelement = xmltree.SubElement(menuitems.getroot(), "shortcut")
-                    xmltree.SubElement(newelement, "label").text = item["label"]
-                    xmltree.SubElement(newelement, "label2").text = "32024"  # Custom shortcut
-                    xmltree.SubElement(newelement, "icon").text = item["thumbnail"]
-                    xmltree.SubElement(newelement, "thumb")
-                    xmltree.SubElement(newelement, "action").text = \
+                    newelement = ETree.SubElement(menuitems.getroot(), "shortcut")
+                    ETree.SubElement(newelement, "label").text = item["label"]
+                    ETree.SubElement(newelement, "label2").text = "32024"  # Custom shortcut
+                    ETree.SubElement(newelement, "icon").text = item["thumbnail"]
+                    ETree.SubElement(newelement, "thumb")
+                    ETree.SubElement(newelement, "action").text = \
                         "ActivateWindow(%s,%s,return)" % (window, item["file"])
 
             data_func.indent(menuitems.getroot())

@@ -10,7 +10,7 @@
 import _thread as thread
 import calendar
 import random
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as ETree
 from time import gmtime
 from traceback import print_exc
 
@@ -665,7 +665,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             log("Saving changes")
 
             # Create a new tree
-            tree = xmltree.ElementTree(xmltree.Element("shortcuts"))
+            tree = ETree.ElementTree(ETree.Element("shortcuts"))
             root = tree.getroot()
 
             properties = []
@@ -700,12 +700,12 @@ class GUI(xbmcgui.WindowXMLDialog):
                         labelIDChangesDict[labelID] = newlabelID
 
                     # We want to save this
-                    shortcut = xmltree.SubElement(root, "shortcut")
-                    xmltree.SubElement(shortcut, "defaultID").text = defaultID
+                    shortcut = ETree.SubElement(root, "shortcut")
+                    ETree.SubElement(shortcut, "defaultID").text = defaultID
 
                     # Label and label2
-                    xmltree.SubElement(shortcut, "label").text = localLabel[0]
-                    xmltree.SubElement(shortcut, "label2").text = \
+                    ETree.SubElement(shortcut, "label").text = localLabel[0]
+                    ETree.SubElement(shortcut, "label2").text = \
                         self.data_func.local(listitem.getLabel2())[0]
 
                     # Icon and thumbnail
@@ -719,24 +719,24 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                     thumb = listitem.getProperty("thumbnail")
 
-                    xmltree.SubElement(shortcut, "icon").text = icon
-                    xmltree.SubElement(shortcut, "thumb").text = thumb
+                    ETree.SubElement(shortcut, "icon").text = icon
+                    ETree.SubElement(shortcut, "thumb").text = thumb
 
                     # Action
-                    xmltree.SubElement(shortcut, "action").text = listitem.getProperty("path")
+                    ETree.SubElement(shortcut, "action").text = listitem.getProperty("path")
 
                     # Visible
                     if listitem.getProperty("visible-condition"):
-                        xmltree.SubElement(shortcut, "visible").text = \
+                        ETree.SubElement(shortcut, "visible").text = \
                             listitem.getProperty("visible-condition")
 
                     # Disabled
                     if listitem.getProperty("skinshortcuts-disabled") == "True":
-                        xmltree.SubElement(shortcut, "disabled").text = "True"
+                        ETree.SubElement(shortcut, "disabled").text = "True"
 
                     # Locked
                     if listitem.getProperty("LOCKED"):
-                        xmltree.SubElement(shortcut, "lock").text = listitem.getProperty("LOCKED")
+                        ETree.SubElement(shortcut, "lock").text = listitem.getProperty("LOCKED")
 
                     # Additional properties
                     if listitem.getProperty("additionalListItemProperties"):
@@ -844,7 +844,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     for path in paths:
 
                         if path[1] == "New":
-                            tree = xmltree.ElementTree(xmltree.Element("shortcuts"))
+                            tree = ETree.ElementTree(ETree.Element("shortcuts"))
                             tree.write(target, encoding="UTF-8")
                             log("Creating empty file - %s" % target)
                             break
@@ -860,7 +860,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                 # We're copying the file (actually, we'll re-write the file without
                                 # any LOCKED elements and with icons/thumbs
                                 # adjusted to absolute paths)
-                                newtree = xmltree.parse(path[0])
+                                newtree = ETree.parse(path[0])
                                 for newnode in newtree.getroot().findall("shortcut"):
                                     searchNode = newnode.find("locked")
                                     if searchNode is not None:

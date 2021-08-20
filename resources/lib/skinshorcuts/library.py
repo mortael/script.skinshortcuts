@@ -7,7 +7,7 @@
 """
 
 import os
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as ETree
 from traceback import print_exc
 # noinspection PyCompatibility
 from urllib.parse import unquote
@@ -1294,7 +1294,7 @@ class LibraryFunctions:
 
                     if playlist.endswith('.xsp'):
                         contents_data = read_file(playlistfile)
-                        xmldata = xmltree.fromstring(contents_data)
+                        xmldata = ETree.fromstring(contents_data)
                         mediaType = "unknown"
                         try:
                             iterator = xmldata.iter()
@@ -1401,7 +1401,7 @@ class LibraryFunctions:
 
                 if playlist.endswith('-randomversion.xsp'):
                     contents_data = read_file(playlistfile)
-                    xmldata = xmltree.fromstring(contents_data)
+                    xmldata = ETree.fromstring(contents_data)
                     try:
                         iterator = xmldata.iter()
                     except:
@@ -1583,7 +1583,7 @@ class LibraryFunctions:
     def hasPluginEntryPoint(path):
         # Check if an addon has a plugin entry point by parsing its addon.xml file
         try:
-            tree = xmltree.parse(os.path.join(path, "addon.xml")).getroot()
+            tree = ETree.parse(os.path.join(path, "addon.xml")).getroot()
             for extension in tree.findall("extension"):
                 if "point" in extension.attrib and \
                         extension.attrib.get("point") == "xbmc.python.pluginsource":
@@ -2285,7 +2285,7 @@ class LibraryFunctions:
     def _build_playlist(self, target, mediatype, name, negative):
         # This function will build a playlist that displays the contents of a
         # source in the library view (that is to say, "path" "contains")
-        tree = xmltree.ElementTree(xmltree.Element("smartplaylist"))
+        tree = ETree.ElementTree(ETree.Element("smartplaylist"))
         root = tree.getroot()
         root.set("type", mediatype)
 
@@ -2298,23 +2298,23 @@ class LibraryFunctions:
         else:
             target = [target]
 
-        xmltree.SubElement(root, "name").text = name
+        ETree.SubElement(root, "name").text = name
         if negative is False:
-            xmltree.SubElement(root, "match").text = "one"
+            ETree.SubElement(root, "match").text = "one"
         else:
-            xmltree.SubElement(root, "match").text = "all"
+            ETree.SubElement(root, "match").text = "all"
 
         for item in target:
             if negative is False:
-                rule = xmltree.SubElement(root, "rule")
+                rule = ETree.SubElement(root, "rule")
                 rule.set("field", "path")
                 rule.set("operator", "startswith")
-                xmltree.SubElement(rule, "value").text = item
+                ETree.SubElement(rule, "value").text = item
             else:
-                rule = xmltree.SubElement(root, "rule")
+                rule = ETree.SubElement(root, "rule")
                 rule.set("field", "path")
                 rule.set("operator", "doesnotcontain")
-                xmltree.SubElement(rule, "value").text = item
+                ETree.SubElement(rule, "value").text = item
 
         _id = 1
         while xbmcvfs.exists(os.path.join(DATA_PATH, str(_id) + ".xsp")):
@@ -2325,7 +2325,7 @@ class LibraryFunctions:
         tree.write(os.path.join(DATA_PATH, str(_id) + ".xsp"), encoding="utf-8")
 
         # Add a random property, and save this for use in playlists/backgrounds
-        order = xmltree.SubElement(root, "order")
+        order = ETree.SubElement(root, "order")
         order.text = "random"
         self.data_func.indent(tree.getroot())
         tree.write(os.path.join(DATA_PATH, str(_id) + "-randomversion.xsp"), encoding="utf-8")
@@ -2370,7 +2370,7 @@ class LibraryFunctions:
                 return
 
             # Load the tree and change the name
-            tree = xmltree.parse(filename)
+            tree = ETree.parse(filename)
             name = tree.getroot().find("name")
             name.text = newLabel
 
@@ -2379,7 +2379,7 @@ class LibraryFunctions:
             tree.write(filename, encoding="utf-8")
 
             # Load the random tree and change the name
-            tree = xmltree.parse(filename.replace(".xsp", "-randomversion.xsp"))
+            tree = ETree.parse(filename.replace(".xsp", "-randomversion.xsp"))
             name = tree.getroot().find("name")
             name.text = newLabel
 

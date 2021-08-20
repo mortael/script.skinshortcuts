@@ -8,7 +8,7 @@
 
 import os
 import re
-import xml.etree.ElementTree as xmltree
+import xml.etree.ElementTree as ETree
 from traceback import print_exc
 
 import xbmc
@@ -61,7 +61,7 @@ class XMLFunctions:
         tree = None
         if xbmcvfs.exists(fav_file):
             contents = read_file(fav_file)
-            tree = xmltree.fromstring(contents)
+            tree = ETree.fromstring(contents)
 
         profilelist = []
         if tree is not None:
@@ -174,7 +174,7 @@ class XMLFunctions:
 
         # Get the skins addon.xml file
         addonpath = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
-        addon = xmltree.parse(addonpath)
+        addon = ETree.parse(addonpath)
         extensionpoints = addon.findall("extension")
         paths = []
         skinpaths = []
@@ -325,7 +325,7 @@ class XMLFunctions:
         self.widgetCount = 1
 
         # Create a new tree and includes for the various groups
-        tree = xmltree.ElementTree(xmltree.Element("includes"))
+        tree = ETree.ElementTree(ETree.Element("includes"))
         root = tree.getroot()
 
         # Create a Template object and pass it the root
@@ -344,13 +344,13 @@ class XMLFunctions:
                                                checkForShortcutOverride.attrib.get("property"),
                                                "False"))
 
-        mainmenuTree = xmltree.SubElement(root, "include")
+        mainmenuTree = ETree.SubElement(root, "include")
         mainmenuTree.set("name", "skinshortcuts-mainmenu")
 
         submenuTrees = []
         for level in range(0, int(numLevels) + 1):
-            _ = xmltree.SubElement(root, "include")
-            subtree = xmltree.SubElement(root, "include")
+            _ = ETree.SubElement(root, "include")
+            subtree = ETree.SubElement(root, "include")
             if level == 0:
                 subtree.set("name", "skinshortcuts-submenu")
             else:
@@ -360,7 +360,7 @@ class XMLFunctions:
 
         allmenuTree = []
         if buildMode == "single":
-            allmenuTree = xmltree.SubElement(root, "include")
+            allmenuTree = ETree.SubElement(root, "include")
             allmenuTree.set("name", "skinshortcuts-allmenus")
 
         profilePercent = 100 / len(profilelist)
@@ -391,7 +391,7 @@ class XMLFunctions:
             # Create objects to hold the items
             menuitems = []
             submenuItems = []
-            templateMainMenuItems = xmltree.Element("includes")
+            templateMainMenuItems = ETree.Element("includes")
 
             # If building the main menu, split the mainmenu shortcut nodes into the menuitems list
             fullMenu = False
@@ -503,8 +503,8 @@ class XMLFunctions:
                             justmenuTreeB = submenuNodes[submenu][1]
                         else:
                             # Create these nodes
-                            justmenuTreeA = xmltree.SubElement(root, "include")
-                            justmenuTreeB = xmltree.SubElement(root, "include")
+                            justmenuTreeA = ETree.SubElement(root, "include")
+                            justmenuTreeB = ETree.SubElement(root, "include")
 
                             if count != 0:
                                 groupInclude = self.data_func.slugify(
@@ -537,11 +537,11 @@ class XMLFunctions:
                     if count == 0:
                         if len(submenuitems) != 0:
                             try:
-                                hasSubMenu = xmltree.SubElement(mainmenuItemA, "property")
+                                hasSubMenu = ETree.SubElement(mainmenuItemA, "property")
                                 hasSubMenu.set("name", "hasSubmenu")
                                 hasSubMenu.text = "True"
                                 if buildMode == "single":
-                                    hasSubMenu = xmltree.SubElement(mainmenuItemB, "property")
+                                    hasSubMenu = ETree.SubElement(mainmenuItemB, "property")
                                     hasSubMenu.set("name", "hasSubmenu")
                                     hasSubMenu.text = "True"
                             except:
@@ -549,11 +549,11 @@ class XMLFunctions:
                                 pass
                         else:
                             try:
-                                hasSubMenu = xmltree.SubElement(mainmenuItemA, "property")
+                                hasSubMenu = ETree.SubElement(mainmenuItemA, "property")
                                 hasSubMenu.set("name", "hasSubmenu")
                                 hasSubMenu.text = "False"
                                 if buildMode == "single":
-                                    hasSubMenu = xmltree.SubElement(mainmenuItemB, "property")
+                                    hasSubMenu = ETree.SubElement(mainmenuItemB, "property")
                                     hasSubMenu.set("name", "hasSubmenu")
                                     hasSubMenu.text = "False"
                             except:
@@ -573,7 +573,7 @@ class XMLFunctions:
                                                             convertInteger=True),
                                      onclickelement.attrib.get("condition"))
                                 )
-                                newonclick = xmltree.SubElement(mainmenuItemB, "onclick")
+                                newonclick = ETree.SubElement(mainmenuItemB, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
                                                   self.data_func.slugify(submenuVisibilityName,
                                                                          convertInteger=True) + \
@@ -586,14 +586,14 @@ class XMLFunctions:
                                     % (self.data_func.slugify(submenuVisibilityName,
                                                               convertInteger=True))
                                 )
-                                newonclick = xmltree.SubElement(mainmenuItemB, "onclick")
+                                newonclick = ETree.SubElement(mainmenuItemB, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
                                                   self.data_func.slugify(submenuVisibilityName,
                                                                          convertInteger=True) + \
                                                   ",10000)"
 
                     # Build the submenu items
-                    templateSubMenuItems = xmltree.Element("includes")
+                    templateSubMenuItems = ETree.Element("includes")
                     for submenuItem in submenuitems:
                         itemidsubmenu += 1
                         # Build the item without any visibility conditions
@@ -601,7 +601,7 @@ class XMLFunctions:
                                                                profile[1], itemid=itemidsubmenu,
                                                                mainmenuid=itemidmainmenu,
                                                                options=options)
-                        isSubMenuElement = xmltree.SubElement(menuitem, "property")
+                        isSubMenuElement = ETree.SubElement(menuitem, "property")
                         isSubMenuElement.set("name", "isSubmenu")
                         isSubMenuElement.text = "True"
 
@@ -636,7 +636,7 @@ class XMLFunctions:
                         if buildMode == "single" and not isinstance(item, str):
                             # Add the property 'submenuVisibility'
                             allmenuTreeCopy = Template.copy_tree(menuitemCopy)
-                            submenuVisibility = xmltree.SubElement(allmenuTreeCopy, "property")
+                            submenuVisibility = ETree.SubElement(allmenuTreeCopy, "property")
                             submenuVisibility.set("name", "submenuVisibility")
                             submenuVisibility.text = self.data_func.slugify(submenuVisibilityName,
                                                                             convertInteger=True)
@@ -656,7 +656,7 @@ class XMLFunctions:
                         # There aren't any submenu items, so add a 'description'
                         # element to the group includes
                         # so that Kodi doesn't think they're invalid
-                        newelement = xmltree.Element("description")
+                        newelement = ETree.Element("description")
                         newelement.text = "No items"
                         justmenuTreeA.append(newelement)
                         justmenuTreeB.append(newelement)
@@ -682,18 +682,18 @@ class XMLFunctions:
                 forceSettings = overridestree.getroot().find("forcesettings")
                 if forceSettings is not None:
                     # We want a settings option to be added
-                    newelement = xmltree.SubElement(mainmenuTree, "item")
-                    xmltree.SubElement(newelement, "label").text = "$LOCALIZE[10004]"
-                    xmltree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
-                    xmltree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
-                    xmltree.SubElement(newelement, "visible").text = profile[1]
+                    newelement = ETree.SubElement(mainmenuTree, "item")
+                    ETree.SubElement(newelement, "label").text = "$LOCALIZE[10004]"
+                    ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
+                    ETree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
+                    ETree.SubElement(newelement, "visible").text = profile[1]
 
                     if buildMode == "single":
-                        newelement = xmltree.SubElement(mainmenuTree, "item")
-                        xmltree.SubElement(newelement, "label").text = "$LOCALIZE[10004]"
-                        xmltree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
-                        xmltree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
-                        xmltree.SubElement(newelement, "visible").text = profile[1]
+                        newelement = ETree.SubElement(mainmenuTree, "item")
+                        ETree.SubElement(newelement, "label").text = "$LOCALIZE[10004]"
+                        ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
+                        ETree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
+                        ETree.SubElement(newelement, "visible").text = profile[1]
 
             if len(self.checkForShortcuts) != 0:
                 # Add a value to the variable for all checkForShortcuts
@@ -731,7 +731,7 @@ class XMLFunctions:
 
         # Get the skins addon.xml file
         addon_xml = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
-        addon = xmltree.parse(addon_xml)
+        addon = ETree.parse(addon_xml)
         extensionpoints = addon.findall("extension")
 
         skinVersion = addon.getroot().attrib.get("version")
@@ -773,28 +773,28 @@ class XMLFunctions:
             options = []
 
         # Create the element
-        newelement = xmltree.Element("item")
+        newelement = ETree.Element("item")
         allProps = {}
 
         # Set ID
         if itemid != -1:
             newelement.set("id", str(itemid))
-        idproperty = xmltree.SubElement(newelement, "property")
+        idproperty = ETree.SubElement(newelement, "property")
         idproperty.set("name", "id")
         idproperty.text = "$NUMBER[%s]" % (str(itemid))
         allProps["id"] = idproperty
 
         # Set main menu id
         if mainmenuid:
-            mainmenuidproperty = xmltree.SubElement(newelement, "property")
+            mainmenuidproperty = ETree.SubElement(newelement, "property")
             mainmenuidproperty.set("name", "mainmenuid")
             mainmenuidproperty.text = "%s" % (str(mainmenuid))
             allProps[mainmenuid] = mainmenuidproperty
 
         # Label and label2
-        xmltree.SubElement(newelement, "label").text = \
+        ETree.SubElement(newelement, "label").text = \
             self.data_func.local(item.find("label").text)[1]
-        xmltree.SubElement(newelement, "label2").text = \
+        ETree.SubElement(newelement, "label2").text = \
             self.data_func.local(item.find("label2").text)[1]
 
         # Icon and thumb
@@ -802,19 +802,19 @@ class XMLFunctions:
         if icon is None:
             icon = item.find("icon")
         if icon is None:
-            xmltree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
+            ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
         else:
-            xmltree.SubElement(newelement, "icon").text = icon.text
+            ETree.SubElement(newelement, "icon").text = icon.text
         thumb = item.find("thumb")
         if thumb is not None:
-            xmltree.SubElement(newelement, "thumb").text = item.find("thumb").text
+            ETree.SubElement(newelement, "thumb").text = item.find("thumb").text
 
         # labelID and defaultID
-        labelID = xmltree.SubElement(newelement, "property")
+        labelID = ETree.SubElement(newelement, "property")
         labelID.text = item.find("labelID").text
         labelID.set("name", "labelID")
         allProps["labelID"] = labelID
-        defaultID = xmltree.SubElement(newelement, "property")
+        defaultID = ETree.SubElement(newelement, "property")
         defaultID.text = item.find("defaultID").text
         defaultID.set("name", "defaultID")
         allProps["defaultID"] = defaultID
@@ -822,8 +822,8 @@ class XMLFunctions:
         # Check if the item is disabled
         if item.find("disabled") is not None:
             # It is, so we set it to be invisible, add an empty onclick and return
-            xmltree.SubElement(newelement, "visible").text = "False"
-            xmltree.SubElement(newelement, "onclick").text = "noop"
+            ETree.SubElement(newelement, "visible").text = "False"
+            ETree.SubElement(newelement, "onclick").text = "noop"
             return newelement, allProps
 
         # Clear cloned options if main menu
@@ -837,10 +837,10 @@ class XMLFunctions:
         if len(properties) != 0:
             for prop in properties:
                 if prop[0] == "node.visible":
-                    visibleProperty = xmltree.SubElement(newelement, "visible")
+                    visibleProperty = ETree.SubElement(newelement, "visible")
                     visibleProperty.text = prop[1]
                 else:
-                    additionalproperty = xmltree.SubElement(newelement, "property")
+                    additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", prop[0])
                     additionalproperty.text = prop[1]
                     allProps[prop[0]] = additionalproperty
@@ -875,7 +875,7 @@ class XMLFunctions:
 
                     # For backwards compatibility, save widgetPlaylist as widgetPath too
                     if prop[0] == "widgetPlaylist":
-                        additionalproperty = xmltree.SubElement(newelement, "property")
+                        additionalproperty = ETree.SubElement(newelement, "property")
                         additionalproperty.set("name", "widgetPath")
                         additionalproperty.text = prop[1]
 
@@ -899,7 +899,7 @@ class XMLFunctions:
                                 break
 
                     if matches:
-                        additionalproperty = xmltree.SubElement(newelement, "property")
+                        additionalproperty = ETree.SubElement(newelement, "property")
                         additionalproperty.set("name", key)
                         additionalproperty.text = propertyMatch[0]
                         allProps[key] = additionalproperty
@@ -919,12 +919,12 @@ class XMLFunctions:
         # Primary visibility
         visibility = item.find("visibility")
         if visibility is not None:
-            xmltree.SubElement(newelement, "visible").text = visibility.text
+            ETree.SubElement(newelement, "visible").text = visibility.text
 
         # additional onclick (group overrides)
         onclicks = item.findall("additional-action")
         for onclick in onclicks:
-            onclickelement = xmltree.SubElement(newelement, "onclick")
+            onclickelement = ETree.SubElement(newelement, "onclick")
             onclickelement.text = onclick.text
             if "condition" in onclick.attrib:
                 onclickelement.set("condition", onclick.attrib.get("condition"))
@@ -935,7 +935,7 @@ class XMLFunctions:
             onclicks = item.findall("action")
 
         for onclick in onclicks:
-            onclickelement = xmltree.SubElement(newelement, "onclick")
+            onclickelement = ETree.SubElement(newelement, "onclick")
 
             # Updrage action if necessary
             onclick.text = self.data_func.upgradeAction(onclick.text)
@@ -970,7 +970,7 @@ class XMLFunctions:
             if not self.propertyExists("path", newelement) and "path" not in list(allProps.keys()):
                 # we only add the path property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
-                pathelement = xmltree.SubElement(newelement, "property")
+                pathelement = ETree.SubElement(newelement, "property")
                 pathelement.set("name", "path")
                 pathelement.text = onclickelement.text
                 allProps["path"] = pathelement
@@ -979,7 +979,7 @@ class XMLFunctions:
             if not self.propertyExists("list", newelement) and "list" not in list(allProps.keys()):
                 # we only add the list property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
-                listElement = xmltree.SubElement(newelement, "property")
+                listElement = ETree.SubElement(newelement, "property")
                 listElement.set("name", "list")
                 listElement.text = \
                     self.data_func.getListProperty(onclickelement.text.replace('"', ''))
@@ -1005,22 +1005,22 @@ class XMLFunctions:
 
         # Visibility
         if visibilityCondition is not None:
-            visibilityElement = xmltree.SubElement(newelement, "visible")
+            visibilityElement = ETree.SubElement(newelement, "visible")
             if profileVisibility is not None:
                 visibilityElement.text = profileVisibility + " + [" + visibilityCondition + "]"
             else:
                 visibilityElement.text = visibilityCondition
-            issubmenuElement = xmltree.SubElement(newelement, "property")
+            issubmenuElement = ETree.SubElement(newelement, "property")
             issubmenuElement.set("name", "isSubmenu")
             issubmenuElement.text = "True"
             allProps["isSubmenu"] = issubmenuElement
         elif profileVisibility is not None:
-            visibilityElement = xmltree.SubElement(newelement, "visible")
+            visibilityElement = ETree.SubElement(newelement, "visible")
             visibilityElement.text = profileVisibility
 
         # Submenu visibility
         if submenuVisibility is not None:
-            submenuVisibilityElement = xmltree.SubElement(newelement, "property")
+            submenuVisibilityElement = ETree.SubElement(newelement, "property")
             submenuVisibilityElement.set("name", "submenuVisibility")
             if submenuVisibility.isdigit():
                 submenuVisibilityElement.text = "$NUMBER[" + submenuVisibility + "]"
@@ -1028,7 +1028,7 @@ class XMLFunctions:
                 submenuVisibilityElement.text = self.data_func.slugify(submenuVisibility)
 
         # Group name
-        group = xmltree.SubElement(newelement, "property")
+        group = ETree.SubElement(newelement, "property")
         group.set("name", "group")
         group.text = groupName
         allProps["group"] = group
@@ -1037,19 +1037,19 @@ class XMLFunctions:
         if groupName != "mainmenu":
             if "clonewidgets" in options and len(self.MAINWIDGET) != 0:
                 for key in self.MAINWIDGET:
-                    additionalproperty = xmltree.SubElement(newelement, "property")
+                    additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.MAINWIDGET[key]
                     allProps[key] = additionalproperty
             if "clonebackgrounds" in options and len(self.MAINBACKGROUND) != 0:
                 for key in self.MAINBACKGROUND:
-                    additionalproperty = xmltree.SubElement(newelement, "property")
+                    additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.MAINBACKGROUND[key])[1]
                     allProps[key] = additionalproperty
             if "cloneproperties" in options and len(self.MAINPROPERTIES) != 0:
                 for key in self.MAINPROPERTIES:
-                    additionalproperty = xmltree.SubElement(newelement, "property")
+                    additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.MAINPROPERTIES[key])[1]
                     allProps[key] = additionalproperty
@@ -1064,7 +1064,7 @@ class XMLFunctions:
                     propertyPattern = regexpPattern.sub(replacement.replace("\\", r"\\"),
                                                         propertyPattern)
 
-                additionalproperty = xmltree.SubElement(newelement, "property")
+                additionalproperty = ETree.SubElement(newelement, "property")
                 additionalproperty.set("name", propertyName)
                 additionalproperty.text = propertyPattern
                 allProps[propertyName] = additionalproperty
