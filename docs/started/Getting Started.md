@@ -90,4 +90,4 @@ If you don't want these groups, you can tell Skin Shortcuts not to build them by
 
 Multiple options can be separated with a pipe - | - symbol.
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](../advanced/Advanced%20Usage.md)
+***Quick links*** - [Readme](../../../README.md) - [Advanced Usage](../advanced/Advanced%20Usage.md)
