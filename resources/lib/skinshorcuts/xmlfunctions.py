@@ -157,7 +157,8 @@ class XMLFunctions:
                         xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"),
                                             LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
 
-    def shouldwerun(self, profilelist):
+    @staticmethod
+    def shouldwerun(profilelist):
         try:
             prop = HOME_WINDOW.getProperty("skinshortcuts-reloadmainmenu")
             HOME_WINDOW.clearProperty("skinshortcuts-reloadmainmenu")
@@ -506,8 +507,9 @@ class XMLFunctions:
                             justmenuTreeB = xmltree.SubElement(root, "include")
 
                             if count != 0:
-                                groupInclude = self.data_func.slugify(submenu[:-2], convertInteger=True) + \
-                                               "-" + submenu[-1:]
+                                groupInclude = self.data_func.slugify(
+                                    submenu[:-2], convertInteger=True
+                                ) + "-" + submenu[-1:]
                             else:
                                 groupInclude = self.data_func.slugify(submenu, convertInteger=True)
 
@@ -567,7 +569,8 @@ class XMLFunctions:
                                     "condition",
                                     "String.IsEqual(Window(10000)"
                                     ".Property(submenuVisibility),%s) + [%s]" %
-                                    (self.data_func.slugify(submenuVisibilityName, convertInteger=True),
+                                    (self.data_func.slugify(submenuVisibilityName,
+                                                            convertInteger=True),
                                      onclickelement.attrib.get("condition"))
                                 )
                                 newonclick = xmltree.SubElement(mainmenuItemB, "onclick")
@@ -580,7 +583,8 @@ class XMLFunctions:
                                 onclickelement.set(
                                     "condition",
                                     "String.IsEqual(Window(10000).Property(submenuVisibility),%s)"
-                                    % (self.data_func.slugify(submenuVisibilityName, convertInteger=True))
+                                    % (self.data_func.slugify(submenuVisibilityName,
+                                                              convertInteger=True))
                                 )
                                 newonclick = xmltree.SubElement(mainmenuItemB, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
@@ -605,7 +609,8 @@ class XMLFunctions:
                         templateSubMenuItems.append(Template.copy_tree(menuitem))
 
                         # Remove any template-only properties
-                        otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
+                        otherProperties, requires, templateOnly = \
+                            self.data_func._getPropertyRequires()
                         for key in otherProperties:
                             if key in list(allProps.keys()) and key in templateOnly:
                                 # This key is template-only
@@ -665,7 +670,8 @@ class XMLFunctions:
                         profile[1], "String.IsEqual(Container(%s).ListItem"
                                     ".Property(submenuVisibility),%s)" %
                                     (mainmenuID,
-                                     self.data_func.slugify(submenuVisibilityName, convertInteger=True)),
+                                     self.data_func.slugify(submenuVisibilityName,
+                                                            convertInteger=True)),
                         item, None, buildOthers, mainmenuitems=templateCurrentMainMenuItem)
 
                     count += 1
@@ -783,8 +789,10 @@ class XMLFunctions:
             allProps[mainmenuid] = mainmenuidproperty
 
         # Label and label2
-        xmltree.SubElement(newelement, "label").text = self.data_func.local(item.find("label").text)[1]
-        xmltree.SubElement(newelement, "label2").text = self.data_func.local(item.find("label2").text)[1]
+        xmltree.SubElement(newelement, "label").text = \
+            self.data_func.local(item.find("label").text)[1]
+        xmltree.SubElement(newelement, "label2").text = \
+            self.data_func.local(item.find("label2").text)[1]
 
         # Icon and thumb
         icon = item.find("override-icon")
@@ -846,7 +854,8 @@ class XMLFunctions:
                         xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" +
                                             prop[1] + ")")
 
-                    # If this is the main menu, and we're cloning widgets, backgrounds or properties...
+                    # If this is the main menu, and we're cloning widgets,
+                    # backgrounds or properties...
                     if groupName == "mainmenu":
                         if "clonewidgets" in options:
                             widgetProperties = ["widget", "widgetName", "widgetType",
@@ -969,7 +978,8 @@ class XMLFunctions:
                 # because it has to be unique in Kodi lists
                 listElement = xmltree.SubElement(newelement, "property")
                 listElement.set("name", "list")
-                listElement.text = self.data_func.getListProperty(onclickelement.text.replace('"', ''))
+                listElement.text = \
+                    self.data_func.getListProperty(onclickelement.text.replace('"', ''))
                 allProps["list"] = listElement
 
             if onclick.text == "ActivateWindow(Settings)":

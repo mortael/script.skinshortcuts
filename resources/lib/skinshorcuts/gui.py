@@ -536,7 +536,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             labelID = listitem.getProperty("localizedString")
             if labelID is None or labelID == "":
                 labelID = listitem.getLabel()
-            labelID = self.data_func._get_labelID(self.data_func.local(labelID)[3], listitem.getProperty("path"))
+            labelID = self.data_func._get_labelID(self.data_func.local(labelID)[3],
+                                                  listitem.getProperty("path"))
 
         # Retrieve icon
         icon = listitem.getProperty("icon")
@@ -693,7 +694,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                         localLabel = self.data_func.local(listitem.getLabel())
                     else:
                         localLabel = self.data_func.local(localizedString)
-                    newlabelID = self.data_func._get_labelID(localLabel[3], listitem.getProperty("path"))
+                    newlabelID = self.data_func._get_labelID(localLabel[3],
+                                                             listitem.getProperty("path"))
                     if self.group == "mainmenu":
                         labelIDChanges.append([labelID, newlabelID, defaultID])
                         labelIDChangesDict[labelID] = newlabelID
@@ -757,7 +759,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             # Save the shortcuts
             self.data_func.indent(root)
             path = self.data_func.data_xml_filename(DATA_PATH,
-                                                    self.data_func.slugify(self.group, True, isSubLevel=isSubLevel))
+                                                    self.data_func.slugify(self.group, True,
+                                                                           isSubLevel=isSubLevel))
 
             tree.write(path.replace(".shortcuts", ".self.data_func.xml"), encoding="UTF-8")
 
@@ -795,35 +798,48 @@ class GUI(xbmcgui.WindowXMLDialog):
                     if i == 0:
                         groupName = labelIDFrom
                         paths = [
-                            [self.data_func.data_xml_filename(DATA_PATH, self.data_func.slugify(labelIDFrom, True)),
+                            [self.data_func.data_xml_filename(DATA_PATH,
+                                                              self.data_func.slugify(labelIDFrom,
+                                                                                     True)),
                              "Move"],
-                            [self.data_func.data_xml_filename(SKIN_SHORTCUTS_PATH,
-                                                              self.data_func.slugify(defaultIDFrom)),
-                             "Copy"],
-                            [self.data_func.data_xml_filename(DEFAULT_PATH, self.data_func.slugify(defaultIDFrom)),
-                             "Copy"],
+                            [self.data_func.data_xml_filename(
+                                SKIN_SHORTCUTS_PATH,
+                                self.data_func.slugify(defaultIDFrom)
+                            ),
+                                "Copy"],
+                            [self.data_func.data_xml_filename(
+                                DEFAULT_PATH,
+                                self.data_func.slugify(defaultIDFrom)
+                            ),
+                                "Copy"],
                             [None, "New"]
                         ]
-                        target = self.data_func.data_xml_filename(DATA_PATH, self.data_func.slugify(labelIDTo, True))
+                        target = self.data_func.data_xml_filename(DATA_PATH,
+                                                                  self.data_func.slugify(labelIDTo,
+                                                                                         True))
                     else:
                         groupName = "%s.%s" % (labelIDFrom, str(i))
                         paths = [
                             [self.data_func.data_xml_filename(
                                 DATA_PATH,
-                                self.data_func.slugify("%s.%s" % (labelIDFrom, str(i)), True, isSubLevel=True)
+                                self.data_func.slugify("%s.%s" % (labelIDFrom, str(i)),
+                                                       True, isSubLevel=True)
                             ), "Move"],
                             [self.data_func.data_xml_filename(
                                 SKIN_SHORTCUTS_PATH,
-                                self.data_func.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True)
+                                self.data_func.slugify("%s.%s" % (defaultIDFrom, str(i)),
+                                                       isSubLevel=True)
                             ), "Copy"],
                             [self.data_func.data_xml_filename(
                                 DEFAULT_PATH,
-                                self.data_func.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True)
+                                self.data_func.slugify("%s.%s" % (defaultIDFrom, str(i)),
+                                                       isSubLevel=True)
                             ), "Copy"]
                         ]
                         target = self.data_func.data_xml_filename(
                             DATA_PATH,
-                            self.data_func.slugify("%s.%s" % (labelIDTo, str(i)), True, isSubLevel=True)
+                            self.data_func.slugify("%s.%s" % (labelIDTo, str(i)), True,
+                                                   isSubLevel=True)
                         )
 
                     for path in paths:
@@ -1504,9 +1520,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                 originalLabelIDList = self.data_func.labelIDList
                 self.data_func.labelIDList = []
 
-                # Get a list of all shortcuts that were originally in the menu and restore labelIDList
+                # Get a list of all shortcuts that were originally in the menu and
+                # restore labelIDList
                 self.data_func._clear_labelID()
-                shortcuts = self.data_func._get_shortcuts(self.group, defaultGroup=self.defaultGroup,
+                shortcuts = self.data_func._get_shortcuts(self.group,
+                                                          defaultGroup=self.defaultGroup,
                                                           defaultsOnly=True)
                 self.data_func.labelIDList = originalLabelIDList
 
@@ -1540,7 +1558,9 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # We now have our shortcut to return. Add it to self.allListItems and labelID list
                 self.allListItems.append(restoreItems[restoreShortcut])
-                self.data_func.labelIDList.append(restoreItems[restoreShortcut].getProperty("labelID"))
+                self.data_func.labelIDList.append(
+                    restoreItems[restoreShortcut].getProperty("labelID")
+                )
 
                 self.changeMade = True
                 self._display_listitems()
@@ -1589,8 +1609,9 @@ class GUI(xbmcgui.WindowXMLDialog):
                     self.data_func.importSkinMenu(sharedFiles)
                 else:
                     # User has chosen to import from a particular skin
-                    self.data_func.importSkinMenu(self.data_func.getFilesForSkin(skinList[importMenu]),
-                                                  skinList[importMenu])
+                    self.data_func.importSkinMenu(
+                        self.data_func.getFilesForSkin(skinList[importMenu]), skinList[importMenu]
+                    )
 
                 self.getControl(211).reset()
 
@@ -1758,7 +1779,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                             widgetName = keyboard.getText()
 
                 # Add any necessary reload parameter
-                widgetPath = self.lib_func.addWidgetReload(selectedShortcut.getProperty("widgetPath"))
+                widgetPath = \
+                    self.lib_func.addWidgetReload(selectedShortcut.getProperty("widgetPath"))
 
                 self._add_additionalproperty(listitem, "widget" + widgetID,
                                              selectedShortcut.getProperty("widget"))
@@ -2126,7 +2148,9 @@ class GUI(xbmcgui.WindowXMLDialog):
                     listitemCopy.setProperty("path", selectedShortcut.getProperty("chosenPath"))
                     listitemCopy.setProperty("displayPath",
                                              selectedShortcut.getProperty("chosenPath"))
-                self.lib_func._delete_playlist(self.getControl(211).getListItem(num).getProperty("path"))
+                self.lib_func._delete_playlist(
+                    self.getControl(211).getListItem(num).getProperty("path")
+                )
 
                 self.changeMade = True
 

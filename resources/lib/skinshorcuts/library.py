@@ -645,7 +645,8 @@ class LibraryFunctions:
         # Get the items labelID
         self.data_func._clear_labelID()
         labelID = self.data_func._get_labelID(
-            self.data_func.createNiceName(self.data_func.local(localLabel)[0], noNonLocalized=noNonLocalized),
+            self.data_func.createNiceName(self.data_func.local(localLabel)[0],
+                                          noNonLocalized=noNonLocalized),
             item[0],
             noNonLocalized=noNonLocalized
         )
@@ -1179,7 +1180,8 @@ class LibraryFunctions:
                 log("Failed to load default music nodes")
                 print_exc()
 
-        # Do a JSON query for upnp sources (so that they'll show first time the user asks to see them)
+        # Do a JSON query for upnp sources (so that they'll show first time
+        # the user asks to see them)
         if self.loaded["upnp"][0] is False:
             json_payload = {
                 "jsonrpc": "2.0",
@@ -1261,9 +1263,11 @@ class LibraryFunctions:
         if 'result' in json_response and 'sources' in json_response['result'] and \
                 json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
-                listitems.append(self._create(["||SOURCE||" + item['file'], item['label'], "32089", {
-                    "icon": "DefaultFolder.png"
-                }]))
+                listitems.append(self._create(
+                    ["||SOURCE||" + item['file'], item['label'], "32089", {
+                        "icon": "DefaultFolder.png"
+                    }]
+                ))
         self.addToDictionary("picturesources", listitems)
 
         log(" - " + str(len(listitems)) + " picture sources")
@@ -1686,7 +1690,8 @@ class LibraryFunctions:
             if widgetName is not None:
                 listitem.setProperty("widgetName", widgetName)
             else:
-                listitem.setProperty("widgetName", self.data_func.local(elem.attrib.get('label'))[2])
+                listitem.setProperty("widgetName",
+                                     self.data_func.local(elem.attrib.get('label'))[2])
             if widgetType is not None:
                 listitem.setProperty("widgetType", widgetType)
             if widgetPath is not None:
@@ -1804,7 +1809,8 @@ class LibraryFunctions:
                              }]
                         )
 
-                        if item["file"].endswith(".xml/") and self.node_func.isGrouped(item["file"]):
+                        if item["file"].endswith(".xml/") and \
+                                self.node_func.isGrouped(item["file"]):
                             listitem = self._create([item["file"], "%s  >" % (item["label"]), "", {
                                 "icon": "DefaultFolder.png",
                                 "thumb": thumb

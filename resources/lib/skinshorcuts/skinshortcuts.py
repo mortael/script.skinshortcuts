@@ -100,7 +100,7 @@ class Main:
                 )
             else:
                 selectedShortcut = self.lib_func.selectShortcut("", custom=self.CUSTOM,
-                                                               showNone=self.NONE)
+                                                                showNone=self.NONE)
 
             # Now set the skin strings
             if selectedShortcut is not None and selectedShortcut.getProperty("Path"):
@@ -161,7 +161,7 @@ class Main:
             if self.GROUPING:
                 if self.GROUPING.lower() == "default":
                     selectedShortcut = self.lib_func.selectShortcut("", custom=showCustom,
-                                                                   showNone=self.NONE)
+                                                                    showNone=self.NONE)
                 else:
                     selectedShortcut = self.lib_func.selectShortcut(
                         "", grouping=self.GROUPING,
@@ -344,7 +344,8 @@ class Main:
                 if singleAction != "::MULTIPLE::":
                     xbmc.executebuiltin(singleAction)
 
-    def _manage_shortcuts(self, group, defaultGroup, nolabels, groupname):
+    @staticmethod
+    def _manage_shortcuts(group, defaultGroup, nolabels, groupname):
         if HOME_WINDOW.getProperty("skinshortcuts-loading") and \
                 int(calendar.timegm(gmtime())) - \
                 int(HOME_WINDOW.getProperty("skinshortcuts-loading")) <= 5:

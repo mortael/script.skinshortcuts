@@ -495,7 +495,8 @@ class NodeFunctions:
     # ##############################################
 
     # noinspection PyDictCreation
-    def setProperties(self, properties, values, labelID, group, DATA):
+    @staticmethod
+    def setProperties(properties, values, labelID, group, DATA):
         # This function will take a list of properties and values and apply them to the
         # main menu item with the given labelID
         if not group:

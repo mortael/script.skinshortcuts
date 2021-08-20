@@ -17,7 +17,6 @@ from traceback import print_exc
 from unidecode import unidecode
 
 import xbmc
-import xbmcgui
 import xbmcvfs
 from . import nodefunctions
 from .common import log
@@ -1184,7 +1183,8 @@ class DataFunctions:
 
         return canImport, skinName
 
-    def importSkinMenu(self, files, skinName=None):
+    @staticmethod
+    def importSkinMenu(files, skinName=None):
         # This function copies one skins menus to another
         for oldFile in files:
             if skinName:
