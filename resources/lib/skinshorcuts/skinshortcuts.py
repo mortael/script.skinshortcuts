@@ -98,42 +98,42 @@ class Main:
             thread.start_new_thread(self.lib_func.load_all_library, ())
 
             if self.GROUPING is not None:
-                selectedShortcut = self.lib_func.select_shortcut(
+                selected_shortcut = self.lib_func.select_shortcut(
                     "", grouping=self.GROUPING,
                     custom=self.CUSTOM, showNone=self.NONE
                 )
             else:
-                selectedShortcut = self.lib_func.select_shortcut("", custom=self.CUSTOM,
-                                                                 showNone=self.NONE)
+                selected_shortcut = self.lib_func.select_shortcut("", custom=self.CUSTOM,
+                                                                  showNone=self.NONE)
 
             # Now set the skin strings
-            if selectedShortcut is not None and selectedShortcut.getProperty("Path"):
-                path = selectedShortcut.getProperty("Path")
+            if selected_shortcut is not None and selected_shortcut.getProperty("Path"):
+                path = selected_shortcut.getProperty("Path")
 
-                if selectedShortcut.getProperty("chosenPath"):
-                    path = selectedShortcut.getProperty("chosenPath")
+                if selected_shortcut.getProperty("chosenPath"):
+                    path = selected_shortcut.getProperty("chosenPath")
 
                 if path.startswith("pvr-channel://"):
                     path = "RunScript(script.skinshortcuts,type=launchpvr&channel=" + \
                            path.replace("pvr-channel://", "") + ")"
-                if self.LABEL is not None and selectedShortcut.getLabel() != "":
+                if self.LABEL is not None and selected_shortcut.getLabel() != "":
                     xbmc.executebuiltin("Skin.SetString(" + self.LABEL + "," +
-                                        selectedShortcut.getLabel() + ")")
+                                        selected_shortcut.getLabel() + ")")
                 if self.ACTION is not None:
                     xbmc.executebuiltin("Skin.SetString(" + self.ACTION + "," + path + " )")
                 if self.SHORTCUTTYPE is not None:
                     xbmc.executebuiltin("Skin.SetString(" + self.SHORTCUTTYPE + "," +
-                                        selectedShortcut.getLabel2() + ")")
-                if self.THUMBNAIL is not None and selectedShortcut.getProperty("icon"):
+                                        selected_shortcut.getLabel2() + ")")
+                if self.THUMBNAIL is not None and selected_shortcut.getProperty("icon"):
                     xbmc.executebuiltin("Skin.SetString(" + self.THUMBNAIL + "," +
-                                        selectedShortcut.getProperty("icon") + ")")
-                if self.THUMBNAIL is not None and selectedShortcut.getProperty("thumbnail"):
+                                        selected_shortcut.getProperty("icon") + ")")
+                if self.THUMBNAIL is not None and selected_shortcut.getProperty("thumbnail"):
                     xbmc.executebuiltin("Skin.SetString(" + self.THUMBNAIL + "," +
-                                        selectedShortcut.getProperty("thumbnail") + ")")
+                                        selected_shortcut.getProperty("thumbnail") + ")")
                 if self.LIST is not None:
                     xbmc.executebuiltin("Skin.SetString(" + self.LIST + "," +
                                         self.data_func.getListProperty(path) + ")")
-            elif selectedShortcut is not None and selectedShortcut.getLabel() == "::NONE::":
+            elif selected_shortcut is not None and selected_shortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
                 if self.LABEL is not None:
                     xbmc.executebuiltin("Skin.Reset(" + self.LABEL + ")")
@@ -157,81 +157,81 @@ class Main:
 
             # Check if we should show the custom option (if the relevant widgetPath skin
             # string is provided and isn't empty)
-            showCustom = False
+            show_custom = False
             if self.WIDGETPATH and \
                     xbmc.getCondVisibility("!String.IsEmpty(Skin.String(%s))" % self.WIDGETPATH):
-                showCustom = True
+                show_custom = True
 
             if self.GROUPING:
                 if self.GROUPING.lower() == "default":
-                    selectedShortcut = self.lib_func.select_shortcut("", custom=showCustom,
-                                                                     showNone=self.NONE)
+                    selected_shortcut = self.lib_func.select_shortcut("", custom=show_custom,
+                                                                      showNone=self.NONE)
                 else:
-                    selectedShortcut = self.lib_func.select_shortcut(
+                    selected_shortcut = self.lib_func.select_shortcut(
                         "", grouping=self.GROUPING,
-                        custom=showCustom, showNone=self.NONE
+                        custom=show_custom, showNone=self.NONE
                     )
             else:
-                selectedShortcut = self.lib_func.select_shortcut(
+                selected_shortcut = self.lib_func.select_shortcut(
                     "", grouping="widget",
-                    custom=showCustom, showNone=self.NONE
+                    custom=show_custom, showNone=self.NONE
                 )
 
             # Now set the skin strings
-            if selectedShortcut is None:
+            if selected_shortcut is None:
                 # The user cancelled
                 return
 
-            elif selectedShortcut.getProperty("Path") and \
-                    selectedShortcut.getProperty("custom") == "true":
+            elif selected_shortcut.getProperty("Path") and \
+                    selected_shortcut.getProperty("custom") == "true":
                 # The user updated the path - so we just set that property
                 xbmc.executebuiltin(
                     "Skin.SetString(%s,%s)" %
-                    (self.WIDGETPATH, unquote(selectedShortcut.getProperty("Path")))
+                    (self.WIDGETPATH, unquote(selected_shortcut.getProperty("Path")))
                 )
 
-            elif selectedShortcut.getProperty("Path"):
+            elif selected_shortcut.getProperty("Path"):
                 # The user selected the widget they wanted
                 if self.WIDGET:
-                    if selectedShortcut.getProperty("widget"):
+                    if selected_shortcut.getProperty("widget"):
                         xbmc.executebuiltin("Skin.SetString(%s,%s)" %
-                                            (self.WIDGET, selectedShortcut.getProperty("widget")))
+                                            (self.WIDGET, selected_shortcut.getProperty("widget")))
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGET)
                 if self.WIDGETTYPE:
-                    if selectedShortcut.getProperty("widgetType"):
+                    if selected_shortcut.getProperty("widgetType"):
                         xbmc.executebuiltin(
                             "Skin.SetString(%s,%s)" %
-                            (self.WIDGETTYPE, selectedShortcut.getProperty("widgetType"))
+                            (self.WIDGETTYPE, selected_shortcut.getProperty("widgetType"))
                         )
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETTYPE)
                 if self.WIDGETNAME:
-                    if selectedShortcut.getProperty("widgetName"):
+                    if selected_shortcut.getProperty("widgetName"):
                         xbmc.executebuiltin(
                             "Skin.SetString(%s,%s)" %
-                            (self.WIDGETNAME, selectedShortcut.getProperty("widgetName"))
+                            (self.WIDGETNAME, selected_shortcut.getProperty("widgetName"))
                         )
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETNAME)
                 if self.WIDGETTARGET:
-                    if selectedShortcut.getProperty("widgetTarget"):
+                    if selected_shortcut.getProperty("widgetTarget"):
                         xbmc.executebuiltin(
                             "Skin.SetString(%s,%s)" %
-                            (self.WIDGETTARGET, selectedShortcut.getProperty("widgetTarget"))
+                            (self.WIDGETTARGET, selected_shortcut.getProperty("widgetTarget"))
                         )
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETTARGET)
                 if self.WIDGETPATH:
-                    if selectedShortcut.getProperty("widgetPath"):
+                    if selected_shortcut.getProperty("widgetPath"):
                         xbmc.executebuiltin(
                             "Skin.SetString(%s,%s)" %
-                            (self.WIDGETPATH, unquote(selectedShortcut.getProperty("widgetPath")))
+                            (self.WIDGETPATH, unquote(selected_shortcut.getProperty("widgetPath")))
                         )
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % self.WIDGETPATH)
 
-            elif selectedShortcut.getLabel() == "::NONE::":
+            elif selected_shortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
                 if self.WIDGET is not None:
                     xbmc.executebuiltin("Skin.Reset(" + self.WIDGET + ")")
@@ -347,7 +347,7 @@ class Main:
                     xbmc.executebuiltin(singleAction)
 
     @staticmethod
-    def _manage_shortcuts(group, defaultGroup, nolabels, groupname):
+    def _manage_shortcuts(group, default_group, nolabels, groupname):
         if HOME_WINDOW.getProperty("skinshortcuts-loading") and \
                 int(calendar.timegm(gmtime())) - \
                 int(HOME_WINDOW.getProperty("skinshortcuts-loading")) <= 5:
@@ -356,7 +356,7 @@ class Main:
         HOME_WINDOW.setProperty("skinshortcuts-loading", str(calendar.timegm(gmtime())))
         from . import gui
         ui = gui.GUI("script-skinshortcuts.xml", CWD, "default", group=group,
-                     defaultGroup=defaultGroup, nolabels=nolabels, groupname=groupname)
+                     defaultGroup=default_group, nolabels=nolabels, groupname=groupname)
         ui.doModal()
         del ui
 
@@ -373,33 +373,33 @@ class Main:
         log("### Resetting all shortcuts")
         dialog = xbmcgui.Dialog()
 
-        shouldRun = None
+        should_run = None
         if self.WARNING is not None and self.WARNING.lower() == "false":
-            shouldRun = True
+            should_run = True
 
         # Ask the user if they're sure they want to do this
-        if shouldRun is None:
-            shouldRun = dialog.yesno(LANGUAGE(32037), LANGUAGE(32038))
+        if should_run is None:
+            should_run = dialog.yesno(LANGUAGE(32037), LANGUAGE(32038))
 
-        if shouldRun:
-            isShared = self.data_func.checkIfMenusShared()
+        if should_run:
+            is_shared = self.data_func.checkIfMenusShared()
             for files in xbmcvfs.listdir(DATA_PATH):
                 # Try deleting all shortcuts
                 if files:
                     for file in files:
-                        deleteFile = False
+                        delete_file = False
                         if file == "settings.xml":
                             continue
-                        if isShared:
-                            deleteFile = True
+                        if is_shared:
+                            delete_file = True
                         elif file.startswith(SKIN_DIR) and \
                                 (file.endswith(".properties") or file.endswith(".DATA.xml")):
-                            deleteFile = True
+                            delete_file = True
 
                         # if file != "settings.xml" and ( not isShared or
                         # file.startswith( "%s-" %( xbmc.getSkinDir() ) ) ) or
                         # file == "%s.properties" %( xbmc.getSkinDir() ):
-                        if deleteFile:
+                        if delete_file:
                             file_path = os.path.join(DATA_PATH, file)
                             if xbmcvfs.exists(file_path):
                                 try:
