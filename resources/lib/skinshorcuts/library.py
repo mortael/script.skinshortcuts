@@ -146,7 +146,7 @@ class LibraryFunctions:
         self.loadedFavourites = False
         self.fav_list = None
 
-    def loadLibrary(self, library):
+    def load_library(self, library):
         # Common entry point for loading available shortcuts
 
         # Handle whether the shortcuts are already loaded/loading
@@ -197,20 +197,20 @@ class LibraryFunctions:
         self.loaded[library][0] = True
         return True
 
-    def loadAllLibrary(self):
+    def load_all_library(self):
         # Load all library data, for use with threading
-        self.loadLibrary("common")
-        self.loadLibrary("more")
-        self.loadLibrary("videolibrary")
-        self.loadLibrary("musiclibrary")
-        self.loadLibrary("pvrlibrary")
-        self.loadLibrary("radiolibrary")
-        self.loadLibrary("librarysources")
-        self.loadLibrary("playlists")
-        self.loadLibrary("addons")
-        self.loadLibrary("favourites")
-        self.loadLibrary("settings")
-        self.loadLibrary("widgets")
+        self.load_library("common")
+        self.load_library("more")
+        self.load_library("videolibrary")
+        self.load_library("musiclibrary")
+        self.load_library("pvrlibrary")
+        self.load_library("radiolibrary")
+        self.load_library("librarysources")
+        self.load_library("playlists")
+        self.load_library("addons")
+        self.load_library("favourites")
+        self.load_library("settings")
+        self.load_library("widgets")
 
         # Do a JSON query for upnp sources
         # (so that they'll show first time the user asks to see them)
@@ -232,7 +232,7 @@ class LibraryFunctions:
     # === BUILD/DISPLAY AVAILABLE SHORTCUT NODES ===
     # ==============================================
 
-    def retrieveGroup(self, group, flat=True, grouping=None):
+    def retrieve_group(self, group, flat=True, grouping=None):
         trees = [self.data_func.get_overrides_skin(), self.data_func.get_overrides_script()]
         nodes = None
         for tree in trees:
@@ -276,7 +276,7 @@ class LibraryFunctions:
                     self.installWidget = False
                 if count == group:
                     # We found it :)
-                    return node.attrib.get("label"), self.buildNodeListing(node, True)
+                    return node.attrib.get("label"), self.build_node_listing(node, True)
 
             return ["Error", []]
 
@@ -288,17 +288,17 @@ class LibraryFunctions:
                 windowTitle = LANGUAGE(32048)
                 if grouping == "widget":
                     windowTitle = LANGUAGE(32044)
-                return [windowTitle, self.buildNodeListing(nodes, False)]
+                return [windowTitle, self.build_node_listing(nodes, False)]
             else:
                 groups = group.split(",")
 
                 nodes = ["", nodes]
                 for groupNum in groups:
-                    nodes = self.getNode(nodes[1], int(groupNum))
+                    nodes = self.get_node(nodes[1], int(groupNum))
 
-                return [nodes[0], self.buildNodeListing(nodes[1], False)]
+                return [nodes[0], self.build_node_listing(nodes[1], False)]
 
-    def getNode(self, tree, number):
+    def get_node(self, tree, number):
         count = 0
         for subnode in tree:
             count += 1
@@ -325,7 +325,7 @@ class LibraryFunctions:
                 label = self.data_func.local(subnode.attrib.get("label"))[2]
                 return [label, subnode]
 
-    def buildNodeListing(self, nodes, flat):
+    def build_node_listing(self, nodes, flat):
         returnList = []
         count = 0
         for node in nodes:
@@ -341,7 +341,7 @@ class LibraryFunctions:
                     continue
             count += 1
             if node.tag == "content":
-                returnList = returnList + self.retrieveContent(node.text)
+                returnList = returnList + self.retrieve_content(node.text)
             if node.tag == "shortcut":
                 shortcutItem = self.create(
                     [node.text,
@@ -383,7 +383,7 @@ class LibraryFunctions:
 
         return returnList
 
-    def retrieveContent(self, content):
+    def retrieve_content(self, content):
         if content == "upnp-video":
             items = [self.create(["||UPNP||", "32070", "32069", {
                 "icon": "DefaultFolder.png"
@@ -395,12 +395,12 @@ class LibraryFunctions:
 
         elif self.dictionaryGroupings[content] is None:
             # The data hasn't been loaded yet
-            items = self.loadGrouping(content)
+            items = self.load_grouping(content)
         else:
             items = self.dictionaryGroupings[content]
 
         if items is not None:
-            items = self.checkForFolder(items)
+            items = self.check_for_folder(items)
         else:
             items = []
 
@@ -421,7 +421,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetName", listitem.getLabel())
                     listitem.setProperty("widgetPath", path)
 
-                    widgetType = self.node_func.get_mediaType(path)
+                    widgetType = self.node_func.get_media_type(path)
                     if widgetType != "unknown":
                         listitem.setProperty("widgetType", widgetType)
 
@@ -433,7 +433,7 @@ class LibraryFunctions:
 
         return items
 
-    def checkForFolder(self, items):
+    def check_for_folder(self, items):
         # This function will check for any folders in the listings that are being returned
         # and, if found, move their sub-items into a property
         returnItems = []
@@ -449,16 +449,16 @@ class LibraryFunctions:
 
         return returnItems
 
-    def loadGrouping(self, content):
+    def load_grouping(self, content):
         # Display a busy dialog
         dialog = xbmcgui.DialogProgress()
         dialog.create("Skin Shortcuts", LANGUAGE(32063))
 
         # We'll be called if the data for a wanted group hasn't been loaded yet
         if content == "common":
-            self.loadLibrary("common")
+            self.load_library("common")
         if content == "commands":
-            self.loadLibrary("more")
+            self.load_library("more")
         if content == "movie" or content == "tvshow" or content == "musicvideo" or \
                 content == "customvideonode" or content == "movie-flat" or \
                 content == "tvshow-flat" or content == "musicvideo-flat" or \
@@ -466,32 +466,32 @@ class LibraryFunctions:
             # These have been deprecated
             return []
         if content == "video":
-            self.loadLibrary("videolibrary")
+            self.load_library("videolibrary")
         if content == "videosources" or content == "musicsources" or content == "picturesources":
-            self.loadLibrary("librarysources")
+            self.load_library("librarysources")
         if content == "music":
-            self.loadLibrary("musiclibrary")
+            self.load_library("musiclibrary")
         if content == "pvr" or content == "pvr-tv" or content == "pvr-radio":
-            self.loadLibrary("pvrlibrary")
+            self.load_library("pvrlibrary")
         if content == "radio":
-            self.loadLibrary("radiolibrary")
+            self.load_library("radiolibrary")
         if content == "playlist-video" or content == "playlist-audio":
-            self.loadLibrary("playlists")
+            self.load_library("playlists")
         if content == "addon-program" or content == "addon-video" or \
                 content == "addon-audio" or content == "addon-image":
-            self.loadLibrary("addons")
+            self.load_library("addons")
         if content == "favourite":
-            self.loadLibrary("favourites")
+            self.load_library("favourites")
         if content == "settings":
-            self.loadLibrary("settings")
+            self.load_library("settings")
         if content == "widgets":
-            self.loadLibrary("widgets")
+            self.load_library("widgets")
 
         # The data has now been loaded, return it
         dialog.close()
         return self.dictionaryGroupings[content]
 
-    def flatGroupingsCount(self):
+    def flat_groupings_count(self):
         # Return how many nodes there are in the the flat grouping
         tree = self.data_func.get_overrides_script()
         if tree is None:
@@ -511,7 +511,7 @@ class LibraryFunctions:
 
         return count
 
-    def addToDictionary(self, group, content):
+    def add_to_dictionary(self, group, content):
         # This function adds content to the dictionaryGroupings - including
         # adding any skin-provided shortcuts to the group
         tree = self.data_func.get_overrides_skin()
@@ -775,21 +775,21 @@ class LibraryFunctions:
     def videolibrary(self):
         # Try loading custom nodes first
         try:
-            if self._parse_libraryNodes("video", "custom") is False:
+            if self._parse_library_nodes("video", "custom") is False:
                 log("Failed to load custom video nodes")
-                self._parse_libraryNodes("video", "default")
+                self._parse_library_nodes("video", "default")
         except:
             log("Failed to load custom video nodes")
             print_exc()
             try:
                 # Try loading default nodes
-                self._parse_libraryNodes("video", "default")
+                self._parse_library_nodes("video", "default")
             except:
                 # Empty library
                 log("Failed to load default video nodes")
                 print_exc()
 
-    def _parse_libraryNodes(self, library, node_type):
+    def _parse_library_nodes(self, library, node_type):
         # items = {"video":[], "movies":[], "tvshows":[], "musicvideos":[], "custom":{}}
         if library == "video":
             windowID = "Videos"
@@ -851,7 +851,7 @@ class LibraryFunctions:
                 item.setProperty("widgetTarget", library)
             items.append(item)
 
-        self.addToDictionary(library, items)
+        self.add_to_dictionary(library, items)
 
     # ============================
     # === LOAD OTHER LIBRARIES ===
@@ -939,7 +939,7 @@ class LibraryFunctions:
             "icon": "Favourites.png"
         }]))
 
-        self.addToDictionary("common", listitems)
+        self.add_to_dictionary("common", listitems)
 
     def more(self):
         listitems = []
@@ -1009,7 +1009,7 @@ class LibraryFunctions:
             "icon": "CleanMusicLibrary.png"
         }]))
 
-        self.addToDictionary("commands", listitems)
+        self.add_to_dictionary("commands", listitems)
 
     def settings(self):
         listitems = []
@@ -1042,7 +1042,7 @@ class LibraryFunctions:
             "icon": "InterfaceSettings.png"
         }]))
 
-        self.addToDictionary("settings", listitems)
+        self.add_to_dictionary("settings", listitems)
 
     def pvrlibrary(self):
         # PVR
@@ -1074,7 +1074,7 @@ class LibraryFunctions:
             "icon": "DefaultTVShows.png"
         }]))
 
-        self.addToDictionary("pvr", listitems)
+        self.add_to_dictionary("pvr", listitems)
 
         # Add tv channels
         listitems = []
@@ -1101,7 +1101,7 @@ class LibraryFunctions:
                     }]
                 ))
 
-        self.addToDictionary("pvr-tv", listitems)
+        self.add_to_dictionary("pvr-tv", listitems)
 
         # Add radio channels
         listitems = []
@@ -1129,7 +1129,7 @@ class LibraryFunctions:
                 ))
 
         log("Found " + str(len(listitems)) + " radio channels")
-        self.addToDictionary("pvr-radio", listitems)
+        self.add_to_dictionary("pvr-radio", listitems)
 
     def radiolibrary(self):
         listitems = []
@@ -1161,20 +1161,20 @@ class LibraryFunctions:
             "icon": "DefaultAudio.png"
         }]))
 
-        self.addToDictionary("radio", listitems)
+        self.add_to_dictionary("radio", listitems)
 
     def musiclibrary(self):
         # Try loading custom nodes first
         try:
-            if self._parse_libraryNodes("music", "custom") is False:
+            if self._parse_library_nodes("music", "custom") is False:
                 log("Failed to load custom music nodes")
-                self._parse_libraryNodes("music", "default")
+                self._parse_library_nodes("music", "default")
         except:
             log("Failed to load custom music nodes")
             print_exc()
             try:
                 # Try loading default nodes
-                self._parse_libraryNodes("music", "default")
+                self._parse_library_nodes("music", "default")
             except:
                 # Empty library
                 log("Failed to load default music nodes")
@@ -1218,7 +1218,7 @@ class LibraryFunctions:
                         "icon": "DefaultFolder.png"
                     }]
                 ))
-        self.addToDictionary("videosources", listitems)
+        self.add_to_dictionary("videosources", listitems)
 
         log(" - " + str(len(listitems)) + " video sources")
 
@@ -1243,7 +1243,7 @@ class LibraryFunctions:
                         "icon": "DefaultFolder.png"
                     }]
                 ))
-        self.addToDictionary("musicsources", listitems)
+        self.add_to_dictionary("musicsources", listitems)
 
         log(" - " + str(len(listitems)) + " audio sources")
 
@@ -1268,7 +1268,7 @@ class LibraryFunctions:
                         "icon": "DefaultFolder.png"
                     }]
                 ))
-        self.addToDictionary("picturesources", listitems)
+        self.add_to_dictionary("picturesources", listitems)
 
         log(" - " + str(len(listitems)) + " picture sources")
 
@@ -1383,11 +1383,11 @@ class LibraryFunctions:
 
             log(" - [" + path[0] + "] " + str(count) + " playlists found")
 
-        self.addToDictionary("playlist-video", videolist)
-        self.addToDictionary("playlist-audio", audiolist)
+        self.add_to_dictionary("playlist-video", videolist)
+        self.add_to_dictionary("playlist-audio", audiolist)
 
     @staticmethod
-    def scriptPlaylists():
+    def script_playlists():
         # Lazy loading of random source playlists auto-generated by the script
         # (loaded lazily as these can be created/deleted after gui has loaded)
         returnPlaylists = []
@@ -1434,7 +1434,7 @@ class LibraryFunctions:
             listing = doc.documentElement.getElementsByTagName('favourite')
         else:
             # No favourites file found
-            self.addToDictionary("favourite", [])
+            self.add_to_dictionary("favourite", [])
             self.loadedFavourites = True
             return True
 
@@ -1459,7 +1459,7 @@ class LibraryFunctions:
 
         log(" - " + str(len(listitems)) + " favourites found")
 
-        self.addToDictionary("favourite", listitems)
+        self.add_to_dictionary("favourite", listitems)
 
     def addons(self):
         executableItems = {}
@@ -1533,7 +1533,7 @@ class LibraryFunctions:
 
                         elif contenttype == "executable":
                             # Check if it's a program that can be run as an exectuble
-                            provides = self.hasPluginEntryPoint(item["path"])
+                            provides = self._has_plugin_entry_point(item["path"])
                             for content in provides:
                                 # For each content that it provides, add it
                                 # to the add-ons for that type
@@ -1564,23 +1564,23 @@ class LibraryFunctions:
                         listitems[item["name"]] = listitem
 
             if contenttype == "executable":
-                self.addToDictionary("addon-program", self.sortDictionary(listitems))
-                self.addToDictionary("addon-program-plugin",
-                                     self.sortDictionary(executablePluginItems))
+                self.add_to_dictionary("addon-program", self._sort_dictionary(listitems))
+                self.add_to_dictionary("addon-program-plugin",
+                                       self._sort_dictionary(executablePluginItems))
                 log(" - %s programs found (of which %s are plugins)" %
                     (str(len(listitems)), str(len(executablePluginItems))))
             elif contenttype == "video":
-                self.addToDictionary("addon-video", self.sortDictionary(listitems))
+                self.add_to_dictionary("addon-video", self._sort_dictionary(listitems))
                 log(" - " + str(len(listitems)) + " video add-ons found")
             elif contenttype == "audio":
-                self.addToDictionary("addon-audio", self.sortDictionary(listitems))
+                self.add_to_dictionary("addon-audio", self._sort_dictionary(listitems))
                 log(" - " + str(len(listitems)) + " audio add-ons found")
             elif contenttype == "image":
-                self.addToDictionary("addon-image", self.sortDictionary(listitems))
+                self.add_to_dictionary("addon-image", self._sort_dictionary(listitems))
                 log(" - " + str(len(listitems)) + " image add-ons found")
 
     @staticmethod
-    def hasPluginEntryPoint(path):
+    def _has_plugin_entry_point(path):
         # Check if an addon has a plugin entry point by parsing its addon.xml file
         try:
             tree = ETree.parse(os.path.join(path, "addon.xml")).getroot()
@@ -1598,7 +1598,7 @@ class LibraryFunctions:
         return []
 
     @staticmethod
-    def detectPluginContent(item):
+    def _detect_plugin_content(item):
         # based on the properties in the listitem we try to detect the content
 
         if "showtitle" not in item and "artist" not in item:
@@ -1700,10 +1700,10 @@ class LibraryFunctions:
                 listitem.setProperty("widgetTarget", widgetTarget)
             listitems.append(listitem)
 
-        self.addToDictionary("widgets", listitems)
+        self.add_to_dictionary("widgets", listitems)
 
     @staticmethod
-    def sortDictionary(dictionary):
+    def _sort_dictionary(dictionary):
         listitems = []
         for key in sorted(dictionary.keys()):  # , reverse = True):
             listitems.append(dictionary[key])
@@ -1728,7 +1728,7 @@ class LibraryFunctions:
 
         # Shortcut to go 'up'
         if len(label) == 1:
-            # This is the root, create a link to go back to selectShortcut
+            # This is the root, create a link to go back to select_shortcut
             listitem = self.create(["::UP::", "..", "", {}])
         else:
             # This isn't the root, create a link to go up the heirachy
@@ -1781,7 +1781,7 @@ class LibraryFunctions:
                     # Process this as a library node
                     isLibrary = True
                     if widgetType is None:
-                        widgetType = self.node_func.get_mediaType(location)
+                        widgetType = self.node_func.get_media_type(location)
 
                     if itemType == "32014":
                         # Video node
@@ -1810,7 +1810,7 @@ class LibraryFunctions:
                         )
 
                         if item["file"].endswith(".xml/") and \
-                                self.node_func.isGrouped(item["file"]):
+                                self.node_func.is_grouped(item["file"]):
                             listitem = self.create([item["file"], "%s  >" % (item["label"]), "", {
                                 "icon": "DefaultFolder.png",
                                 "thumb": thumb
@@ -1867,7 +1867,7 @@ class LibraryFunctions:
                         }])
                         listings.append(self._get_icon_overrides(tree, listitem, ""))
                     else:
-                        contentType = self.detectPluginContent(item)
+                        contentType = self._detect_plugin_content(item)
                         if contentType is not None:
                             if addonType is not None:
                                 addonType = contentType
@@ -1895,7 +1895,7 @@ class LibraryFunctions:
         elif selectedItem != -1:
             selectedAction = listings[selectedItem].getProperty("path")
             if selectedAction == "::UP::":
-                # User wants to go out of explorer, back to selectShortcut
+                # User wants to go out of explorer, back to select_shortcut
                 listitem = xbmcgui.ListItem(label="back")
                 listitem.setProperty("path", "::UP::")
 
@@ -1923,7 +1923,7 @@ class LibraryFunctions:
                     # Add widget details
                     if isLibrary:
                         listitem.setProperty("widget", "Library")
-                        widgetType = self.node_func.get_mediaType(location)
+                        widgetType = self.node_func.get_media_type(location)
                         if widgetType != "unknown":
                             listitem.setProperty("widgetType", widgetType)
                     else:
@@ -1944,7 +1944,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetType", "audio")
                     if isLibrary:
                         listitem.setProperty("widget", "Library")
-                        widgetType = self.node_func.get_mediaType(location)
+                        widgetType = self.node_func.get_media_type(location)
                         if widgetType != "unknown":
                             listitem.setProperty("widgetType", widgetType)
                     else:
@@ -2018,7 +2018,7 @@ class LibraryFunctions:
 
                 # Add widget details
                 if isLibrary:
-                    widgetType = self.node_func.get_mediaType(listitem.getProperty("widgetPath"))
+                    widgetType = self.node_func.get_media_type(listitem.getProperty("widgetPath"))
                     if widgetType != "unknown":
                         listitem.setProperty("widgetType", widgetType)
 
@@ -2081,8 +2081,8 @@ class LibraryFunctions:
             self._install_widget_provider(providerList[selectedProvider])
 
         # Return to where we were
-        return self.selectShortcut(group=group, grouping=grouping, custom=custom,
-                                   showNone=showNone, currentAction=currentAction)
+        return self.select_shortcut(group=group, grouping=grouping, custom=custom,
+                                    showNone=showNone, currentAction=currentAction)
 
     def _allow_install_widget_provider(self, location, isWidget, nodeAllows=None):
         # This function checks whether the 'Get More...' button should be enabled to install
@@ -2388,7 +2388,7 @@ class LibraryFunctions:
             tree.write(filename.replace(".xsp", "-randomversion.xsp"), encoding="utf-8")
 
     @staticmethod
-    def getImagesFromVfsPath(path):
+    def get_images_from_vfs(path):
         # this gets images from a vfs path to be used as backgrounds or icons
         images = []
         json_payload = {
@@ -2431,8 +2431,8 @@ class LibraryFunctions:
     # === COMMON SELECT SHORTCUT METHOD ===
     # =====================================
 
-    def selectShortcut(self, group="", custom=False, availableShortcuts=None, windowTitle=None,
-                       showNone=False, currentAction="", grouping=None):
+    def select_shortcut(self, group="", custom=False, availableShortcuts=None, windowTitle=None,
+                        showNone=False, currentAction="", grouping=None):
         # This function allows the user to select a shortcut
 
         isWidget = False
@@ -2440,11 +2440,11 @@ class LibraryFunctions:
             isWidget = True
 
         if availableShortcuts is None:
-            nodes = self.retrieveGroup(group, flat=False, grouping=grouping)
+            nodes = self.retrieve_group(group, flat=False, grouping=grouping)
             availableShortcuts = nodes[1]
             windowTitle = nodes[0]
         else:
-            availableShortcuts = self.checkForFolder(availableShortcuts)
+            availableShortcuts = self.check_for_folder(availableShortcuts)
 
         if showNone is not False and group == "":
             availableShortcuts.insert(0, self.create(["::NONE::", LANGUAGE(32053), "", {
@@ -2483,15 +2483,15 @@ class LibraryFunctions:
                     # We're only one level in, so we'll just clear the group
                     newGroup = ""
                 # Recall this function
-                return self.selectShortcut(group=newGroup, grouping=grouping, custom=custom,
-                                           showNone=showNone, currentAction=currentAction)
+                return self.select_shortcut(group=newGroup, grouping=grouping, custom=custom,
+                                            showNone=showNone, currentAction=currentAction)
             if path.startswith("||NODE||"):
                 if group == "":
                     group = path.replace("||NODE||", "")
                 else:
                     group = group + "," + path.replace("||NODE||", "")
-                return self.selectShortcut(group=group, grouping=grouping, custom=custom,
-                                           showNone=showNone, currentAction=currentAction)
+                return self.select_shortcut(group=group, grouping=grouping, custom=custom,
+                                            showNone=showNone, currentAction=currentAction)
             elif path.startswith("||BROWSE||"):
                 selectedShortcut = self.explorer(
                     ["plugin://" + path.replace("||BROWSE||", "")],
@@ -2609,16 +2609,16 @@ class LibraryFunctions:
                 self._install_widget_provider(path.replace("::INSTALL::", ""))
 
                 # Re-call this function
-                return self.selectShortcut(group=group, grouping=grouping, custom=custom,
-                                           showNone=showNone, currentAction=currentAction)
+                return self.select_shortcut(group=group, grouping=grouping, custom=custom,
+                                            showNone=showNone, currentAction=currentAction)
 
             elif path.startswith("::ENABLE::"):
                 # Try to automatically enable an addon
                 self._enable_widget_provider(path.replace("::ENABLE::", ""))
 
                 # Re-call this function
-                return self.selectShortcut(group=group, grouping=grouping, custom=custom,
-                                           showNone=showNone, currentAction=currentAction)
+                return self.select_shortcut(group=group, grouping=grouping, custom=custom,
+                                            showNone=showNone, currentAction=currentAction)
 
             elif path == "||CUSTOM||":
                 # Let the user type a command
@@ -2644,9 +2644,9 @@ class LibraryFunctions:
 
             # Check that explorer hasn't sent us back here
             if selectedShortcut is not None and selectedShortcut.getProperty("path") == "::UP::":
-                return self.selectShortcut(group=group, custom=custom, availableShortcuts=None,
-                                           windowTitle=windowTitle, showNone=showNone,
-                                           grouping=grouping, currentAction=currentAction)
+                return self.select_shortcut(group=group, custom=custom, availableShortcuts=None,
+                                            windowTitle=windowTitle, showNone=showNone,
+                                            grouping=grouping, currentAction=currentAction)
 
             return selectedShortcut
         else:
@@ -2661,7 +2661,7 @@ class LibraryFunctions:
     # - to plugins to help display updated content
 
     @staticmethod
-    def addWidgetReload(widgetPath):
+    def add_widget_reload(widgetPath):
         if "plugin://" not in widgetPath or "reload=" in widgetPath.lower() or \
                 "script.extendedinfo" in widgetPath.lower():
             # Not a plugin, or already has a reload parameter

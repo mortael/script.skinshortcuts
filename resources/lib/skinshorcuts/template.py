@@ -72,8 +72,8 @@ class Template:
         self.hashable = set()
         self.hashable.add(self.templatepath)
 
-    def parseItems(self, menuType, level, items, profile, profileVisibility, visibilityCondition,
-                   menuName, mainmenuID=None, buildOthers=False, mainmenuitems=None):
+    def parse_items(self, menuType, level, items, profile, profileVisibility, visibilityCondition,
+                    menuName, mainmenuID=None, buildOthers=False, mainmenuitems=None):
         # This will build an item in our includes for a menu
         if self.includes is None or self.tree is None:
             return
@@ -86,7 +86,7 @@ class Template:
         else:
             if len(items.findall("item")) == 0:
                 return
-            template = self.findSubmenu(menuName, level)
+            template = self.find_submenu(menuName, level)
 
         if template is not None:
             # Found a template - let's build it
@@ -101,17 +101,17 @@ class Template:
             if "include" in template.attrib:
                 includeName += "-%s" % (template.attrib.get("include"))
 
-            _ = self.getInclude(self.includes, includeName, profileVisibility, profile)
-            includeTree = self.getInclude(self.includes, includeName + "-%s" % profile, None, None)
+            _ = self.get_include(self.includes, includeName, profileVisibility, profile)
+            includeTree = self.get_include(self.includes, includeName + "-%s" % profile, None, None)
 
             # If we've been passed any mainmenu items, retrieve their properties
             properties = {}
             if mainmenuitems is not None:
-                properties = self.getProperties(template, mainmenuitems)
+                properties = self.get_properties(template, mainmenuitems)
 
             # Now replace all <skinshortcuts> elements with correct data
-            self.replaceElements(template.find("controls"), visibilityCondition, profileVisibility,
-                                 items, properties, customitems=template.findall("items"))
+            self.replace_elements(template.find("controls"), visibilityCondition, profileVisibility,
+                                  items, properties, customitems=template.findall("items"))
 
             # Add the template to the includes
             for child in template.find("controls"):
@@ -168,8 +168,8 @@ class Template:
 
             # Now find a matching template - if one matches, it will be saved to be processed
             # at the end (when we have all visibility conditions)
-            numTemplates += self.findOther(item, profile, profileVisibility, visibilityCondition,
-                                           finalVisibility, menuType, rootID)
+            numTemplates += self.find_other(item, profile, profileVisibility, visibilityCondition,
+                                            finalVisibility, menuType, rootID)
             if menuType == "mainmenu":
                 self.progress.update(
                     int(self.current + ((float(self.percent) / float(len(items))) * progressCount))
@@ -177,7 +177,7 @@ class Template:
         if numTemplates != 0:
             log(" - %d templates" % numTemplates)
 
-    def writeOthers(self):
+    def write_others(self):
         # This will write any 'other' elements we have into the includes file
         # (now we have all the visibility conditions for them)
         if self.includes is None or self.tree is None:
@@ -211,15 +211,15 @@ class Template:
                         visibilityCondition += " | " + condition.text
 
                 # Get the include this will be done under
-                _ = self.getInclude(self.includes, name, profile.attrib.get("visible"),
-                                    profile.attrib.get("profile"))
-                include = self.getInclude(self.includes, "%s-%s" %
-                                          (name, profile.attrib.get("profile")),
-                                          None, None)  # profile.attrib.get( "visible" ) )
+                _ = self.get_include(self.includes, name, profile.attrib.get("visible"),
+                                     profile.attrib.get("profile"))
+                include = self.get_include(self.includes, "%s-%s" %
+                                           (name, profile.attrib.get("profile")),
+                                           None, None)  # profile.attrib.get( "visible" ) )
 
                 # Create a copy of the node with any changes within (this time it'll be visibility)
                 final = self.copy_tree(template)
-                self.replaceElements(final, visibilityCondition, profile.attrib.get("visible"), [])
+                self.replace_elements(final, visibilityCondition, profile.attrib.get("visible"), [])
 
                 # Add the template to the includes
                 controls = final.find("controls")
@@ -264,7 +264,7 @@ class Template:
         for variableName in finalVariableNames:
             element = ETree.SubElement(self.includes, "variable")
             element.set("name", variableName)
-            for condition, value in self.parseVariables(variableName, finalVariables):
+            for condition, value in self.parse_variables(variableName, finalVariables):
                 valueElement = ETree.SubElement(element, "value")
                 valueElement.text = value
                 if condition != "":
@@ -273,12 +273,12 @@ class Template:
         # If there are any 'other' templates that we haven't built, build an empty one
         for otherTemplate in self.otherTemplates:
             # Get the include this will be built in
-            root = self.getInclude(self.includes, otherTemplate, None, None)
+            root = self.get_include(self.includes, otherTemplate, None, None)
             ETree.SubElement(root, "description").text = \
                 "This include was built automatically as the template didn't match any menu items"
 
     @staticmethod
-    def parseVariables(variableName, allVariables):
+    def parse_variables(variableName, allVariables):
         # This function will return all condition/value elements for a given variable,
         # including adding profile conditions
         returnVariables = []
@@ -329,7 +329,7 @@ class Template:
         return returnVariables + noCondition
 
     @staticmethod
-    def getInclude(tree, name, condition, profile):
+    def get_include(tree, name, condition, profile):
         # This function gets an existing <include/>, or creates it
         for include in tree.findall("include"):
             if include.attrib.get("name") == name:
@@ -362,7 +362,7 @@ class Template:
 
         return newInclude
 
-    def findSubmenu(self, name, level):
+    def find_submenu(self, name, level):
         # Find the correct submenu template
         returnElem = None
         for elem in self.tree.findall("submenu"):
@@ -392,8 +392,8 @@ class Template:
             return None
         return self.copy_tree(returnElem)
 
-    def findOther(self, item, profile, profileVisibility, simpleVisibility, visibilityCondition,
-                  menuType, rootID):
+    def find_other(self, item, profile, profileVisibility, simpleVisibility, visibilityCondition,
+                   menuType, rootID):
         # Find a template matching the item we have been passed
         foundTemplateIncludes = []
         numTemplates = 0
@@ -448,13 +448,13 @@ class Template:
                 if matchType == "all":
                     if matched is False:
                         break
-                    if self.checkCondition(condition, item) is False:
+                    if self.check_condition(condition, item) is False:
                         matched = False
                         break
                 else:
                     if matched is True:
                         break
-                    if self.checkCondition(condition, item) is True:
+                    if self.check_condition(condition, item) is True:
                         matched = True
                         break
 
@@ -465,15 +465,15 @@ class Template:
             numTemplates += 1
 
             # All the rules matched, so next we'll get any properties
-            properties = self.getProperties(template, item)
+            properties = self.get_properties(template, item)
             if rootID is not None:
                 properties["auto-rootID"] = rootID
 
             # Next up, we do any replacements - EXCEPT for visibility, which
             # we'll store for later (in case multiple items would have an
             # identical template
-            self.replaceElements(template.find("controls"), None, None, [], properties)
-            self.replaceElements(template.find("variables"), None, None, [], properties)
+            self.replace_elements(template.find("controls"), None, None, [], properties)
+            self.replace_elements(template.find("variables"), None, None, [], properties)
 
             # Now we need to check if we've already got a template identical to this
             foundInPrevious = False
@@ -544,7 +544,7 @@ class Template:
         return numTemplates
 
     @staticmethod
-    def checkCondition(condition, items):
+    def check_condition(condition, items):
         # Check if a particular condition is matched for an 'other' template
         if "tag" not in condition.attrib:
             # Tag attrib is required
@@ -575,7 +575,7 @@ class Template:
 
         return False
 
-    def getProperties(self, elem, items):
+    def get_properties(self, elem, items):
         # Get any properties specified in an 'other' template
         properties = {}
 
@@ -736,9 +736,9 @@ class Template:
 
         return properties
 
-    def combineProperties(self, elem, items, currentProperties):
+    def combine_properties(self, elem, items, currentProperties):
         # Combines an existing set of properties with additional properties
-        newProperties = self.getProperties(elem, items)
+        newProperties = self.get_properties(elem, items)
         for propertyName in newProperties:
             if propertyName in list(currentProperties.keys()):
                 continue
@@ -746,8 +746,8 @@ class Template:
 
         return currentProperties
 
-    def replaceElements(self, tree, visibilityCondition, profileVisibility, items,
-                        properties=None, customitems=None):
+    def replace_elements(self, tree, visibilityCondition, profileVisibility, items,
+                         properties=None, customitems=None):
         if properties is None:
             properties = {}
 
@@ -885,10 +885,10 @@ class Template:
                     tree.insert(index, newelement)
                 elif item_type == "items" and customitems is not None and \
                         elem.attrib.get("insert"):
-                    for element in self.buildSubmenuCustomItems(customitems,
-                                                                items.findall("item"),
-                                                                elem.attrib.get("insert"),
-                                                                properties):
+                    for element in self.build_submenu_custom_items(customitems,
+                                                                   items.findall("item"),
+                                                                   elem.attrib.get("insert"),
+                                                                   properties):
                         for child in element:
                             tree.insert(index, child)
                 elif item_type == "items":
@@ -915,10 +915,10 @@ class Template:
 
             else:
                 # Iterate through tree
-                self.replaceElements(elem, visibilityCondition, profileVisibility, items,
-                                     properties, customitems=customitems)
+                self.replace_elements(elem, visibilityCondition, profileVisibility, items,
+                                      properties, customitems=customitems)
 
-    def buildSubmenuCustomItems(self, template, items, insert, currentProperties):
+    def build_submenu_custom_items(self, template, items, insert, currentProperties):
         # Builds an 'items' template within a submenu template
 
         # Find the template with the correct insert attribute
@@ -935,9 +935,9 @@ class Template:
         newelements = []
         for item in items:
             newElement = self.copy_tree(itemTemplate.find("controls"))
-            self.replaceElements(
+            self.replace_elements(
                 newElement, None, None, [],
-                self.combineProperties(itemTemplate, item, currentProperties.copy())
+                self.combine_properties(itemTemplate, item, currentProperties.copy())
             )
             newelements.insert(0, newElement)
         return newelements

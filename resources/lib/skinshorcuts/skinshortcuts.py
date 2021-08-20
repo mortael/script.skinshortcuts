@@ -63,8 +63,8 @@ class Main:
 
         if self.TYPE == "buildxml":
             xbmc.sleep(100)
-            self.xml_func.buildMenu(self.MENUID, self.GROUP, self.LEVELS, self.MODE,
-                                    self.OPTIONS, self.MINITEMS)
+            self.xml_func.build_menu(self.MENUID, self.GROUP, self.LEVELS, self.MODE,
+                                     self.OPTIONS, self.MINITEMS)
 
         if self.TYPE == "launch":
             xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False,
@@ -95,16 +95,16 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            thread.start_new_thread(self.lib_func.loadAllLibrary, ())
+            thread.start_new_thread(self.lib_func.load_all_library, ())
 
             if self.GROUPING is not None:
-                selectedShortcut = self.lib_func.selectShortcut(
+                selectedShortcut = self.lib_func.select_shortcut(
                     "", grouping=self.GROUPING,
                     custom=self.CUSTOM, showNone=self.NONE
                 )
             else:
-                selectedShortcut = self.lib_func.selectShortcut("", custom=self.CUSTOM,
-                                                                showNone=self.NONE)
+                selectedShortcut = self.lib_func.select_shortcut("", custom=self.CUSTOM,
+                                                                 showNone=self.NONE)
 
             # Now set the skin strings
             if selectedShortcut is not None and selectedShortcut.getProperty("Path"):
@@ -153,7 +153,7 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            thread.start_new_thread(self.lib_func.loadAllLibrary, ())
+            thread.start_new_thread(self.lib_func.load_all_library, ())
 
             # Check if we should show the custom option (if the relevant widgetPath skin
             # string is provided and isn't empty)
@@ -164,15 +164,15 @@ class Main:
 
             if self.GROUPING:
                 if self.GROUPING.lower() == "default":
-                    selectedShortcut = self.lib_func.selectShortcut("", custom=showCustom,
-                                                                    showNone=self.NONE)
+                    selectedShortcut = self.lib_func.select_shortcut("", custom=showCustom,
+                                                                     showNone=self.NONE)
                 else:
-                    selectedShortcut = self.lib_func.selectShortcut(
+                    selectedShortcut = self.lib_func.select_shortcut(
                         "", grouping=self.GROUPING,
                         custom=showCustom, showNone=self.NONE
                     )
             else:
-                selectedShortcut = self.lib_func.selectShortcut(
+                selectedShortcut = self.lib_func.select_shortcut(
                     "", grouping="widget",
                     custom=showCustom, showNone=self.NONE
                 )
@@ -249,13 +249,13 @@ class Main:
             if not xbmc.getCondVisibility("Skin.HasSetting(SkinShortcuts-FullMenu)"):
                 xbmcgui.Dialog().ok(ADDON_NAME, ADDON.getLocalizedString(32116))
             else:
-                self.node_func.addToMenu(self.CONTEXTFILENAME, self.CONTEXTLABEL, self.CONTEXTICON,
-                                         self.CONTEXTCONTENT, self.CONTEXTWINDOW, self.data_func)
+                self.node_func.add_to_menu(self.CONTEXTFILENAME, self.CONTEXTLABEL, self.CONTEXTICON,
+                                           self.CONTEXTCONTENT, self.CONTEXTWINDOW, self.data_func)
 
         if self.TYPE == "setProperty":
             # External request to set properties of a menu item
-            self.node_func.setProperties(self.PROPERTIES, self.VALUES, self.LABELID,
-                                         self.GROUPNAME, self.data_func)
+            self.node_func.set_properties(self.PROPERTIES, self.VALUES, self.LABELID,
+                                          self.GROUPNAME, self.data_func)
 
         if self.TYPE == "resetall":
             # Tell XBMC not to try playing any media

@@ -137,7 +137,7 @@ class NodeFunctions:
             print_exc()
 
     @staticmethod
-    def isGrouped(path):
+    def is_grouped(path):
         customPathVideo = path.replace("library://video",
                                        os.path.join(PROFILE_PATH, "library", "video"))[:-1]
         defaultPathVideo = path.replace("library://video",
@@ -256,7 +256,7 @@ class NodeFunctions:
         return ""
 
     @staticmethod
-    def get_mediaType(path):
+    def get_media_type(path):
         path = path.replace("videodb://", "library://video/")
         path = path.replace("musicdb://", "library://music/")
         if path.endswith(".xml"):
@@ -325,7 +325,7 @@ class NodeFunctions:
     # Functions to externally add a node to the menu #
     ##################################################
 
-    def addToMenu(self, path, label, icon, content, window, data_func):
+    def add_to_menu(self, path, label, icon, content, window, data_func):
         log(repr(window))
         log(repr(label))
         log(repr(path))
@@ -373,7 +373,7 @@ class NodeFunctions:
         if content == "albums":
             labels.append("Play")
             paths.append("RunScript(script.skinshortcuts,type=launchalbum&album=%s)" %
-                         (self.extractID(path)))
+                         (self.extract_id(path)))
         if window == 10002:
             labels.append("Slideshow")
             paths.append("SlideShow(%s,notrandom)" % path)
@@ -483,7 +483,7 @@ class NodeFunctions:
         xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32090))
 
     @staticmethod
-    def extractID(path):
+    def extract_id(path):
         # Extract the ID of an item from its path
         itemID = path
         if "?" in itemID:
@@ -499,7 +499,7 @@ class NodeFunctions:
 
     # noinspection PyDictCreation
     @staticmethod
-    def setProperties(properties, values, labelID, group, data_func):
+    def set_properties(properties, values, labelID, group, data_func):
         # This function will take a list of properties and values and apply them to the
         # main menu item with the given labelID
         if not group:

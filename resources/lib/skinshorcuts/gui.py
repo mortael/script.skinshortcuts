@@ -128,7 +128,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             self._load_overrides_onclick()
 
             # Load additional button ID's we'll handle for custom properties
-            self._load_customPropertyButtons()
+            self._load_custom_property_buttons()
 
             # Load current shortcuts
             self.load_shortcuts()
@@ -245,7 +245,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     log("No widget button on GUI (id 401)")
 
             # Load library shortcuts in thread
-            thread.start_new_thread(self.lib_func.loadAllLibrary, ())
+            thread.start_new_thread(self.lib_func.load_all_library, ())
 
             if has111:
                 try:
@@ -499,7 +499,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Save the new properties to the listitem
         listitem.setProperty("skinshortcuts-allproperties", repr(allProps))
-        added, removed, changed = self.DictDiffer(allProps, currentProperties)
+        added, removed, changed = self.dict_differ(allProps, currentProperties)
         for key in added:
             listitem.setProperty(key, allProps[key])
         for key in removed:
@@ -510,7 +510,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             listitem.setProperty(key, allProps[key])
 
         # Save the new properties to the window
-        added, removed, changed = self.DictDiffer(allProps, self.windowProperties)
+        added, removed, changed = self.dict_differ(allProps, self.windowProperties)
         for key in added:
             self.currentWindow.setProperty(key, allProps[key])
         for key in removed:
@@ -519,7 +519,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             self.currentWindow.setProperty(key, allProps[key])
         self.windowProperties = allProps
 
-    def DictDiffer(self, current_dict, past_dict):
+    def dict_differ(self, current_dict, past_dict):
         # Get differences between dictionaries
         self.current_dict, self.past_dict = current_dict, past_dict
         set_current, set_past = set(current_dict.keys()), set(past_dict.keys())
@@ -681,7 +681,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 # or a specified property from the override is present
                 if listitem.getLabel() != LANGUAGE(32013) or \
                         listitem.getProperty("path") != "noop" or \
-                        self.hasSaveWithProperty(listitem):
+                        self.has_save_with_property(listitem):
                     # Generate labelID, and mark if it has changed
                     labelID = listitem.getProperty("labelID")
 
@@ -884,7 +884,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # Note that we've saved stuff
             HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
 
-    def hasSaveWithProperty(self, listitem):
+    def has_save_with_property(self, listitem):
         for propertyName in self.saveWithProperty:
             if listitem.getProperty(propertyName) != "":
                 return True
@@ -1062,7 +1062,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             if elem.text.startswith("||BROWSE||"):
                 # we want to include images from a VFS path...
-                images = self.lib_func.getImagesFromVfsPath(elem.text.replace("||BROWSE||", ""))
+                images = self.lib_func.get_images_from_vfs(elem.text.replace("||BROWSE||", ""))
                 for image in images:
                     backgrounds.append([image[0], image[1]])
             elif "icon" in elem.attrib:
@@ -1082,7 +1082,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             if elem.text.startswith("||BROWSE||"):
                 # we want to include images from a VFS path...
-                images = self.lib_func.getImagesFromVfsPath(elem.text.replace("||BROWSE||", ""))
+                images = self.lib_func.get_images_from_vfs(elem.text.replace("||BROWSE||", ""))
                 for image in images:
                     thumbnails.append([image[0], image[1]])
             elif elem.text == "::NONE::":
@@ -1095,7 +1095,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         self.thumbnails = thumbnails
 
-    def _load_customPropertyButtons(self):
+    def _load_custom_property_buttons(self):
         # Load a list of addition button IDs we'll handle for setting additional properties
 
         # Load skin overrides
@@ -1118,14 +1118,14 @@ class GUI(xbmcgui.WindowXMLDialog):
             # Move to previous type of shortcuts
             self.shortcutgroup = self.shortcutgroup - 1
             if self.shortcutgroup == 0:
-                self.shortcutgroup = self.lib_func.flatGroupingsCount()
+                self.shortcutgroup = self.lib_func.flat_groupings_count()
 
             self._display_shortcuts()
 
         elif controlID == 103:
             # Move to next type of shortcuts
             self.shortcutgroup = self.shortcutgroup + 1
-            if self.shortcutgroup > self.lib_func.flatGroupingsCount():
+            if self.shortcutgroup > self.lib_func.flat_groupings_count():
                 self.shortcutgroup = 1
 
             self._display_shortcuts()
@@ -1445,14 +1445,14 @@ class GUI(xbmcgui.WindowXMLDialog):
                 action = ""
 
             if self.currentWindow.getProperty("custom-grouping"):
-                selectedShortcut = self.lib_func.selectShortcut(
+                selectedShortcut = self.lib_func.select_shortcut(
                     custom=True,
                     currentAction=listitem.getProperty("path"),
                     grouping=self.currentWindow.getProperty("custom-grouping")
                 )
                 self.currentWindow.clearProperty("custom-grouping")
             else:
-                selectedShortcut = self.lib_func.selectShortcut(
+                selectedShortcut = self.lib_func.select_shortcut(
                     custom=True,
                     currentAction=listitem.getProperty("path")
                 )
@@ -1626,7 +1626,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             listitem = listControl.getSelectedItem()
 
             # Check that widgets have been loaded
-            self.lib_func.loadLibrary("widgets")
+            self.lib_func.load_library("widgets")
 
             # If we're setting for an additional widget, get it's number
             widgetID = ""
@@ -1656,7 +1656,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # If playlists have been enabled for widgets, add them too
             if self.widgetPlaylists:
                 # Ensure playlists are loaded
-                self.lib_func.loadLibrary("playlists")
+                self.lib_func.load_library("playlists")
 
                 # Add them
                 for playlist in self.lib_func.widgetPlaylistsList:
@@ -1664,7 +1664,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     widgetLabel.append(playlist[1])
                     widgetName.append(playlist[2])
                     widgetType.append(self.widgetPlaylistsType)
-                for playlist in self.lib_func.scriptPlaylists():
+                for playlist in self.lib_func.script_playlists():
                     widget.append("::PLAYLIST::" + playlist[0])
                     widgetLabel.append(playlist[1])
                     widgetName.append(playlist[2])
@@ -1735,13 +1735,13 @@ class GUI(xbmcgui.WindowXMLDialog):
                                   listitem.getProperty("defaultID"))
 
             # Ensure widgets are loaded
-            self.lib_func.loadLibrary("widgets")
+            self.lib_func.load_library("widgets")
 
             # Let user choose widget
             if listitem.getProperty("widgetPath") == "":
-                selectedShortcut = self.lib_func.selectShortcut(grouping="widget", showNone=True)
+                selectedShortcut = self.lib_func.select_shortcut(grouping="widget", showNone=True)
             else:
-                selectedShortcut = self.lib_func.selectShortcut(
+                selectedShortcut = self.lib_func.select_shortcut(
                     grouping="widget",
                     showNone=True,
                     custom=True,
@@ -1779,7 +1779,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # Add any necessary reload parameter
                 widgetPath = \
-                    self.lib_func.addWidgetReload(selectedShortcut.getProperty("widgetPath"))
+                    self.lib_func.add_widget_reload(selectedShortcut.getProperty("widgetPath"))
 
                 self._add_additionalproperty(listitem, "widget" + widgetID,
                                              selectedShortcut.getProperty("widget"))
@@ -1879,7 +1879,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                 ["", key[1].replace("::PLAYLIST::", playlist[1]), "", {}]
                             )
                         )
-                    for playlist in self.lib_func.scriptPlaylists():
+                    for playlist in self.lib_func.script_playlists():
                         background.append([key[0], playlist[0], playlist[1]])
                         backgroundLabel.append(key[1].replace("::PLAYLIST::", playlist[1]))
                         backgroundPretty.append(
@@ -2101,12 +2101,12 @@ class GUI(xbmcgui.WindowXMLDialog):
                 return
 
             if self.currentWindow.getProperty("custom-grouping"):
-                selectedShortcut = self.lib_func.selectShortcut(
+                selectedShortcut = self.lib_func.select_shortcut(
                     grouping=self.currentWindow.getProperty("custom-grouping")
                 )
                 self.currentWindow.clearProperty("custom-grouping")
             else:
-                selectedShortcut = self.lib_func.selectShortcut()
+                selectedShortcut = self.lib_func.select_shortcut()
 
             if selectedShortcut is not None:
                 listitemCopy = self._duplicate_listitem(selectedShortcut,
@@ -2124,7 +2124,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                                      listitemProperty[1])
 
                 # set default background for this item (if any)
-                defaultBackground = self.find_defaultBackground(
+                defaultBackground = self.find_default_background(
                     listitemCopy.getProperty("labelID"),
                     listitemCopy.getProperty("defaultID")
                 )
@@ -2135,8 +2135,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                                                  defaultBackground["label"])
 
                 # set default widget for this item (if any)
-                defaultWidget = self.find_defaultWidget(listitemCopy.getProperty("labelID"),
-                                                        listitemCopy.getProperty("defaultID"))
+                defaultWidget = self.find_default_widget(listitemCopy.getProperty("labelID"),
+                                                         listitemCopy.getProperty("defaultID"))
                 if defaultWidget:
                     self._add_additionalproperty(listitemCopy, "widget", defaultWidget["widget"])
                     self._add_additionalproperty(listitemCopy, "widgetName", defaultWidget["name"])
@@ -2442,7 +2442,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
     def _display_shortcuts(self):
         # Load the currently selected shortcut group
-        newGroup = self.lib_func.retrieveGroup(self.shortcutgroup)
+        newGroup = self.lib_func.retrieve_group(self.shortcutgroup)
 
         label = self.data_func.local(newGroup[0])[2]
 
@@ -2595,7 +2595,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         return True
 
-    def find_defaultBackground(self, labelID, defaultID):
+    def find_default_background(self, labelID, defaultID):
         # This function finds the default background, including properties
         count = 0
         while self.backgrounds == "LOADING" and count < 20:
@@ -2617,7 +2617,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         return result
 
-    def find_defaultWidget(self, labelID, defaultID):
+    def find_default_widget(self, labelID, defaultID):
         # This function finds the default widget, including properties
         result = {}
 
@@ -2703,13 +2703,13 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         elif currentFocus in self.contextControls and action.getId() in ACTION_CONTEXT_MENU:
             # Context menu action
-            self._display_Context_Menu()
+            self._display_context_menu()
 
         if currentFocus == 211:
             # Changed highlighted item, update window properties
             self._add_additional_properties()
 
-    def _display_Context_Menu(self):
+    def _display_context_menu(self):
         # Displays a context menu
 
         contextActions = []

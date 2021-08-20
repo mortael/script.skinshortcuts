@@ -48,8 +48,8 @@ class XMLFunctions:
 
         self.checkForShortcuts = []
 
-    def buildMenu(self, mainmenuID, groups, numLevels, buildMode, options, minitems,
-                  weEnabledSystemDebug=False, weEnabledScriptDebug=False):
+    def build_menu(self, mainmenuID, groups, numLevels, buildMode, options, minitems,
+                   weEnabledSystemDebug=False, weEnabledScriptDebug=False):
         # Entry point for building includes.xml files
         if HOME_WINDOW.getProperty("skinshortcuts-isrunning") == "True":
             return
@@ -144,8 +144,8 @@ class XMLFunctions:
 
                 if enabledSystemDebug or enabledScriptDebug:
                     # We enabled one or more of the debug options, re-run this function
-                    self.buildMenu(mainmenuID, groups, numLevels, buildMode, options, minitems,
-                                   enabledSystemDebug, enabledScriptDebug)
+                    self.build_menu(mainmenuID, groups, numLevels, buildMode, options, minitems,
+                                    enabledSystemDebug, enabledScriptDebug)
                 else:
                     # Offer to upload a debug log
                     if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
@@ -442,7 +442,7 @@ class XMLFunctions:
                     submenu = item.find("labelID").text
 
                     # Build the menu item
-                    menuitem, allProps = self.buildElement(
+                    menuitem, allProps = self.build_element(
                         item,
                         "mainmenu",
                         None,
@@ -597,10 +597,10 @@ class XMLFunctions:
                     for submenuItem in submenuitems:
                         itemidsubmenu += 1
                         # Build the item without any visibility conditions
-                        menuitem, allProps = self.buildElement(submenuItem, submenu, None,
-                                                               profile[1], itemid=itemidsubmenu,
-                                                               mainmenuid=itemidmainmenu,
-                                                               options=options)
+                        menuitem, allProps = self.build_element(submenuItem, submenu, None,
+                                                                profile[1], itemid=itemidsubmenu,
+                                                                mainmenuid=itemidmainmenu,
+                                                                options=options)
                         isSubMenuElement = ETree.SubElement(menuitem, "property")
                         isSubMenuElement.set("name", "isSubmenu")
                         isSubMenuElement.text = "True"
@@ -665,7 +665,7 @@ class XMLFunctions:
                     buildOthers = False
                     if item in submenuItems:
                         buildOthers = True
-                    Template.parseItems(
+                    Template.parse_items(
                         "submenu", count, templateSubMenuItems, profile[2],
                         profile[1], "String.IsEqual(Container(%s).ListItem"
                                     ".Property(submenuVisibility),%s)" %
@@ -709,8 +709,8 @@ class XMLFunctions:
                                                       checkForShortcut[2]]])
 
             # Build the template for the main menu
-            Template.parseItems("mainmenu", 0, templateMainMenuItems, profile[2], profile[1],
-                                "", "", mainmenuID, True)
+            Template.parse_items("mainmenu", 0, templateMainMenuItems, profile[2], profile[1],
+                                 "", "", mainmenuID, True)
 
             # If we haven't built enough main menu items, copy the ones we have
             while itemidmainmenu < minitems and fullMenu and len(mainmenuTree) != 0:
@@ -725,7 +725,7 @@ class XMLFunctions:
                     mainmenuTree.append(item)
 
         # Build any 'Other' templates
-        Template.writeOthers()
+        Template.write_others()
 
         progress.update(100, message=LANGUAGE(32098))
 
@@ -765,8 +765,8 @@ class XMLFunctions:
         # Save the hashes
         write_hashes(hashlist)
 
-    def buildElement(self, item, groupName, visibilityCondition, profileVisibility,
-                     submenuVisibility=None, itemid=-1, mainmenuid=None, options=None):
+    def build_element(self, item, groupName, visibilityCondition, profileVisibility,
+                      submenuVisibility=None, itemid=-1, mainmenuid=None, options=None):
         # This function will build an element for the passed Item in
 
         if options is None:
@@ -967,7 +967,7 @@ class XMLFunctions:
                 onclickelement.text = onclick.text
 
             # Also add it as a path property
-            if not self.propertyExists("path", newelement) and "path" not in list(allProps.keys()):
+            if not self.property_exists("path", newelement) and "path" not in list(allProps.keys()):
                 # we only add the path property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 pathelement = ETree.SubElement(newelement, "property")
@@ -976,7 +976,7 @@ class XMLFunctions:
                 allProps["path"] = pathelement
 
             # Get 'list' property (the action property of an ActivateWindow shortcut)
-            if not self.propertyExists("list", newelement) and "list" not in list(allProps.keys()):
+            if not self.property_exists("list", newelement) and "list" not in list(allProps.keys()):
                 # we only add the list property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 listElement = ETree.SubElement(newelement, "property")
@@ -1054,9 +1054,9 @@ class XMLFunctions:
                     additionalproperty.text = self.data_func.local(self.MAINPROPERTIES[key])[1]
                     allProps[key] = additionalproperty
 
-        propertyPatterns = self.getPropertyPatterns(labelID.text, groupName)
+        propertyPatterns = self.get_property_patterns(labelID.text, groupName)
         if len(propertyPatterns) > 0:
-            propertyReplacements = self.getPropertyReplacements(newelement)
+            propertyReplacements = self.get_property_replacements(newelement)
             for propertyName in propertyPatterns:
                 propertyPattern = propertyPatterns[propertyName][0]
                 for original, replacement in propertyReplacements:
@@ -1071,7 +1071,7 @@ class XMLFunctions:
 
         return newelement, allProps
 
-    def getPropertyPatterns(self, labelID, group):
+    def get_property_patterns(self, labelID, group):
         propertyPatterns = {}
         if not self.loadedPropertyPatterns:
             overrides = self.data_func.get_overrides_skin()
@@ -1098,7 +1098,7 @@ class XMLFunctions:
         return propertyPatterns
 
     @staticmethod
-    def getPropertyReplacements(element):
+    def get_property_replacements(element):
         propertyReplacements = []
         for subElement in list(element):
             if subElement.tag == "property":
@@ -1111,14 +1111,14 @@ class XMLFunctions:
         return propertyReplacements
 
     @staticmethod
-    def propertyExists(propertyName, element):
+    def property_exists(propertyName, element):
         for item in element.findall("property"):
             if propertyName in item.attrib:
                 return True
         return False
 
     @staticmethod
-    def findIncludePosition(source_list, item):
+    def find_include_position(source_list, item):
         try:
             return source_list.index(item)
         except:
