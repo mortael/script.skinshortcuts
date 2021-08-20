@@ -57,7 +57,7 @@ class NodeFunctions:
                 self.parse_node(os.path.join(path, _dir), _dir, nodes, prefix)
             for file in files:
                 self.parse_view(os.path.join(path, file), nodes,
-                                origPath="%s/%s" % (prefix, file))
+                                orig_path="%s/%s" % (prefix, file))
         except:
             print_exc()
             return False
@@ -70,8 +70,8 @@ class NodeFunctions:
             self.parse_view(os.path.join(node, "index.xml"), nodes, True,
                             "%s/%s/" % (prefix, directory), node)
 
-    def parse_view(self, file, nodes, isFolder=False, origFolder=None, origPath=None):
-        if not isFolder and file.endswith("index.xml"):
+    def parse_view(self, file, nodes, is_folder=False, orig_folder=None, orig_path=None):
+        if not is_folder and file.endswith("index.xml"):
             return
         try:
             # Load the xml file
@@ -81,7 +81,7 @@ class NodeFunctions:
             # Get the item index
             if "order" in root.attrib:
                 index = root.attrib.get("order")
-                origIndex = index
+                orig_index = index
                 while int(index) in nodes:
                     index = int(index)
                     index += 1
@@ -89,23 +89,23 @@ class NodeFunctions:
             else:
                 self.indexCounter -= 1
                 index = str(self.indexCounter)
-                origIndex = "-"
+                orig_index = "-"
 
             # Try to get media type from visibility condition
-            mediaType = None
+            media_type = None
             if "visible" in root.attrib:
-                visibleAttrib = root.attrib.get("visible")
-                if not xbmc.getCondVisibility(visibleAttrib):
+                visible_attrib = root.attrib.get("visible")
+                if not xbmc.getCondVisibility(visible_attrib):
                     # The node isn't visible
                     return
-                if "Library.HasContent(" in visibleAttrib and "+" not in visibleAttrib and \
-                        "|" not in visibleAttrib:
-                    mediaType = visibleAttrib.split("(")[1].split(")")[0].lower()
+                if "Library.HasContent(" in visible_attrib and "+" not in visible_attrib and \
+                        "|" not in visible_attrib:
+                    media_type = visible_attrib.split("(")[1].split(")")[0].lower()
 
             # Try to get media type from content node
-            contentNode = root.find("content")
-            if contentNode is not None:
-                mediaType = contentNode.text
+            content_node = root.find("content")
+            if content_node is not None:
+                media_type = content_node.text
 
             # Get label and icon
             label = root.find("label").text
@@ -115,47 +115,55 @@ class NodeFunctions:
             else:
                 icon = ""
 
-            if isFolder:
+            if is_folder:
                 # Add it to our list of nodes
-                nodes[int(index)] = [label, icon, origFolder, "folder", origIndex, mediaType]
+                nodes[int(index)] = [label, icon, orig_folder, "folder", orig_index, media_type]
             else:
                 # Check for a path
                 path = root.find("path")
                 if path is not None:
-                    # Change the origPath (the url used as the shortcut address) to it
-                    origPath = path.text
+                    # Change the orig_path (the url used as the shortcut address) to it
+                    orig_path = path.text
 
                 # Check for a grouping
                 group = root.find("group")
                 if group is None:
                     # Add it as an item
-                    nodes[int(index)] = [label, icon, origPath, "item", origIndex, mediaType]
+                    nodes[int(index)] = [label, icon, orig_path, "item", orig_index, media_type]
                 else:
                     # Add it as grouped
-                    nodes[int(index)] = [label, icon, origPath, "grouped", origIndex, mediaType]
+                    nodes[int(index)] = [label, icon, orig_path, "grouped", orig_index, media_type]
         except:
             print_exc()
 
     @staticmethod
     def is_grouped(path):
-        customPathVideo = path.replace("library://video",
-                                       os.path.join(PROFILE_PATH, "library", "video"))[:-1]
-        defaultPathVideo = path.replace("library://video",
-                                        os.path.join(KODI_PATH, "system", "library", "video"))[:-1]
-        customPathAudio = path.replace("library://music",
-                                       os.path.join(PROFILE_PATH, "library", "music"))[:-1]
-        defaultPathAudio = path.replace("library://music",
-                                        os.path.join(KODI_PATH, "system", "library", "music"))[:-1]
+        custom_path_video = path.replace(
+            "library://video",
+            os.path.join(PROFILE_PATH, "library", "video")
+        )[:-1]
+        default_path_video = path.replace(
+            "library://video",
+            os.path.join(KODI_PATH, "system", "library", "video")
+        )[:-1]
+        custom_path_audio = path.replace(
+            "library://music",
+            os.path.join(PROFILE_PATH, "library", "music")
+        )[:-1]
+        default_path_audio = path.replace(
+            "library://music",
+            os.path.join(KODI_PATH, "system", "library", "music")
+        )[:-1]
 
-        paths = [customPathVideo, defaultPathVideo, customPathAudio, defaultPathAudio]
-        foundPath = False
+        paths = [custom_path_video, default_path_video, custom_path_audio, default_path_audio]
+        found_path = False
 
-        for tryPath in paths:
-            if xbmcvfs.exists(tryPath):
-                path = tryPath
-                foundPath = True
+        for try_path in paths:
+            if xbmcvfs.exists(try_path):
+                path = try_path
+                found_path = True
                 break
-        if foundPath is False:
+        if found_path is False:
             return False
 
         # Open the file
@@ -186,60 +194,60 @@ class NodeFunctions:
             path = path[:-4]
 
         if "library://video" in path:
-            pathStart = "library://video"
-            pathEnd = "video"
+            path_start = "library://video"
+            path_end = "video"
         elif "library://music" in path:
-            pathStart = "library://music"
-            pathEnd = "music"
+            path_start = "library://music"
+            path_end = "music"
         else:
             return ""
 
-        customPath = path.replace(pathStart,
-                                  os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
-        customFile = path.replace(pathStart,
-                                  os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
-        defaultPath = path.replace(
-            pathStart,
-            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        custom_path = path.replace(path_start,
+                                   os.path.join(PROFILE_PATH, "library", path_end)) + "index.xml"
+        custom_file = path.replace(path_start,
+                                   os.path.join(PROFILE_PATH, "library", path_end))[:-1] + ".xml"
+        default_path = path.replace(
+            path_start,
+            os.path.join(KODI_PATH, "system", "library", path_end)
         ) + "index.xml"
-        defaultFile = path.replace(
-            pathStart,
-            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        default_file = path.replace(
+            path_start,
+            os.path.join(KODI_PATH, "system", "library", path_end)
         )[:-1] + ".xml"
 
         # Check whether the node exists - either as a parent node (with an index.xml)
         # or a view node (append .xml) in first custom video nodes, then default video nodes
-        nodeFile = None
-        if xbmcvfs.exists(customPath):
-            nodeFile = customPath
-        elif xbmcvfs.exists(defaultPath):
-            nodeFile = defaultPath
-        if xbmcvfs.exists(customFile):
-            nodeFile = customFile
-        elif xbmcvfs.exists(defaultFile):
-            nodeFile = defaultFile
+        node_file = None
+        if xbmcvfs.exists(custom_path):
+            node_file = custom_path
+        elif xbmcvfs.exists(default_path):
+            node_file = default_path
+        if xbmcvfs.exists(custom_file):
+            node_file = custom_file
+        elif xbmcvfs.exists(default_file):
+            node_file = default_file
 
         # Next check if there is a parent node
         if path.endswith("/"):
             path = path[:-1]
         path = path.rsplit("/", 1)[0]
-        customPath = path.replace(pathStart,
-                                  os.path.join(PROFILE_PATH, "library", pathEnd)) + "/index.xml"
-        defaultPath = path.replace(
-            pathStart,
-            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        custom_path = path.replace(path_start,
+                                   os.path.join(PROFILE_PATH, "library", path_end)) + "/index.xml"
+        default_path = path.replace(
+            path_start,
+            os.path.join(KODI_PATH, "system", "library", path_end)
         ) + "/index.xml"
-        nodeParent = None
+        node_parent = None
 
-        if xbmcvfs.exists(customPath):
-            nodeParent = customPath
-        elif xbmcvfs.exists(defaultPath):
-            nodeParent = defaultPath
+        if xbmcvfs.exists(custom_path):
+            node_parent = custom_path
+        elif xbmcvfs.exists(default_path):
+            node_parent = default_path
 
-        if not nodeFile and not nodeParent:
+        if not node_file and not node_parent:
             return ""
 
-        for path in (nodeFile, nodeParent):
+        for path in (node_file, node_parent):
             if path is None:
                 continue
             # Open the file
@@ -265,37 +273,37 @@ class NodeFunctions:
             path = path[:-4]
 
         if "library://video" in path:
-            pathStart = "library://video"
-            pathEnd = "video"
+            path_start = "library://video"
+            path_end = "video"
         elif "library://music" in path:
-            pathStart = "library://music"
-            pathEnd = "music"
+            path_start = "library://music"
+            path_end = "music"
         else:
             return "unknown"
 
-        customPath = path.replace(pathStart,
-                                  os.path.join(PROFILE_PATH, "library", pathEnd)) + "index.xml"
-        customFile = path.replace(pathStart,
-                                  os.path.join(PROFILE_PATH, "library", pathEnd))[:-1] + ".xml"
-        defaultPath = path.replace(
-            pathStart,
-            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        custom_path = path.replace(path_start,
+                                   os.path.join(PROFILE_PATH, "library", path_end)) + "index.xml"
+        custom_file = path.replace(path_start,
+                                   os.path.join(PROFILE_PATH, "library", path_end))[:-1] + ".xml"
+        default_path = path.replace(
+            path_start,
+            os.path.join(KODI_PATH, "system", "library", path_end)
         ) + "index.xml"
-        defaultFile = path.replace(
-            pathStart,
-            os.path.join(KODI_PATH, "system", "library", pathEnd)
+        default_file = path.replace(
+            path_start,
+            os.path.join(KODI_PATH, "system", "library", path_end)
         )[:-1] + ".xml"
 
         # Check whether the node exists - either as a parent node (with an index.xml)
         # or a view node (append .xml) in first custom video nodes, then default video nodes
-        if xbmcvfs.exists(customPath):
-            path = customPath
-        elif xbmcvfs.exists(customFile):
-            path = customFile
-        elif xbmcvfs.exists(defaultPath):
-            path = defaultPath
-        elif xbmcvfs.exists(defaultFile):
-            path = defaultFile
+        if xbmcvfs.exists(custom_path):
+            path = custom_path
+        elif xbmcvfs.exists(custom_file):
+            path = custom_file
+        elif xbmcvfs.exists(default_path):
+            path = default_path
+        elif xbmcvfs.exists(default_file):
+            path = default_file
         else:
             return "unknown"
 
@@ -305,18 +313,18 @@ class NodeFunctions:
             tree = ETree.parse(path)
             root = tree.getroot()
 
-            mediaType = "unknown"
+            media_type = "unknown"
             if "visible" in root.attrib:
-                visibleAttrib = root.attrib.get("visible")
-                if "Library.HasContent(" in visibleAttrib and "+" not in visibleAttrib and \
-                        "|" not in visibleAttrib:
-                    mediaType = visibleAttrib.split("(")[1].split(")")[0].lower()
+                visible_attrib = root.attrib.get("visible")
+                if "Library.HasContent(" in visible_attrib and "+" not in visible_attrib and \
+                        "|" not in visible_attrib:
+                    media_type = visible_attrib.split("(")[1].split(")")[0].lower()
 
-            contentNode = root.find("content")
-            if contentNode is not None:
-                mediaType = contentNode.text
+            content_node = root.find("content")
+            if content_node is not None:
+                media_type = content_node.text
 
-            return mediaType
+            return media_type
 
         except:
             return "unknown"
@@ -335,21 +343,21 @@ class NodeFunctions:
         dialog.create(path, LANGUAGE(32063))
 
         # Work out if it's a single item, or a node
-        isNode = False
-        jsonPath = path.replace("\\", "\\\\")
+        is_node = False
+        json_path = path.replace("\\", "\\\\")
         json_payload = {
             "jsonrpc": "2.0",
             "id": 0,
             "method": "Files.GetDirectory",
             "params": {
                 "properties": ["title", "file", "thumbnail"],
-                "directory": "%s" % jsonPath,
+                "directory": "%s" % json_path,
                 "media": "files"
             }
         }
         json_response = rpc_request(json_payload)
 
-        nodePaths = []
+        node_paths = []
 
         # Add all directories returned by the json query
         if 'result' in json_response and 'files' in json_response['result'] and \
@@ -358,9 +366,9 @@ class NodeFunctions:
             paths = ["ActivateWindow(%s,%s,return)" % (window, path)]
             for item in json_response['result']['files']:
                 if item["filetype"] == "directory":
-                    isNode = True
+                    is_node = True
                     labels.append(item["label"])
-                    nodePaths.append("ActivateWindow(%s,%s,return)" % (window, item["file"]))
+                    node_paths.append("ActivateWindow(%s,%s,return)" % (window, item["file"]))
         else:
             # Unable to add to get directory listings
             log("Invalid JSON response returned")
@@ -387,13 +395,13 @@ class NodeFunctions:
             labels.append("Play")
             paths.append("PlayMedia(%s)" % path)
 
-        allMenuItems = [xbmcgui.ListItem(label=LANGUAGE(32112))]  # Main menu
-        allLabelIDs = ["mainmenu"]
-        if isNode:
-            allMenuItems.append(
+        all_menu_items = [xbmcgui.ListItem(label=LANGUAGE(32112))]  # Main menu
+        all_label_ids = ["mainmenu"]
+        if is_node:
+            all_menu_items.append(
                 xbmcgui.ListItem(label=LANGUAGE(32113))  # Main menu + autofill submenu
             )
-            allLabelIDs.append("mainmenu")
+            all_label_ids.append("mainmenu")
 
         # Get main menu items
         menuitems = data_func.get_shortcuts("mainmenu", processShortcuts=False)
@@ -404,8 +412,8 @@ class NodeFunctions:
             listitem.setArt({
                 'icon': menuitem.find("icon").text
             })
-            allMenuItems.append(listitem)
-            allLabelIDs.append(data_func.get_labelID(
+            all_menu_items.append(listitem)
+            all_label_ids.append(data_func.get_labelID(
                 data_func.local(menuitem.find("label").text)[3], menuitem.find("action").text)
             )
 
@@ -413,37 +421,37 @@ class NodeFunctions:
         dialog.close()
 
         # Show a select dialog so the user can pick where in the menu to add the item
-        w = ShowDialog("DialogSelect.xml", CWD, listing=allMenuItems, windowtitle=LANGUAGE(32114))
+        w = ShowDialog("DialogSelect.xml", CWD, listing=all_menu_items, windowtitle=LANGUAGE(32114))
         w.doModal()
-        selectedMenu = w.result
+        selected_menu = w.result
         del w
 
-        if selectedMenu == -1 or selectedMenu is None:
+        if selected_menu == -1 or selected_menu is None:
             # User cancelled
             return
 
         action = paths[0]
-        if isNode and selectedMenu == 1:
+        if is_node and selected_menu == 1:
             # We're auto-filling submenu, so add all sub-nodes as possible default actions
-            paths = paths + nodePaths
+            paths = paths + node_paths
 
         if len(paths) > 1:
             # There are multiple actions to choose from
-            selectedAction = xbmcgui.Dialog().select(LANGUAGE(32095), labels)
+            selected_action = xbmcgui.Dialog().select(LANGUAGE(32095), labels)
 
-            if selectedAction == -1 or selectedAction is None:
+            if selected_action == -1 or selected_action is None:
                 # User cancelled
                 return True
 
-            action = paths[selectedAction]
+            action = paths[selected_action]
 
         # Add the shortcut to the menu the user has selected
         # Load existing main menu items
-        menuitems = data_func.get_shortcuts(allLabelIDs[selectedMenu], processShortcuts=False)
+        menuitems = data_func.get_shortcuts(all_label_ids[selected_menu], processShortcuts=False)
         data_func.clear_labelID()
 
         # Generate a new labelID
-        newLabelID = data_func.get_labelID(label, action)
+        new_label_id = data_func.get_labelID(label, action)
 
         # Write the updated mainmenu.DATA.xml
         newelement = ETree.SubElement(menuitems.getroot(), "shortcut")
@@ -455,10 +463,10 @@ class NodeFunctions:
 
         data_func.indent(menuitems.getroot())
         path = data_func.data_xml_filename(DATA_PATH,
-                                           data_func.slugify(allLabelIDs[selectedMenu], True))
+                                           data_func.slugify(all_label_ids[selected_menu], True))
         menuitems.write(path, encoding="UTF-8")
 
-        if isNode and selectedMenu == 1:
+        if is_node and selected_menu == 1:
             # We're also going to write a submenu
             menuitems = ETree.ElementTree(ETree.Element("shortcuts"))
 
@@ -473,7 +481,7 @@ class NodeFunctions:
                         "ActivateWindow(%s,%s,return)" % (window, item["file"])
 
             data_func.indent(menuitems.getroot())
-            path = data_func.data_xml_filename(DATA_PATH, data_func.slugify(newLabelID, True))
+            path = data_func.data_xml_filename(DATA_PATH, data_func.slugify(new_label_id, True))
             menuitems.write(path, encoding="UTF-8")
 
         # Mark that the menu needs to be rebuilt
@@ -485,13 +493,13 @@ class NodeFunctions:
     @staticmethod
     def extract_id(path):
         # Extract the ID of an item from its path
-        itemID = path
-        if "?" in itemID:
-            itemID = itemID.rsplit("?", 1)[0]
-        if itemID.endswith("/"):
-            itemID = itemID[:-1]
-        itemID = itemID.rsplit("/", 1)[1]
-        return itemID
+        item_id = path
+        if "?" in item_id:
+            item_id = item_id.rsplit("?", 1)[0]
+        if item_id.endswith("/"):
+            item_id = item_id[:-1]
+        item_id = item_id.rsplit("/", 1)[1]
+        return item_id
 
     # ##############################################
     # ### Functions to externally set properties ###
@@ -499,84 +507,84 @@ class NodeFunctions:
 
     # noinspection PyDictCreation
     @staticmethod
-    def set_properties(properties, values, labelID, group, data_func):
+    def set_properties(properties, values, label_id, group, data_func):
         # This function will take a list of properties and values and apply them to the
         # main menu item with the given labelID
         if not group:
             group = "mainmenu"
 
         # Split up property names and values
-        propertyNames = properties.split("|")
-        propertyValues = values.replace("::INFO::", "$INFO").split("|")
-        labelIDValues = labelID.split("|")
-        if len(labelIDValues) == 0:
+        property_names = properties.split("|")
+        property_values = values.replace("::INFO::", "$INFO").split("|")
+        label_id_values = label_id.split("|")
+        if len(label_id_values) == 0:
             # No labelID passed in, lets assume we were called in error
             return
-        if len(propertyNames) == 0:
+        if len(property_names) == 0:
             # No values passed in, lets assume we were called in error
             return
 
         # Get user confirmation that they want to make these changes
-        message = "Set %s property to %s?" % (propertyNames[0], propertyValues[0])
-        if len(propertyNames) == 2:
+        message = "Set %s property to %s?" % (property_names[0], property_values[0])
+        if len(property_names) == 2:
             message += "[CR](and 1 other property)"
-        elif len(propertyNames) > 2:
-            message += "[CR](and %d other properties)" % (len(propertyNames) - 1)
-        shouldRun = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"), message)
-        if not shouldRun:
+        elif len(property_names) > 2:
+            message += "[CR](and %d other properties)" % (len(property_names) - 1)
+        should_run = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"), message)
+        if not should_run:
             return
 
         # Load the properties
-        currentProperties, defaultProperties = data_func.get_additionalproperties()
-        otherProperties, requires, templateOnly = data_func.getPropertyRequires()
+        current_properties, default_properties = data_func.get_additionalproperties()
+        other_properties, requires, _ = data_func.getPropertyRequires()
 
-        # If there aren't any currentProperties, use the defaultProperties instead
-        if currentProperties == [None]:
-            currentProperties = defaultProperties
+        # If there aren't any current_properties, use the default_properties instead
+        if current_properties == [None]:
+            current_properties = default_properties
 
         # Pull out all properties into multi-dimensional dicts
-        allProps = {}
-        allProps[group] = {}
-        for currentProperty in currentProperties:
-            # If the group isn't in allProps, add it
-            if currentProperty[0] not in list(allProps.keys()):
-                allProps[currentProperty[0]] = {}
-            # If the labelID isn't in the allProps[ group ], add it
-            if currentProperty[1] not in list(allProps[currentProperty[0]].keys()):
-                allProps[currentProperty[0]][currentProperty[1]] = {}
-            # And add the property to allProps[ group ][ labelID ]
-            if currentProperty[3] is not None:
-                allProps[currentProperty[0]][currentProperty[1]][currentProperty[2]] = \
-                    currentProperty[3]
+        all_props = {}
+        all_props[group] = {}
+        for current_property in current_properties:
+            # If the group isn't in all_props, add it
+            if current_property[0] not in list(all_props.keys()):
+                all_props[current_property[0]] = {}
+            # If the labelID isn't in the all_props[ group ], add it
+            if current_property[1] not in list(all_props[current_property[0]].keys()):
+                all_props[current_property[0]][current_property[1]] = {}
+            # And add the property to all_props[ group ][ labelID ]
+            if current_property[3] is not None:
+                all_props[current_property[0]][current_property[1]][current_property[2]] = \
+                    current_property[3]
 
         # Loop through the properties we've been asked to set
-        for count, propertyName in enumerate(propertyNames):
+        for count, property_name in enumerate(property_names):
             # Set the new value
-            log("Setting %s to %s" % (propertyName, propertyValues[count]))
-            if len(labelIDValues) != 1:
-                labelID = labelIDValues[count]
-            if labelID not in list(allProps[group].keys()):
-                allProps[group][labelID] = {}
-            allProps[group][labelID][propertyName] = propertyValues[count]
+            log("Setting %s to %s" % (property_name, property_values[count]))
+            if len(label_id_values) != 1:
+                label_id = label_id_values[count]
+            if label_id not in list(all_props[group].keys()):
+                all_props[group][label_id] = {}
+            all_props[group][label_id][property_name] = property_values[count]
 
             # Remove any properties whose requirements haven't been met
-            for key in otherProperties:
-                if key in list(allProps[group][labelID].keys()) and \
+            for key in other_properties:
+                if key in list(all_props[group][label_id].keys()) and \
                         key in list(requires.keys()) and \
-                        requires[key] not in list(allProps[group][labelID].keys()):
+                        requires[key] not in list(all_props[group][label_id].keys()):
                     # This properties requirements aren't met
                     log("Removing value %s" % key)
-                    allProps[group][labelID].pop(key)
+                    all_props[group][label_id].pop(key)
 
         # Build the list of all properties to save
-        saveData = []
-        for saveGroup in allProps:
-            for saveLabelID in allProps[saveGroup]:
-                for saveProperty in allProps[saveGroup][saveLabelID]:
-                    saveData.append([saveGroup, saveLabelID, saveProperty,
-                                     allProps[saveGroup][saveLabelID][saveProperty]])
+        save_data = []
+        for save_group in all_props:
+            for save_label_id in all_props[save_group]:
+                for save_property in all_props[save_group][save_label_id]:
+                    save_data.append([save_group, save_label_id, save_property,
+                                      all_props[save_group][save_label_id][save_property]])
 
-        write_properties(saveData)
+        write_properties(save_data)
 
         # The properties will only be used if the .DATA.xml file exists in the
         # addon_data folder( otherwise the script will use the default values),
@@ -638,10 +646,10 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
             self.result = -1
             self.close()
 
-    def onClick(self, controlID):
-        if controlID == 5:
+    def onClick(self, control_id):
+        if control_id == 5:
             self.result = -2
-        elif controlID == 6 or controlID == 3:
+        elif control_id == 6 or control_id == 3:
             num = self.fav_list.getSelectedPosition()
             self.result = num
         else:
@@ -649,5 +657,5 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
 
         self.close()
 
-    def onFocus(self, controlID):
+    def onFocus(self, control_id):
         pass

@@ -342,9 +342,9 @@ class Main:
         else:
             # Multiple actions, separated by |
             actions = action.split("|")
-            for singleAction in actions:
-                if singleAction != "::MULTIPLE::":
-                    xbmc.executebuiltin(singleAction)
+            for single_action in actions:
+                if single_action != "::MULTIPLE::":
+                    xbmc.executebuiltin(single_action)
 
     @staticmethod
     def _manage_shortcuts(group, default_group, nolabels, groupname):
