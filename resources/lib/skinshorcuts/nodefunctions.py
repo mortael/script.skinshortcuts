@@ -325,7 +325,7 @@ class NodeFunctions:
     # Functions to externally add a node to the menu #
     ##################################################
 
-    def addToMenu(self, path, label, icon, content, window, DATA):
+    def addToMenu(self, path, label, icon, content, window, data_func):
         log(repr(window))
         log(repr(label))
         log(repr(path))
@@ -396,17 +396,18 @@ class NodeFunctions:
             allLabelIDs.append("mainmenu")
 
         # Get main menu items
-        menuitems = DATA._get_shortcuts("mainmenu", processShortcuts=False)
-        DATA._clear_labelID()
+        menuitems = data_func._get_shortcuts("mainmenu", processShortcuts=False)
+        data_func._clear_labelID()
         for menuitem in menuitems.findall("shortcut"):
             # Get existing items labelID's
-            listitem = xbmcgui.ListItem(label=DATA.local(menuitem.find("label").text)[2])
+            listitem = xbmcgui.ListItem(label=data_func.local(menuitem.find("label").text)[2])
             listitem.setArt({
                 'icon': menuitem.find("icon").text
             })
             allMenuItems.append(listitem)
-            allLabelIDs.append(DATA._get_labelID(DATA.local(menuitem.find("label").text)[3],
-                                                 menuitem.find("action").text))
+            allLabelIDs.append(data_func._get_labelID(
+                data_func.local(menuitem.find("label").text)[3], menuitem.find("action").text)
+            )
 
         # Close progress dialog
         dialog.close()
@@ -438,11 +439,11 @@ class NodeFunctions:
 
         # Add the shortcut to the menu the user has selected
         # Load existing main menu items
-        menuitems = DATA._get_shortcuts(allLabelIDs[selectedMenu], processShortcuts=False)
-        DATA._clear_labelID()
+        menuitems = data_func._get_shortcuts(allLabelIDs[selectedMenu], processShortcuts=False)
+        data_func._clear_labelID()
 
         # Generate a new labelID
-        newLabelID = DATA._get_labelID(label, action)
+        newLabelID = data_func._get_labelID(label, action)
 
         # Write the updated mainmenu.DATA.xml
         newelement = xmltree.SubElement(menuitems.getroot(), "shortcut")
@@ -452,8 +453,9 @@ class NodeFunctions:
         xmltree.SubElement(newelement, "thumb")
         xmltree.SubElement(newelement, "action").text = action
 
-        DATA.indent(menuitems.getroot())
-        path = DATA.data_xml_filename(DATA_PATH, DATA.slugify(allLabelIDs[selectedMenu], True))
+        data_func.indent(menuitems.getroot())
+        path = data_func.data_xml_filename(DATA_PATH,
+                                           data_func.slugify(allLabelIDs[selectedMenu], True))
         menuitems.write(path, encoding="UTF-8")
 
         if isNode and selectedMenu == 1:
@@ -470,8 +472,8 @@ class NodeFunctions:
                     xmltree.SubElement(newelement, "action").text = \
                         "ActivateWindow(%s,%s,return)" % (window, item["file"])
 
-            DATA.indent(menuitems.getroot())
-            path = DATA.data_xml_filename(DATA_PATH, DATA.slugify(newLabelID, True))
+            data_func.indent(menuitems.getroot())
+            path = data_func.data_xml_filename(DATA_PATH, data_func.slugify(newLabelID, True))
             menuitems.write(path, encoding="UTF-8")
 
         # Mark that the menu needs to be rebuilt
