@@ -15,6 +15,8 @@ from time import gmtime
 from time import strftime
 from traceback import print_exc
 # noinspection PyCompatibility
+from urllib.parse import parse_qsl
+# noinspection PyCompatibility
 from urllib.parse import unquote
 
 import xbmc
@@ -265,18 +267,16 @@ class Main:
             self._reset_all_shortcuts()
 
     def _parse_argv(self):
+        params = {}
         try:
-            params = dict(arg.split("=") for arg in sys.argv[1].split("&"))
-            self.TYPE = params.get("type", "")
+            params = dict(parse_qsl(sys.argv[1]))
         except:
-            # print_exc()
             try:
-                params = dict(arg.split("=") for arg in sys.argv[2].split("&"))
-                self.TYPE = params.get("?type", "")
+                params = dict(parse_qsl(sys.argv[2].lstrip('?')))
             except:
-                self.TYPE = ""
-                params = {}
+                pass
 
+        self.TYPE = params.get("type", "")
         self.GROUP = params.get("group", "")
         self.GROUPNAME = params.get("groupname", None)
         self.GROUPING = params.get("grouping", None)
