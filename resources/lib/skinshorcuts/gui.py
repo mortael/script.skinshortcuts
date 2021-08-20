@@ -77,7 +77,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         self.onBack = {}
         self.saveWithProperty = []
 
-        # Has skin overriden GUI 308
+        # Has skin overridden GUI 308
         self.alwaysReset = False
         self.alwaysRestore = False
 
@@ -381,13 +381,13 @@ class GUI(xbmcgui.WindowXMLDialog):
         else:
             listitem.setProperty("skinshortcuts-disabled", "False")
 
-        # If there's an overriden icon, use it
-        overridenIcon = item.find("override-icon")
-        if overridenIcon is not None:
+        # If there's an overridden icon, use it
+        overriddenIcon = item.find("override-icon")
+        if overriddenIcon is not None:
             listitem.setArt({
-                'icon': overridenIcon.text
+                'icon': overriddenIcon.text
             })
-            listitem.setProperty("icon", overridenIcon.text)
+            listitem.setProperty("icon", overriddenIcon.text)
             listitem.setProperty("original-icon", icon)
 
         # Set the labelID, displayID, shortcutType
@@ -593,7 +593,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             listitem.setProperty("original-icon", oldicon)
 
         if setDefault is True and setToDefault is True:
-            # We set this to the default icon, so we need to check if /that/ icon is overriden
+            # We set this to the default icon, so we need to check if /that/ icon is overridden
             self._get_icon_overrides(listitem, False, labelID)
 
     def _save_shortcuts(self, weEnabledSystemDebug=False, weEnabledScriptDebug=False):
@@ -2689,7 +2689,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # Close action
 
             if currentFocus and currentFocus in self.onBack:
-                # Action overriden to return to a control
+                # Action overridden to return to a control
                 self.setFocusId(self.onBack[currentFocus])
                 return
 

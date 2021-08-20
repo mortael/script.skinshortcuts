@@ -639,7 +639,7 @@ class LibraryFunctions:
         if item[0].startswith("||"):
             displayLabel = displayLabel + "  >"
             # We'll also mark that we don't want to use a non-localised labelID, as this
-            # causes issues with some folders picking up overriden icons incorrectly
+            # causes issues with some folders picking up overridden icons incorrectly
             noNonLocalized = True
 
         # Get the items labelID

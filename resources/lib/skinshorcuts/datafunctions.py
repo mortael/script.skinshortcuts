@@ -293,12 +293,12 @@ class DataFunctions:
             if iconNode.text is None or iconNode.text == "":
                 iconNode.text = "DefaultShortcut.png"
 
-            # Get a skin-overriden icon
-            overridenIcon = self._get_icon_overrides(skinoverrides, node.find("icon").text,
+            # Get a skin-overridden icon
+            overriddenIcon = self._get_icon_overrides(skinoverrides, node.find("icon").text,
                                                      group, labelID)
-            if overridenIcon is not None:
-                # Add a new node with the overriden icon
-                xmltree.SubElement(node, "override-icon").text = overridenIcon
+            if overriddenIcon is not None:
+                # Add a new node with the overridden icon
+                xmltree.SubElement(node, "override-icon").text = overriddenIcon
 
             # If the action uses the special://skin protocol, translate it
             if "special://skin/" in action.text:
@@ -309,7 +309,7 @@ class DataFunctions:
             visibilityNode = None
 
             if visibilityCondition != "":
-                # Check whether visibility condition is overriden
+                # Check whether visibility condition is overridden
                 overriddenVisibility = False
                 for override in skinoverrides.findall("visibleoverride"):
                     if override.attrib.get("condition").lower() != visibilityCondition.lower():
@@ -322,7 +322,7 @@ class DataFunctions:
 
                     overriddenVisibility = True
 
-                    # It's overriden - add the original action with the visibility condition
+                    # It's overridden - add the original action with the visibility condition
                     originalAction = xmltree.SubElement(node, "override-visibility")
                     originalAction.text = action.text
                     originalAction.set("condition", visibilityCondition)
@@ -335,7 +335,7 @@ class DataFunctions:
                     break
 
                 if overriddenVisibility is False:
-                    # The skin hasn't overriden the visibility
+                    # The skin hasn't overridden the visibility
                     visibilityNode = xmltree.SubElement(node, "visibility")
                     visibilityNode.text = visibilityCondition
 
@@ -347,7 +347,7 @@ class DataFunctions:
                     continue
                 if overrideTree is not None:
                     for elem in overrideTree.findall("override"):
-                        # Pull out the current action, and any already-overriden actions
+                        # Pull out the current action, and any already-overridden actions
                         itemsToOverride = []
                         for itemToOverride in node.findall("override-visibility"):
                             itemsToOverride.append(itemToOverride)
@@ -376,7 +376,7 @@ class DataFunctions:
                                         continue
 
                                 hasOverriden = True
-                                itemToOverride.set("overriden", "True")
+                                itemToOverride.set("overridden", "True")
 
                                 # Get the visibility condition
                                 condition = elem.find("condition")
@@ -410,11 +410,11 @@ class DataFunctions:
 
             # Sort any visibility overrides
             for elem in node.findall("override-visibility"):
-                if elem.get("overriden") == "True":
-                    # The item has been overriden, delete it
+                if elem.get("overridden") == "True":
+                    # The item has been overridden, delete it
                     node.remove(elem)
                 else:
-                    # The item hasn't been overriden, so change it to an override-action element
+                    # The item hasn't been overridden, so change it to an override-action element
                     elem.tag = "override-action"
 
             # Get visibility condition of any skin-provided shortcuts
