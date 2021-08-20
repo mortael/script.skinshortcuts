@@ -29,9 +29,6 @@ from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
 
-DATA = datafunctions.DataFunctions()
-NODE = nodefunctions.NodeFunctions()
-
 
 def kodiwalk(path, stringForce=False):
     json_payload = {
@@ -72,6 +69,8 @@ def kodiwalk(path, stringForce=False):
 # noinspection PyListCreation
 class LibraryFunctions:
     def __init__(self, *args, **kwargs):
+        self.node_func = nodefunctions.NodeFunctions()
+        self.data_func = datafunctions.DataFunctions()
 
         # Dictionary to make checking whether things are loaded easier
         self.loaded = {
@@ -232,7 +231,7 @@ class LibraryFunctions:
     # ==============================================
 
     def retrieveGroup(self, group, flat=True, grouping=None):
-        trees = [DATA._get_overrides_skin(), DATA._get_overrides_script()]
+        trees = [self.data_func._get_overrides_skin(), self.data_func._get_overrides_script()]
         nodes = None
         for tree in trees:
             if flat:
@@ -263,7 +262,7 @@ class LibraryFunctions:
                 if "version" in node.attrib:
                     version = node.attrib.get("version")
                     if KODI_VERSION != version and \
-                            DATA.checkVersionEquivalency(
+                            self.data_func.checkVersionEquivalency(
                                 version, node.attrib.get("condition"), "groupings"
                             ) is False:
                         group += 1
@@ -309,7 +308,7 @@ class LibraryFunctions:
             if "version" in subnode.attrib:
                 version = subnode.attrib.get("version")
                 if KODI_VERSION != version and \
-                        DATA.checkVersionEquivalency(
+                        self.data_func.checkVersionEquivalency(
                             version, subnode.attrib.get("condition"), "groupings"
                         ) is False:
                     number += 1
@@ -321,7 +320,7 @@ class LibraryFunctions:
                 self.installWidget = False
 
             if count == number:
-                label = DATA.local(subnode.attrib.get("label"))[2]
+                label = self.data_func.local(subnode.attrib.get("label"))[2]
                 return [label, subnode]
 
     def buildNodeListing(self, nodes, flat):
@@ -334,7 +333,7 @@ class LibraryFunctions:
             if "version" in node.attrib:
                 version = node.attrib.get("version")
                 if KODI_VERSION != version and \
-                        DATA.checkVersionEquivalency(
+                        self.data_func.checkVersionEquivalency(
                             version, node.attrib.get("condition"), "groupings"
                         ) is False:
                     continue
@@ -376,7 +375,7 @@ class LibraryFunctions:
                     }]))
 
         # Override icons
-        tree = DATA._get_overrides_skin()
+        tree = self.data_func._get_overrides_skin()
         for idx, item in enumerate(returnList):
             returnList[idx] = self._get_icon_overrides(tree, item, None)
 
@@ -409,7 +408,7 @@ class LibraryFunctions:
             for listitem in items:
                 path = listitem.getProperty("path")
                 if path.lower().startswith("activatewindow"):
-                    path = DATA.getListProperty(path)
+                    path = self.data_func.getListProperty(path)
                     listitem.setProperty("widget", "Library")
                     if content == "video":
                         listitem.setProperty("widgetType", "video")
@@ -420,12 +419,12 @@ class LibraryFunctions:
                     listitem.setProperty("widgetName", listitem.getLabel())
                     listitem.setProperty("widgetPath", path)
 
-                    widgetType = NODE.get_mediaType(path)
+                    widgetType = self.node_func.get_mediaType(path)
                     if widgetType != "unknown":
                         listitem.setProperty("widgetType", widgetType)
 
         # Check for any icon overrides for these items
-        tree = DATA._get_overrides_skin()
+        tree = self.data_func._get_overrides_skin()
 
         for idx, item in enumerate(items):
             items[idx] = self._get_icon_overrides(tree, item, content)
@@ -490,10 +489,9 @@ class LibraryFunctions:
         dialog.close()
         return self.dictionaryGroupings[content]
 
-    @staticmethod
-    def flatGroupingsCount():
+    def flatGroupingsCount(self):
         # Return how many nodes there are in the the flat grouping
-        tree = DATA._get_overrides_script()
+        tree = self.data_func._get_overrides_script()
         if tree is None:
             return 1
         groupings = tree.find("flatgroupings")
@@ -514,7 +512,7 @@ class LibraryFunctions:
     def addToDictionary(self, group, content):
         # This function adds content to the dictionaryGroupings - including
         # adding any skin-provided shortcuts to the group
-        tree = DATA._get_overrides_skin()
+        tree = self.data_func._get_overrides_skin()
 
         # Search for skin-provided shortcuts for this group
         originalGroup = group
@@ -602,33 +600,33 @@ class LibraryFunctions:
 
     def _create(self, item, allowOverrideLabel=True):
         # Retrieve label
-        localLabel = DATA.local(item[1])[0]
+        localLabel = self.data_func.local(item[1])[0]
 
         # Create localised label2
-        displayLabel2 = DATA.local(item[2])[2]
-        shortcutType = DATA.local(item[2])[0]
+        displayLabel2 = self.data_func.local(item[2])[2]
+        shortcutType = self.data_func.local(item[2])[0]
 
         if allowOverrideLabel:
             # Check for a replaced label
-            replacementLabel = DATA.checkShortcutLabelOverride(item[0])
+            replacementLabel = self.data_func.checkShortcutLabelOverride(item[0])
             if replacementLabel is not None:
 
-                localLabel = DATA.local(replacementLabel[0])[0]
+                localLabel = self.data_func.local(replacementLabel[0])[0]
 
                 if len(replacementLabel) == 2:
                     # We're also overriding the type
-                    displayLabel2 = DATA.local(replacementLabel[1])[2]
-                    shortcutType = DATA.local(replacementLabel[1])[0]
+                    displayLabel2 = self.data_func.local(replacementLabel[1])[2]
+                    shortcutType = self.data_func.local(replacementLabel[1])[0]
 
         # Try localising it
-        displayLabel = DATA.local(localLabel)[2]
+        displayLabel = self.data_func.local(localLabel)[2]
 
         if displayLabel.startswith("$NUMBER["):
             displayLabel = displayLabel[8:-1]
 
         # Create localised label2
-        displayLabel2 = DATA.local(displayLabel2)[2]
-        shortcutType = DATA.local(shortcutType)[0]
+        displayLabel2 = self.data_func.local(displayLabel2)[2]
+        shortcutType = self.data_func.local(shortcutType)[0]
 
         # If either displayLabel starts with a $, ask Kodi to parse it for us
         if displayLabel.startswith("$"):
@@ -645,9 +643,9 @@ class LibraryFunctions:
             noNonLocalized = True
 
         # Get the items labelID
-        DATA._clear_labelID()
-        labelID = DATA._get_labelID(
-            DATA.createNiceName(DATA.local(localLabel)[0], noNonLocalized=noNonLocalized),
+        self.data_func._clear_labelID()
+        labelID = self.data_func._get_labelID(
+            self.data_func.createNiceName(self.data_func.local(localLabel)[0], noNonLocalized=noNonLocalized),
             item[0],
             noNonLocalized=noNonLocalized
         )
@@ -669,7 +667,7 @@ class LibraryFunctions:
         # Check if the option to use the thumb as the icon is enabled
         if self.useDefaultThumbAsIcon is None:
             # Retrieve the choice from the overrides.xml
-            tree = DATA._get_overrides_skin()
+            tree = self.data_func._get_overrides_skin()
             node = tree.getroot().find("useDefaultThumbAsIcon")
             if node is None:
                 self.useDefaultThumbAsIcon = False
@@ -810,7 +808,7 @@ class LibraryFunctions:
             rootdir = os.path.join(KODI_PATH, "system", "library", library)
             log("Listing default %s nodes..." % library)
 
-        nodes = NODE.get_nodes(rootdir, prefix)
+        nodes = self.node_func.get_nodes(rootdir, prefix)
         if nodes is False or len(nodes) == 0:
             return False
 
@@ -1649,7 +1647,7 @@ class LibraryFunctions:
         listitems = []
 
         # Load skin overrides
-        tree = DATA._get_overrides_skin()
+        tree = self.data_func._get_overrides_skin()
         elems = tree.getroot().findall("widget")
         for elem in elems:
             widgetType = None
@@ -1669,18 +1667,18 @@ class LibraryFunctions:
             if "icon" in elem.attrib:
                 widgetIcon = elem.attrib.get("icon")
             if "name" in elem.attrib:
-                widgetName = DATA.local(elem.attrib.get('name'))[2]
+                widgetName = self.data_func.local(elem.attrib.get('name'))[2]
 
             # Save widget for button 309
             self.dictionaryGroupings["widgets-classic"].append(
                 [elem.text,
-                 DATA.local(elem.attrib.get('label'))[2],
+                 self.data_func.local(elem.attrib.get('label'))[2],
                  widgetType, widgetPath, widgetIcon, widgetTarget]
             )
 
             # Save widgets for button 312
             listitem = self._create(
-                [elem.text, DATA.local(elem.attrib.get('label'))[2], "::SCRIPT::32099", {
+                [elem.text, self.data_func.local(elem.attrib.get('label'))[2], "::SCRIPT::32099", {
                     "icon": widgetIcon
                 }]
             )
@@ -1688,7 +1686,7 @@ class LibraryFunctions:
             if widgetName is not None:
                 listitem.setProperty("widgetName", widgetName)
             else:
-                listitem.setProperty("widgetName", DATA.local(elem.attrib.get('label'))[2])
+                listitem.setProperty("widgetName", self.data_func.local(elem.attrib.get('label'))[2])
             if widgetType is not None:
                 listitem.setProperty("widgetType", widgetType)
             if widgetPath is not None:
@@ -1721,7 +1719,7 @@ class LibraryFunctions:
 
         listings = []
 
-        tree = DATA._get_overrides_skin()
+        tree = self.data_func._get_overrides_skin()
 
         # Shortcut to go 'up'
         if len(label) == 1:
@@ -1778,7 +1776,7 @@ class LibraryFunctions:
                     # Process this as a library node
                     isLibrary = True
                     if widgetType is None:
-                        widgetType = NODE.get_mediaType(location)
+                        widgetType = self.node_func.get_mediaType(location)
 
                     if itemType == "32014":
                         # Video node
@@ -1806,7 +1804,7 @@ class LibraryFunctions:
                              }]
                         )
 
-                        if item["file"].endswith(".xml/") and NODE.isGrouped(item["file"]):
+                        if item["file"].endswith(".xml/") and self.node_func.isGrouped(item["file"]):
                             listitem = self._create([item["file"], "%s  >" % (item["label"]), "", {
                                 "icon": "DefaultFolder.png",
                                 "thumb": thumb
@@ -1900,7 +1898,7 @@ class LibraryFunctions:
                 # User has chosen the shortcut they want
 
                 # Localize strings
-                localItemType = DATA.local(itemType)[2]
+                localItemType = self.data_func.local(itemType)[2]
 
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[len(label) - 1].replace("  >", ""),
@@ -1921,7 +1919,7 @@ class LibraryFunctions:
                     # Add widget details
                     if isLibrary:
                         listitem.setProperty("widget", "Library")
-                        widgetType = NODE.get_mediaType(location)
+                        widgetType = self.node_func.get_mediaType(location)
                         if widgetType != "unknown":
                             listitem.setProperty("widgetType", widgetType)
                     else:
@@ -1942,7 +1940,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetType", "audio")
                     if isLibrary:
                         listitem.setProperty("widget", "Library")
-                        widgetType = NODE.get_mediaType(location)
+                        widgetType = self.node_func.get_mediaType(location)
                         if widgetType != "unknown":
                             listitem.setProperty("widgetType", widgetType)
                     else:
@@ -2016,7 +2014,7 @@ class LibraryFunctions:
 
                 # Add widget details
                 if isLibrary:
-                    widgetType = NODE.get_mediaType(listitem.getProperty("widgetPath"))
+                    widgetType = self.node_func.get_mediaType(listitem.getProperty("widgetPath"))
                     if widgetType != "unknown":
                         listitem.setProperty("widgetType", widgetType)
 
@@ -2281,8 +2279,7 @@ class LibraryFunctions:
         selectedShortcut.setProperty("displayPath", newAction)
         return selectedShortcut
 
-    @staticmethod
-    def _build_playlist(target, mediatype, name, negative):
+    def _build_playlist(self, target, mediatype, name, negative):
         # This function will build a playlist that displays the contents of a
         # source in the library view (that is to say, "path" "contains")
         tree = xmltree.ElementTree(xmltree.Element("smartplaylist"))
@@ -2321,13 +2318,13 @@ class LibraryFunctions:
             _id += 1
 
         # Write playlist we'll link to the menu item
-        DATA.indent(tree.getroot())
+        self.data_func.indent(tree.getroot())
         tree.write(os.path.join(DATA_PATH, str(_id) + ".xsp"), encoding="utf-8")
 
         # Add a random property, and save this for use in playlists/backgrounds
         order = xmltree.SubElement(root, "order")
         order.text = "random"
-        DATA.indent(tree.getroot())
+        self.data_func.indent(tree.getroot())
         tree.write(os.path.join(DATA_PATH, str(_id) + "-randomversion.xsp"), encoding="utf-8")
 
         return str(_id) + ".xsp"
@@ -2350,12 +2347,10 @@ class LibraryFunctions:
             except:
                 return
 
-    @staticmethod
-    def _rename_playlist(target, newLabel):
+    def _rename_playlist(self, target, newLabel):
         # This function changes the label tag of an auto-generated playlist
 
         # First we will check that this is a playlist
-        target = target
         if target.startswith("ActivateWindow("):
             try:
                 elements = target.split(",")
@@ -2377,7 +2372,7 @@ class LibraryFunctions:
             name.text = newLabel
 
             # Write the tree
-            DATA.indent(tree.getroot())
+            self.data_func.indent(tree.getroot())
             tree.write(filename, encoding="utf-8")
 
             # Load the random tree and change the name
@@ -2386,7 +2381,7 @@ class LibraryFunctions:
             name.text = newLabel
 
             # Write the random tree
-            DATA.indent(tree.getroot())
+            self.data_func.indent(tree.getroot())
             tree.write(filename.replace(".xsp", "-randomversion.xsp"), encoding="utf-8")
 
     @staticmethod

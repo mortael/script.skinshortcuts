@@ -30,23 +30,21 @@ from .constants import ADDON_NAME
 from .constants import ADDON_VERSION
 from .constants import CWD
 from .constants import DATA_PATH
+from .constants import HOME_WINDOW
 from .constants import LANGUAGE
 from .constants import MASTER_PATH
 from .constants import SKIN_DIR
-
-XML = xmlfunctions.XMLFunctions()
-DATA = datafunctions.DataFunctions()
-LIBRARY = library.LibraryFunctions()
-NODE = nodefunctions.NodeFunctions()
-
-hashlist = []
 
 
 class Main:
     # MAIN ENTRY POINT
     def __init__(self):
         self._parse_argv()
-        self.WINDOW = xbmcgui.Window(10000)
+
+        self.data_func = datafunctions.DataFunctions()
+        self.node_func = nodefunctions.NodeFunctions()
+        self.xml_func = xmlfunctions.XMLFunctions()
+        self.lib_func = library.LibraryFunctions()
 
         # Create data and master paths if not exists
         if not xbmcvfs.exists(DATA_PATH):
@@ -61,8 +59,8 @@ class Main:
 
         if self.TYPE == "buildxml":
             xbmc.sleep(100)
-            XML.buildMenu(self.MENUID, self.GROUP, self.LEVELS, self.MODE,
-                          self.OPTIONS, self.MINITEMS)
+            self.xml_func.buildMenu(self.MENUID, self.GROUP, self.LEVELS, self.MODE,
+                                    self.OPTIONS, self.MINITEMS)
 
         if self.TYPE == "launch":
             xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False,
@@ -93,14 +91,16 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            thread.start_new_thread(LIBRARY.loadAllLibrary, ())
+            thread.start_new_thread(self.lib_func.loadAllLibrary, ())
 
             if self.GROUPING is not None:
-                selectedShortcut = LIBRARY.selectShortcut("", grouping=self.GROUPING,
-                                                          custom=self.CUSTOM, showNone=self.NONE)
+                selectedShortcut = self.lib_func.selectShortcut(
+                    "", grouping=self.GROUPING,
+                    custom=self.CUSTOM, showNone=self.NONE
+                )
             else:
-                selectedShortcut = LIBRARY.selectShortcut("", custom=self.CUSTOM,
-                                                          showNone=self.NONE)
+                selectedShortcut = self.lib_func.selectShortcut("", custom=self.CUSTOM,
+                                                               showNone=self.NONE)
 
             # Now set the skin strings
             if selectedShortcut is not None and selectedShortcut.getProperty("Path"):
@@ -128,7 +128,7 @@ class Main:
                                         selectedShortcut.getProperty("thumbnail") + ")")
                 if self.LIST is not None:
                     xbmc.executebuiltin("Skin.SetString(" + self.LIST + "," +
-                                        DATA.getListProperty(path) + ")")
+                                        self.data_func.getListProperty(path) + ")")
             elif selectedShortcut is not None and selectedShortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
                 if self.LABEL is not None:
@@ -149,7 +149,7 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            thread.start_new_thread(LIBRARY.loadAllLibrary, ())
+            thread.start_new_thread(self.lib_func.loadAllLibrary, ())
 
             # Check if we should show the custom option (if the relevant widgetPath skin
             # string is provided and isn't empty)
@@ -160,14 +160,18 @@ class Main:
 
             if self.GROUPING:
                 if self.GROUPING.lower() == "default":
-                    selectedShortcut = LIBRARY.selectShortcut("", custom=showCustom,
-                                                              showNone=self.NONE)
+                    selectedShortcut = self.lib_func.selectShortcut("", custom=showCustom,
+                                                                   showNone=self.NONE)
                 else:
-                    selectedShortcut = LIBRARY.selectShortcut("", grouping=self.GROUPING,
-                                                              custom=showCustom, showNone=self.NONE)
+                    selectedShortcut = self.lib_func.selectShortcut(
+                        "", grouping=self.GROUPING,
+                        custom=showCustom, showNone=self.NONE
+                    )
             else:
-                selectedShortcut = LIBRARY.selectShortcut("", grouping="widget",
-                                                          custom=showCustom, showNone=self.NONE)
+                selectedShortcut = self.lib_func.selectShortcut(
+                    "", grouping="widget",
+                    custom=showCustom, showNone=self.NONE
+                )
 
             # Now set the skin strings
             if selectedShortcut is None:
@@ -241,12 +245,13 @@ class Main:
             if not xbmc.getCondVisibility("Skin.HasSetting(SkinShortcuts-FullMenu)"):
                 xbmcgui.Dialog().ok(ADDON_NAME, ADDON.getLocalizedString(32116))
             else:
-                NODE.addToMenu(self.CONTEXTFILENAME, self.CONTEXTLABEL, self.CONTEXTICON,
-                               self.CONTEXTCONTENT, self.CONTEXTWINDOW, DATA)
+                self.node_func.addToMenu(self.CONTEXTFILENAME, self.CONTEXTLABEL, self.CONTEXTICON,
+                                         self.CONTEXTCONTENT, self.CONTEXTWINDOW, self.data_func)
 
         if self.TYPE == "setProperty":
             # External request to set properties of a menu item
-            NODE.setProperties(self.PROPERTIES, self.VALUES, self.LABELID, self.GROUPNAME, DATA)
+            self.node_func.setProperties(self.PROPERTIES, self.VALUES, self.LABELID,
+                                         self.GROUPNAME, self.data_func)
 
         if self.TYPE == "resetall":
             # Tell XBMC not to try playing any media
@@ -339,15 +344,13 @@ class Main:
                 if singleAction != "::MULTIPLE::":
                     xbmc.executebuiltin(singleAction)
 
-    @staticmethod
-    def _manage_shortcuts(group, defaultGroup, nolabels, groupname):
-        homeWindow = xbmcgui.Window(10000)
-        if homeWindow.getProperty("skinshortcuts-loading") and \
+    def _manage_shortcuts(self, group, defaultGroup, nolabels, groupname):
+        if HOME_WINDOW.getProperty("skinshortcuts-loading") and \
                 int(calendar.timegm(gmtime())) - \
-                int(homeWindow.getProperty("skinshortcuts-loading")) <= 5:
+                int(HOME_WINDOW.getProperty("skinshortcuts-loading")) <= 5:
             return
 
-        homeWindow.setProperty("skinshortcuts-loading", str(calendar.timegm(gmtime())))
+        HOME_WINDOW.setProperty("skinshortcuts-loading", str(calendar.timegm(gmtime())))
         from . import gui
         ui = gui.GUI("script-skinshortcuts.xml", CWD, "default", group=group,
                      defaultGroup=defaultGroup, nolabels=nolabels, groupname=groupname)
@@ -355,13 +358,13 @@ class Main:
         del ui
 
         # Update home window property (used to automatically refresh type=settings)
-        homeWindow.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
+        HOME_WINDOW.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
 
         # Clear window properties for this group, and for backgrounds, widgets, properties
-        homeWindow.clearProperty("skinshortcuts-" + group)
-        homeWindow.clearProperty("skinshortcutsWidgets")
-        homeWindow.clearProperty("skinshortcutsCustomProperties")
-        homeWindow.clearProperty("skinshortcutsBackgrounds")
+        HOME_WINDOW.clearProperty("skinshortcuts-" + group)
+        HOME_WINDOW.clearProperty("skinshortcutsWidgets")
+        HOME_WINDOW.clearProperty("skinshortcutsCustomProperties")
+        HOME_WINDOW.clearProperty("skinshortcutsBackgrounds")
 
     def _reset_all_shortcuts(self):
         log("### Resetting all shortcuts")
@@ -376,7 +379,7 @@ class Main:
             shouldRun = dialog.yesno(LANGUAGE(32037), LANGUAGE(32038))
 
         if shouldRun:
-            isShared = DATA.checkIfMenusShared()
+            isShared = self.data_func.checkIfMenusShared()
             for files in xbmcvfs.listdir(DATA_PATH):
                 # Try deleting all shortcuts
                 if files:
@@ -405,7 +408,7 @@ class Main:
                             log("Not deleting file %s" % [file])
 
             # Update home window property (used to automatically refresh type=settings)
-            xbmcgui.Window(10000).setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
+            HOME_WINDOW.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
 
     # Functions for providing whoe menu in single list
     @staticmethod

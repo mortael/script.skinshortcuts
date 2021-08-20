@@ -21,6 +21,7 @@ from .common import read_file
 from .common import toggle_debug_logging
 from .constants import ADDON
 from .constants import ADDON_VERSION
+from .constants import HOME_WINDOW
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import SKIN_DIR
@@ -29,11 +30,11 @@ from .hash_utils import generate_file_hash
 from .hash_utils import read_hashes
 from .hash_utils import write_hashes
 
-DATA = datafunctions.DataFunctions()
-
 
 class XMLFunctions:
     def __init__(self):
+        self.data_func = datafunctions.DataFunctions()
+
         self.MAINWIDGET = {}
         self.MAINBACKGROUND = {}
         self.MAINPROPERTIES = {}
@@ -50,10 +51,10 @@ class XMLFunctions:
     def buildMenu(self, mainmenuID, groups, numLevels, buildMode, options, minitems,
                   weEnabledSystemDebug=False, weEnabledScriptDebug=False):
         # Entry point for building includes.xml files
-        if xbmcgui.Window(10000).getProperty("skinshortcuts-isrunning") == "True":
+        if HOME_WINDOW.getProperty("skinshortcuts-isrunning") == "True":
             return
 
-        xbmcgui.Window(10000).setProperty("skinshortcuts-isrunning", "True")
+        HOME_WINDOW.setProperty("skinshortcuts-isrunning", "True")
 
         # Get a list of profiles
         fav_file = xbmcvfs.translatePath('special://userdata/profiles.xml')
@@ -83,7 +84,7 @@ class XMLFunctions:
         shouldwerun = self.shouldwerun(profilelist)
         if shouldwerun is False:
             log("Menu is up to date")
-            xbmcgui.Window(10000).clearProperty("skinshortcuts-isrunning")
+            HOME_WINDOW.clearProperty("skinshortcuts-isrunning")
             return
 
         # Create a progress dialog
@@ -102,7 +103,7 @@ class XMLFunctions:
             complete = False
 
         # Mark that we're no longer running, clear the progress dialog
-        xbmcgui.Window(10000).clearProperty("skinshortcuts-isrunning")
+        HOME_WINDOW.clearProperty("skinshortcuts-isrunning")
         progress.close()
 
         if complete is True:
@@ -156,11 +157,10 @@ class XMLFunctions:
                         xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"),
                                             LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
 
-    @staticmethod
-    def shouldwerun(profilelist):
+    def shouldwerun(self, profilelist):
         try:
-            prop = xbmcgui.Window(10000).getProperty("skinshortcuts-reloadmainmenu")
-            xbmcgui.Window(10000).clearProperty("skinshortcuts-reloadmainmenu")
+            prop = HOME_WINDOW.getProperty("skinshortcuts-reloadmainmenu")
+            HOME_WINDOW.clearProperty("skinshortcuts-reloadmainmenu")
             if prop == "True":
                 log("Menu has been edited")
                 return True
@@ -320,7 +320,7 @@ class XMLFunctions:
         hashlist.append(["::SKINDIR::", SKIN_DIR])
 
         # Clear any skin settings for backgrounds and widgets
-        DATA._reset_backgroundandwidgets()
+        self.data_func._reset_backgroundandwidgets()
         self.widgetCount = 1
 
         # Create a new tree and includes for the various groups
@@ -334,7 +334,7 @@ class XMLFunctions:
 
         # Get any shortcuts we're checking for
         self.checkForShortcuts = []
-        overridestree = DATA._get_overrides_skin()
+        overridestree = self.data_func._get_overrides_skin()
         checkForShortcutsOverrides = overridestree.getroot().findall("checkforshortcut")
         for checkForShortcutOverride in checkForShortcutsOverrides:
             if "property" in checkForShortcutOverride.attrib:
@@ -382,10 +382,10 @@ class XMLFunctions:
             self.checkForShortcuts = newCheckForShortcuts
 
             # Clear any previous labelID's
-            DATA._clear_labelID()
+            self.data_func._clear_labelID()
 
             # Clear any additional properties, which may be for a different profile
-            DATA.currentProperties = None
+            self.data_func.currentProperties = None
 
             # Create objects to hold the items
             menuitems = []
@@ -398,7 +398,7 @@ class XMLFunctions:
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
                 hashlist.append(["::FULLMENU::", "True"])
-                for node in DATA._get_shortcuts("mainmenu", None, True, profile[0]) \
+                for node in self.data_func._get_shortcuts("mainmenu", None, True, profile[0]) \
                         .findall("shortcut"):
                     menuitems.append(node)
                     submenuItems.append(node)
@@ -445,7 +445,7 @@ class XMLFunctions:
                         item,
                         "mainmenu",
                         None,
-                        profile[1], DATA.slugify(submenu, convertInteger=True),
+                        profile[1], self.data_func.slugify(submenu, convertInteger=True),
                         itemid=itemidmainmenu,
                         options=options
                     )
@@ -458,7 +458,7 @@ class XMLFunctions:
                     submenuDefaultID = item.find("defaultID").text
 
                     # Remove any template-only properties
-                    otherProperties, requires, templateOnly = DATA._getPropertyRequires()
+                    otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
                     for key in otherProperties:
                         if key in list(allProps.keys()) and key in templateOnly:
                             # This key is template-only
@@ -476,7 +476,7 @@ class XMLFunctions:
 
                 else:
                     # It's an additional menu, so get its labelID
-                    submenu = DATA._get_labelID(item, None)
+                    submenu = self.data_func._get_labelID(item, None)
 
                     # And clear mainmenuItemA and mainmenuItemB, so we don't
                     # incorrectly add properties to an actual main menu item
@@ -506,10 +506,10 @@ class XMLFunctions:
                             justmenuTreeB = xmltree.SubElement(root, "include")
 
                             if count != 0:
-                                groupInclude = DATA.slugify(submenu[:-2], convertInteger=True) + \
+                                groupInclude = self.data_func.slugify(submenu[:-2], convertInteger=True) + \
                                                "-" + submenu[-1:]
                             else:
-                                groupInclude = DATA.slugify(submenu, convertInteger=True)
+                                groupInclude = self.data_func.slugify(submenu, convertInteger=True)
 
                             justmenuTreeA.set("name", "skinshortcuts-group-" + groupInclude)
                             justmenuTreeB.set("name", "skinshortcuts-group-alt-" + groupInclude)
@@ -520,11 +520,11 @@ class XMLFunctions:
 
                     # Get the shortcuts for the submenu
                     if count == 0:
-                        submenudata = DATA._get_shortcuts(submenu, submenuDefaultID,
-                                                          True, profile[0])
+                        submenudata = self.data_func._get_shortcuts(submenu, submenuDefaultID,
+                                                                    True, profile[0])
                     else:
-                        submenudata = DATA._get_shortcuts(submenu, None, True,
-                                                          profile[0], isSubLevel=True)
+                        submenudata = self.data_func._get_shortcuts(submenu, None, True,
+                                                                    profile[0], isSubLevel=True)
 
                     if isinstance(submenudata, list):
                         submenuitems = submenudata
@@ -567,25 +567,25 @@ class XMLFunctions:
                                     "condition",
                                     "String.IsEqual(Window(10000)"
                                     ".Property(submenuVisibility),%s) + [%s]" %
-                                    (DATA.slugify(submenuVisibilityName, convertInteger=True),
+                                    (self.data_func.slugify(submenuVisibilityName, convertInteger=True),
                                      onclickelement.attrib.get("condition"))
                                 )
                                 newonclick = xmltree.SubElement(mainmenuItemB, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
-                                                  DATA.slugify(submenuVisibilityName,
-                                                               convertInteger=True) + \
+                                                  self.data_func.slugify(submenuVisibilityName,
+                                                                         convertInteger=True) + \
                                                   ",10000)"
                                 newonclick.set("condition", onclickelement.attrib.get("condition"))
                             else:
                                 onclickelement.set(
                                     "condition",
                                     "String.IsEqual(Window(10000).Property(submenuVisibility),%s)"
-                                    % (DATA.slugify(submenuVisibilityName, convertInteger=True))
+                                    % (self.data_func.slugify(submenuVisibilityName, convertInteger=True))
                                 )
                                 newonclick = xmltree.SubElement(mainmenuItemB, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
-                                                  DATA.slugify(submenuVisibilityName,
-                                                               convertInteger=True) + \
+                                                  self.data_func.slugify(submenuVisibilityName,
+                                                                         convertInteger=True) + \
                                                   ",10000)"
 
                     # Build the submenu items
@@ -605,7 +605,7 @@ class XMLFunctions:
                         templateSubMenuItems.append(Template.copy_tree(menuitem))
 
                         # Remove any template-only properties
-                        otherProperties, requires, templateOnly = DATA._getPropertyRequires()
+                        otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
                         for key in otherProperties:
                             if key in list(allProps.keys()) and key in templateOnly:
                                 # This key is template-only
@@ -624,8 +624,8 @@ class XMLFunctions:
                                                      (visibilityElement.text,
                                                       "String.IsEqual(Window(10000)"
                                                       ".Property(submenuVisibility),%s)" %
-                                                      (DATA.slugify(submenuVisibilityName,
-                                                                    convertInteger=True)))
+                                                      (self.data_func.slugify(submenuVisibilityName,
+                                                                              convertInteger=True)))
                             justmenuTreeB.append(menuitemCopy)
 
                         if buildMode == "single" and not isinstance(item, str):
@@ -633,8 +633,8 @@ class XMLFunctions:
                             allmenuTreeCopy = Template.copy_tree(menuitemCopy)
                             submenuVisibility = xmltree.SubElement(allmenuTreeCopy, "property")
                             submenuVisibility.set("name", "submenuVisibility")
-                            submenuVisibility.text = DATA.slugify(submenuVisibilityName,
-                                                                  convertInteger=True)
+                            submenuVisibility.text = self.data_func.slugify(submenuVisibilityName,
+                                                                            convertInteger=True)
                             allmenuTree.append(allmenuTreeCopy)
 
                         menuitemCopy = Template.copy_tree(menuitem)
@@ -644,8 +644,8 @@ class XMLFunctions:
                                                   "String.IsEqual(Container(%s)"
                                                   ".ListItem.Property(submenuVisibility),%s)" %
                                                   (mainmenuID,
-                                                   DATA.slugify(submenuVisibilityName,
-                                                                convertInteger=True)))
+                                                   self.data_func.slugify(submenuVisibilityName,
+                                                                          convertInteger=True)))
                         submenuTree.append(menuitemCopy)
                     if len(submenuitems) == 0 and "noGroups" not in options:
                         # There aren't any submenu items, so add a 'description'
@@ -665,14 +665,14 @@ class XMLFunctions:
                         profile[1], "String.IsEqual(Container(%s).ListItem"
                                     ".Property(submenuVisibility),%s)" %
                                     (mainmenuID,
-                                     DATA.slugify(submenuVisibilityName, convertInteger=True)),
+                                     self.data_func.slugify(submenuVisibilityName, convertInteger=True)),
                         item, None, buildOthers, mainmenuitems=templateCurrentMainMenuItem)
 
                     count += 1
 
             if self.hasSettings is False:
                 # Check if the overrides asks for a forced settings...
-                overridestree = DATA._get_overrides_skin()
+                overridestree = self.data_func._get_overrides_skin()
                 forceSettings = overridestree.getroot().find("forcesettings")
                 if forceSettings is not None:
                     # We want a settings option to be added
@@ -733,7 +733,7 @@ class XMLFunctions:
         hashlist.append(["::SKINVER::", skinVersion])
 
         # indent the tree
-        DATA.indent(tree.getroot())
+        self.data_func.indent(tree.getroot())
 
         # create a set of hashable files
         hashable = set()
@@ -748,7 +748,7 @@ class XMLFunctions:
                     tree.write(path, encoding="UTF-8")  # writing includes
                     hashable.add(path)
 
-        hashable.update(DATA.hashable)
+        hashable.update(self.data_func.hashable)
         hashable.update(Template.hashable)
 
         for item in hashable:  # generate a hash for all paths
@@ -783,8 +783,8 @@ class XMLFunctions:
             allProps[mainmenuid] = mainmenuidproperty
 
         # Label and label2
-        xmltree.SubElement(newelement, "label").text = DATA.local(item.find("label").text)[1]
-        xmltree.SubElement(newelement, "label2").text = DATA.local(item.find("label2").text)[1]
+        xmltree.SubElement(newelement, "label").text = self.data_func.local(item.find("label").text)[1]
+        xmltree.SubElement(newelement, "label2").text = self.data_func.local(item.find("label2").text)[1]
 
         # Icon and thumb
         icon = item.find("override-icon")
@@ -868,7 +868,7 @@ class XMLFunctions:
                         additionalproperty.text = prop[1]
 
         # Get fallback properties, property requirements, templateOnly value of properties
-        fallbackProperties, fallbacks = DATA._getCustomPropertyFallbacks(groupName)
+        fallbackProperties, fallbacks = self.data_func._getCustomPropertyFallbacks(groupName)
 
         # Add fallback properties
         for key in fallbackProperties:
@@ -894,7 +894,7 @@ class XMLFunctions:
                         break
 
         # Get property requirements
-        otherProperties, requires, templateOnly = DATA._getPropertyRequires()
+        otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
 
         # Remove any properties whose requirements haven't been met
         for key in otherProperties:
@@ -926,7 +926,7 @@ class XMLFunctions:
             onclickelement = xmltree.SubElement(newelement, "onclick")
 
             # Updrage action if necessary
-            onclick.text = DATA.upgradeAction(onclick.text)
+            onclick.text = self.data_func.upgradeAction(onclick.text)
 
             # PVR Action
             if onclick.text.startswith("pvr-channel://"):
@@ -969,7 +969,7 @@ class XMLFunctions:
                 # because it has to be unique in Kodi lists
                 listElement = xmltree.SubElement(newelement, "property")
                 listElement.set("name", "list")
-                listElement.text = DATA.getListProperty(onclickelement.text.replace('"', ''))
+                listElement.text = self.data_func.getListProperty(onclickelement.text.replace('"', ''))
                 allProps["list"] = listElement
 
             if onclick.text == "ActivateWindow(Settings)":
@@ -1012,7 +1012,7 @@ class XMLFunctions:
             if submenuVisibility.isdigit():
                 submenuVisibilityElement.text = "$NUMBER[" + submenuVisibility + "]"
             else:
-                submenuVisibilityElement.text = DATA.slugify(submenuVisibility)
+                submenuVisibilityElement.text = self.data_func.slugify(submenuVisibility)
 
         # Group name
         group = xmltree.SubElement(newelement, "property")
@@ -1032,13 +1032,13 @@ class XMLFunctions:
                 for key in self.MAINBACKGROUND:
                     additionalproperty = xmltree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
-                    additionalproperty.text = DATA.local(self.MAINBACKGROUND[key])[1]
+                    additionalproperty.text = self.data_func.local(self.MAINBACKGROUND[key])[1]
                     allProps[key] = additionalproperty
             if "cloneproperties" in options and len(self.MAINPROPERTIES) != 0:
                 for key in self.MAINPROPERTIES:
                     additionalproperty = xmltree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
-                    additionalproperty.text = DATA.local(self.MAINPROPERTIES[key])[1]
+                    additionalproperty.text = self.data_func.local(self.MAINPROPERTIES[key])[1]
                     allProps[key] = additionalproperty
 
         propertyPatterns = self.getPropertyPatterns(labelID.text, groupName)
@@ -1061,7 +1061,7 @@ class XMLFunctions:
     def getPropertyPatterns(self, labelID, group):
         propertyPatterns = {}
         if not self.loadedPropertyPatterns:
-            overrides = DATA._get_overrides_skin()
+            overrides = self.data_func._get_overrides_skin()
             self.propertyPatterns = overrides.getroot().findall("propertypattern")
             self.loadedPropertyPatterns = True
 

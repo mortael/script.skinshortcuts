@@ -19,6 +19,7 @@ from .common import rpc_request
 from .constants import ADDON
 from .constants import CWD
 from .constants import DATA_PATH
+from .constants import HOME_WINDOW
 from .constants import KODI_PATH
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
@@ -473,7 +474,7 @@ class NodeFunctions:
             menuitems.write(path, encoding="UTF-8")
 
         # Mark that the menu needs to be rebuilt
-        xbmcgui.Window(10000).setProperty("skinshortcuts-reloadmainmenu", "True")
+        HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
 
         # And tell the user it all worked
         xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32090))
@@ -494,8 +495,7 @@ class NodeFunctions:
     # ##############################################
 
     # noinspection PyDictCreation
-    @staticmethod
-    def setProperties(properties, values, labelID, group, DATA):
+    def setProperties(self, properties, values, labelID, group, DATA):
         # This function will take a list of properties and values and apply them to the
         # main menu item with the given labelID
         if not group:
@@ -585,7 +585,7 @@ class NodeFunctions:
         log("Properties updated")
 
         # Mark that the menu needs to be rebuilt
-        xbmcgui.Window(10000).setProperty("skinshortcuts-reloadmainmenu", "True")
+        HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
 
 
 # ============================

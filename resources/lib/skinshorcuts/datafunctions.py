@@ -17,6 +17,7 @@ from traceback import print_exc
 from unidecode import unidecode
 
 import xbmc
+import xbmcgui
 import xbmcvfs
 from . import nodefunctions
 from .common import log
@@ -32,8 +33,6 @@ from .constants import SKIN_DIR
 from .constants import SKIN_SHORTCUTS_PATH
 from .hash_utils import read_hashes
 from .property_utils import read_properties
-
-NODE = nodefunctions.NodeFunctions()
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
@@ -51,6 +50,8 @@ REMOVE_REXP = re.compile(r'-{2,}')
 
 class DataFunctions:
     def __init__(self):
+        self.node_func = nodefunctions.NodeFunctions()
+
         self.overrides = {}
 
         self.widgetNameAndType = {}
@@ -898,8 +899,7 @@ class DataFunctions:
 
         return item.lower().replace(" ", "")
 
-    @staticmethod
-    def checkVisibility(action):
+    def checkVisibility(self, action):
         # Return whether mainmenu items should be displayed
         action = action.lower().replace(" ", "").replace("\"", "")
 
@@ -917,7 +917,7 @@ class DataFunctions:
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
-            return NODE.get_visibility(path[1])
+            return self.node_func.get_visibility(path[1])
 
         # Audio node visibility - Isengard and earlier
         elif action.startswith("activatewindow(musiclibrary,musicdb://") or \
@@ -927,7 +927,7 @@ class DataFunctions:
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
-            return NODE.get_visibility(path[1])
+            return self.node_func.get_visibility(path[1])
 
         # Audio node visibility - Additional checks for Jarvis and later
         # (Note when cleaning up in the future, some of the Isengard checks -
@@ -937,7 +937,7 @@ class DataFunctions:
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
-            return NODE.get_visibility(path[1])
+            return self.node_func.get_visibility(path[1])
 
         # Power menu visibilities
         elif action == "quit()" or action == "quit":

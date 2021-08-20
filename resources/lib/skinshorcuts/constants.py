@@ -10,6 +10,7 @@ import os
 
 import xbmc
 import xbmcaddon
+import xbmcgui
 import xbmcvfs
 
 ADDON_ID = 'script.skinshortcuts'
@@ -33,3 +34,4 @@ SKIN_DIR = xbmc.getSkinDir()
 PROPERTIES_FILE = os.path.join(DATA_PATH, "%s.properties" % SKIN_DIR)
 HASH_FILE = os.path.join(MASTER_PATH, "%s.hash" % SKIN_DIR)
 LANGUAGE = ADDON.getLocalizedString
+HOME_WINDOW = xbmcgui.Window(10000)
