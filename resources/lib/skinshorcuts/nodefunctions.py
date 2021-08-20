@@ -57,7 +57,7 @@ class NodeFunctions:
                 self.parse_node(os.path.join(path, _dir), _dir, nodes, prefix)
             for file in files:
                 self.parse_view(os.path.join(path, file), nodes,
-                                origPath="%s/%s" % (prefix, file), prefix=prefix)
+                                origPath="%s/%s" % (prefix, file))
         except:
             print_exc()
             return False
@@ -68,9 +68,9 @@ class NodeFunctions:
         # If the folder we've been passed contains an index.xml, send that file to be processed
         if xbmcvfs.exists(os.path.join(node, "index.xml")):
             self.parse_view(os.path.join(node, "index.xml"), nodes, True,
-                            "%s/%s/" % (prefix, directory), node, prefix=prefix)
+                            "%s/%s/" % (prefix, directory), node)
 
-    def parse_view(self, file, nodes, isFolder=False, origFolder=None, origPath=None, prefix=None):
+    def parse_view(self, file, nodes, isFolder=False, origFolder=None, origPath=None):
         if not isFolder and file.endswith("index.xml"):
             return
         try:
@@ -527,7 +527,7 @@ class NodeFunctions:
             return
 
         # Load the properties
-        currentProperties, defaultProperties = data_func._get_additionalproperties(PROFILE_PATH)
+        currentProperties, defaultProperties = data_func._get_additionalproperties()
         otherProperties, requires, templateOnly = data_func._getPropertyRequires()
 
         # If there aren't any currentProperties, use the defaultProperties instead

@@ -145,7 +145,7 @@ class DataFunctions:
     def _pop_labelID(self):
         self.labelIDList.pop()
 
-    def _get_shortcuts(self, group, defaultGroup=None, isXML=False, profileDir=None,
+    def _get_shortcuts(self, group, defaultGroup=None, profileDir=None,
                        defaultsOnly=False, processShortcuts=True, isSubLevel=False):
         # This will load the shortcut file
         # Additionally, if the override files haven't been loaded, we'll load them too
@@ -185,13 +185,13 @@ class DataFunctions:
                 # If this is a user-selected list of shortcuts...
                 if path == userShortcuts:
                     if group == "mainmenu":
-                        self._get_skin_required(tree, group, profileDir)
+                        self._get_skin_required(tree)
                     # Process shortcuts, marked as user-selected
                     self._process_shortcuts(tree, group, profileDir, True)
 
                 else:
                     if group == "mainmenu":
-                        self._get_skin_required(tree, group, profileDir)
+                        self._get_skin_required(tree)
                     self._process_shortcuts(tree, group, profileDir)
 
                 log(" - Loaded file")
@@ -206,7 +206,7 @@ class DataFunctions:
         return xmltree.ElementTree(xmltree.Element("shortcuts"))
 
     def _process_shortcuts(self, tree, group, profileDir="special://profile",
-                           isUserShortcuts=False, allowAdditionalRequired=True):
+                           isUserShortcuts=False):
         # This function will process any overrides and add them to the tree ready to be displayed
         #  - We will process graphics overrides, action overrides, visibility conditions
         skinoverrides = self._get_overrides_skin()
@@ -258,7 +258,7 @@ class DataFunctions:
             version = node.find("version")
             if version is not None:
                 if KODI_VERSION != version.text and \
-                        self.checkVersionEquivalency(version.text, node.find("action")) is False:
+                        self.checkVersionEquivalency(node.find("action")) is False:
                     tree.getroot().remove(node)
                     self._pop_labelID()
                     continue
@@ -269,7 +269,7 @@ class DataFunctions:
 
             # Load additional properties
             additionalProperties = self.checkAdditionalProperties(group, labelID, defaultID,
-                                                                  isUserShortcuts, profileDir)
+                                                                  isUserShortcuts)
 
             # If icon and thumbnail are in the additional properties,
             # overwrite anything in the .DATA.xml file
@@ -296,7 +296,7 @@ class DataFunctions:
 
             # Get a skin-overridden icon
             overriddenIcon = self._get_icon_overrides(skinoverrides, node.find("icon").text,
-                                                     group, labelID)
+                                                      group, labelID)
             if overriddenIcon is not None:
                 # Add a new node with the overridden icon
                 xmltree.SubElement(node, "override-icon").text = overriddenIcon
@@ -438,7 +438,7 @@ class DataFunctions:
 
         return tree
 
-    def _get_skin_required(self, listitems, group, profileDir):
+    def _get_skin_required(self, listitems):
         # This function builds a tree of any skin-required shortcuts not currently in the menu
         # Once the tree is built, it sends them to _process_shortcuts for any overrides, etc,
         # then adds them to the menu tree
@@ -566,7 +566,7 @@ class DataFunctions:
             self.overrides["user"] = tree
             return tree
 
-    def _get_additionalproperties(self, profileDir):
+    def _get_additionalproperties(self):
         # Load all saved properties (widgets, backgrounds, custom properties)
 
         if self.currentProperties is not None:
@@ -999,7 +999,7 @@ class DataFunctions:
 
         return ""
 
-    def checkVersionEquivalency(self, version, action, check_type="shortcuts"):
+    def checkVersionEquivalency(self, action, check_type="shortcuts"):
         # Check whether the version specified for a shortcut has an equivalency
         # to the version of Kodi we're running
         trees = [self._get_overrides_skin(), self._get_overrides_script()]
@@ -1048,9 +1048,9 @@ class DataFunctions:
 
         return False
 
-    def checkAdditionalProperties(self, group, labelID, defaultID, isUserShortcuts, profileDir):
+    def checkAdditionalProperties(self, group, labelID, defaultID, isUserShortcuts):
         # Return any additional properties, including widgets, backgrounds, icons and thumbnails
-        allProperties = self._get_additionalproperties(profileDir)
+        allProperties = self._get_additionalproperties()
         currentProperties = allProperties[1]
 
         returnProperties = []

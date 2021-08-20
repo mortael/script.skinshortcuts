@@ -260,7 +260,7 @@ class GUI(xbmcgui.WindowXMLDialog):
     # === LOAD/SAVE DATA ===
     # ======================
 
-    def load_shortcuts(self, includeUserShortcuts=True, addShortcutsToWindow=True):
+    def load_shortcuts(self, includeUserShortcuts=True):
         log("Loading shortcuts")
         self.data_func._clear_labelID()
 

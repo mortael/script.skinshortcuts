@@ -399,7 +399,7 @@ class XMLFunctions:
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
                 hashlist.append(["::FULLMENU::", "True"])
-                for node in self.data_func._get_shortcuts("mainmenu", None, True, profile[0]) \
+                for node in self.data_func._get_shortcuts("mainmenu", profileDir=profile[0]) \
                         .findall("shortcut"):
                     menuitems.append(node)
                     submenuItems.append(node)
@@ -523,9 +523,9 @@ class XMLFunctions:
                     # Get the shortcuts for the submenu
                     if count == 0:
                         submenudata = self.data_func._get_shortcuts(submenu, submenuDefaultID,
-                                                                    True, profile[0])
+                                                                    profile[0])
                     else:
-                        submenudata = self.data_func._get_shortcuts(submenu, None, True,
+                        submenudata = self.data_func._get_shortcuts(submenu, None,
                                                                     profile[0], isSubLevel=True)
 
                     if isinstance(submenudata, list):

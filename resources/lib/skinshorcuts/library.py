@@ -70,7 +70,7 @@ def kodiwalk(path, stringForce=False):
 
 # noinspection PyListCreation
 class LibraryFunctions:
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.node_func = nodefunctions.NodeFunctions()
         self.data_func = datafunctions.DataFunctions()
 
@@ -265,7 +265,7 @@ class LibraryFunctions:
                     version = node.attrib.get("version")
                     if KODI_VERSION != version and \
                             self.data_func.checkVersionEquivalency(
-                                version, node.attrib.get("condition"), "groupings"
+                                node.attrib.get("condition"), "groupings"
                             ) is False:
                         group += 1
                         continue
@@ -311,7 +311,7 @@ class LibraryFunctions:
                 version = subnode.attrib.get("version")
                 if KODI_VERSION != version and \
                         self.data_func.checkVersionEquivalency(
-                            version, subnode.attrib.get("condition"), "groupings"
+                            subnode.attrib.get("condition"), "groupings"
                         ) is False:
                     number += 1
                     continue
@@ -336,7 +336,7 @@ class LibraryFunctions:
                 version = node.attrib.get("version")
                 if KODI_VERSION != version and \
                         self.data_func.checkVersionEquivalency(
-                            version, node.attrib.get("condition"), "groupings"
+                            node.attrib.get("condition"), "groupings"
                         ) is False:
                     continue
             count += 1
@@ -1889,8 +1889,8 @@ class LibraryFunctions:
         if selectedItem == -2:
             # Get more button
             log("Selected get more button")
-            return self._explorer_install_widget_provider(history, history[len(history) - 1],
-                                                          label, thumbnail, itemType, isWidget)
+            return self._explorer_install_widget_provider(history, label, thumbnail,
+                                                          itemType, isWidget)
 
         elif selectedItem != -1:
             selectedAction = listings[selectedItem].getProperty("path")
@@ -2036,8 +2036,7 @@ class LibraryFunctions:
     # === INSTALL WIDGET PROVIDERS ===
     # ================================
 
-    def _explorer_install_widget_provider(self, history, location, label, thumbnail, itemType,
-                                          isWidget):
+    def _explorer_install_widget_provider(self, history, label, thumbnail, itemType, isWidget):
         # CALLED FROM EXPLORER FUNCTION
         # The user has clicked the 'Get More...' button to install additional widget providers
         providerList = []
@@ -2398,7 +2397,7 @@ class LibraryFunctions:
             "method": "Files.GetDirectory",
             "params": {
                 "properties": ["title", "art", "file", "fanart"],
-                "directory": "' + path + '",
+                "directory": "%s" % path,
                 "media": "files"
             }
         }

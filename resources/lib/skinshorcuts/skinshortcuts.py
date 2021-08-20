@@ -69,7 +69,7 @@ class Main:
         if self.TYPE == "launch":
             xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False,
                                       listitem=xbmcgui.ListItem())
-            self._launch_shortcut(self.PATH)
+            self._launch_shortcut()
         if self.TYPE == "launchpvr":
             json_payload = {
                 "jsonrpc": "2.0",
@@ -333,7 +333,7 @@ class Main:
     # PRIMARY FUNCTIONS
     # -----------------
 
-    def _launch_shortcut(self, path):
+    def _launch_shortcut(self):
         action = unquote(self.PATH)
 
         if action.find("::MULTIPLE::") == -1:
