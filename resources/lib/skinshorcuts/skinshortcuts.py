@@ -32,6 +32,7 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import LANGUAGE
 from .constants import MASTER_PATH
+from .constants import SKIN_DIR
 
 XML = xmlfunctions.XMLFunctions()
 DATA = datafunctions.DataFunctions()
@@ -385,7 +386,7 @@ class Main:
                             continue
                         if isShared:
                             deleteFile = True
-                        elif file.startswith(xbmc.getSkinDir()) and \
+                        elif file.startswith(SKIN_DIR) and \
                                 (file.endswith(".properties") or file.endswith(".DATA.xml")):
                             deleteFile = True
 

@@ -23,6 +23,7 @@ from .constants import ADDON
 from .constants import ADDON_VERSION
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
+from .constants import SKIN_DIR
 from .constants import SKIN_PATH
 from .hash_utils import generate_file_hash
 from .hash_utils import read_hashes
@@ -316,7 +317,7 @@ class XMLFunctions:
         hashlist.append(["::XBMCVER::", KODI_VERSION])
         hashlist.append(["::HIDEPVR::", ADDON.getSetting("donthidepvr")])
         hashlist.append(["::SHARED::", ADDON.getSetting("shared_menu")])
-        hashlist.append(["::SKINDIR::", xbmc.getSkinDir()])
+        hashlist.append(["::SKINDIR::", SKIN_DIR])
 
         # Clear any skin settings for backgrounds and widgets
         DATA._reset_backgroundandwidgets()

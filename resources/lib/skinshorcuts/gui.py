@@ -26,6 +26,7 @@ from .constants import CWD
 from .constants import DATA_PATH
 from .constants import DEFAULT_PATH
 from .constants import LANGUAGE
+from .constants import SKIN_DIR
 from .constants import SKIN_PATH
 from .constants import SKIN_SHORTCUTS_PATH
 from .property_utils import read_properties
@@ -405,7 +406,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Check if the shortcut is locked
         locked = item.find("lock")
         if locked is not None:
-            if locked.text.lower() == "true" or locked.text == xbmc.getSkinDir():
+            if locked.text.lower() == "true" or locked.text == SKIN_DIR:
                 listitem.setProperty("LOCKED", locked.text)
 
         # Additional properties

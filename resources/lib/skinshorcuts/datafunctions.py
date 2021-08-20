@@ -30,6 +30,7 @@ from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
 from .constants import PROPERTIES_FILE
+from .constants import SKIN_DIR
 from .constants import SKIN_SHORTCUTS_PATH
 from .property_utils import read_properties
 
@@ -459,7 +460,7 @@ class DataFunctions:
 
                 # Label and label2
                 xmltree.SubElement(requiredShortcut, "label").text = elem.attrib.get("label")
-                xmltree.SubElement(requiredShortcut, "label2").text = xbmc.getSkinDir()
+                xmltree.SubElement(requiredShortcut, "label2").text = SKIN_DIR
 
                 # Icon and thumbnail
                 if "icon" in elem.attrib:
@@ -476,7 +477,7 @@ class DataFunctions:
                 # Locked
                 # - This is set to the skin directory, so it will only be locked in the
                 # management directory when using this skin
-                xmltree.SubElement(requiredShortcut, "lock").text = xbmc.getSkinDir()
+                xmltree.SubElement(requiredShortcut, "lock").text = SKIN_DIR
 
     def _get_icon_overrides(self, tree, icon, group, labelID, setToDefault=True):
         # This function will get any icon overrides based on labelID or group
@@ -1122,12 +1123,12 @@ class DataFunctions:
             # Try deleting all shortcuts
             if files:
                 for file in files:
-                    if file.endswith(".hash") and not file.startswith("%s-" % (xbmc.getSkinDir())):
+                    if file.endswith(".hash") and not file.startswith("%s-" % SKIN_DIR):
                         canImport, skinName = self.parseHashFile(os.path.join(DATA_PATH, file))
                         if canImport is True:
                             skinNames.append(skinName)
                     elif file.endswith(".DATA.xml") and \
-                            not file.startswith("%s-" % (xbmc.getSkinDir())):
+                            not file.startswith("%s-" % SKIN_DIR):
                         skinFiles.append(file)
 
         # Remove any files which start with one of the skin names
@@ -1192,9 +1193,9 @@ class DataFunctions:
         # This function copies one skins menus to another
         for oldFile in files:
             if skinName:
-                newFile = oldFile.replace(skinName, xbmc.getSkinDir())
+                newFile = oldFile.replace(skinName, SKIN_DIR)
             else:
-                newFile = "%s-%s" % (xbmc.getSkinDir(), oldFile)
+                newFile = "%s-%s" % (SKIN_DIR, oldFile)
             oldPath = os.path.join(DATA_PATH, oldFile)
             newPath = os.path.join(DATA_PATH, newFile)
 
@@ -1262,10 +1263,10 @@ class DataFunctions:
                 # $SKIN[#####|skin.id|last translation] unit
                 if skinid is None:
                     # Set the skinid to the current skin id
-                    skinid = xbmc.getSkinDir()
+                    skinid = SKIN_DIR
 
                 # If we're on the same skin as the skinid, get the latest translation
-                if skinid == xbmc.getSkinDir():
+                if skinid == SKIN_DIR:
                     lasttranslation = xbmc.getLocalizedString(int(data))
                     returnString = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
                     return [returnString, "$LOCALIZE[" + data + "]", lasttranslation, data]
@@ -1362,7 +1363,7 @@ class DataFunctions:
 
         # If this is a shortcut file (.DATA.xml) and user shortcuts aren't shared, add the skin dir
         if userShortcuts is True and self.checkIfMenusShared(isSubLevel) is False:
-            text = "%s-%s" % (xbmc.getSkinDir(), text)
+            text = "%s-%s" % (SKIN_DIR, text)
 
         return text
 
