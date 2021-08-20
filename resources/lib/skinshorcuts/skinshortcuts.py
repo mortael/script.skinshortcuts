@@ -413,7 +413,7 @@ class Main:
             # Update home window property (used to automatically refresh type=settings)
             HOME_WINDOW.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
 
-    # Functions for providing whoe menu in single list
+    # Functions for providing whole menu in single list
     @staticmethod
     def _hidesubmenu(menuid):
         count = 0
