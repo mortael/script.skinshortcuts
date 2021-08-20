@@ -17,8 +17,8 @@ import xbmcvfs
 from .common import log
 from .common import rpc_request
 from .constants import ADDON
-from .constants import ADDON_ID
 from .constants import CWD
+from .constants import DATA_PATH
 from .constants import KODI_PATH
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
@@ -451,12 +451,7 @@ class NodeFunctions:
         xmltree.SubElement(newelement, "action").text = action
 
         DATA.indent(menuitems.getroot())
-        path = xbmcvfs.translatePath(os.path.join("special://profile",
-                                                  "addon_data",
-                                                  ADDON_ID,
-                                                  "%s.DATA.xml" %
-                                                  (DATA.slugify(allLabelIDs[selectedMenu], True)))
-                                     )
+        path = DATA.data_xml_filename(DATA_PATH, DATA.slugify(allLabelIDs[selectedMenu], True))
         menuitems.write(path, encoding="UTF-8")
 
         if isNode and selectedMenu == 1:
@@ -474,9 +469,7 @@ class NodeFunctions:
                         "ActivateWindow(%s,%s,return)" % (window, item["file"])
 
             DATA.indent(menuitems.getroot())
-            path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data",
-                                                      ADDON_ID, DATA.slugify(newLabelID, True) +
-                                                      ".DATA.xml"))
+            path = DATA.data_xml_filename(DATA_PATH, DATA.slugify(newLabelID, True))
             menuitems.write(path, encoding="UTF-8")
 
         # Mark that the menu needs to be rebuilt
@@ -586,8 +579,7 @@ class NodeFunctions:
         # so we're going to open and write the 'group' that has been passed to us
         menuitems = DATA._get_shortcuts(group, processShortcuts=False)
         DATA.indent(menuitems.getroot())
-        path = xbmcvfs.translatePath(os.path.join("special://profile", "addon_data", ADDON_ID,
-                                                  "%s.DATA.xml" % (DATA.slugify(group, True))))
+        path = DATA.data_xml_filename(DATA_PATH, DATA.slugify(group, True))
         menuitems.write(path, encoding="UTF-8")
 
         log("Properties updated")

@@ -154,14 +154,13 @@ class DataFunctions:
         if profileDir is None:
             profileDir = PROFILE_PATH
 
-        userShortcuts = os.path.join(profileDir, "addon_data", ADDON_ID,
-                                     self.slugify(group, True, isSubLevel=isSubLevel) + ".DATA.xml")
-        skinShortcuts = os.path.join(SKIN_SHORTCUTS_PATH, self.slugify(group) + ".DATA.xml")
-        defaultShortcuts = os.path.join(DEFAULT_PATH, self.slugify(group) + ".DATA.xml")
+        userShortcuts = self.data_xml_filename(os.path.join(profileDir, "addon_data", ADDON_ID),
+                                               self.slugify(group, True, isSubLevel=isSubLevel))
+        skinShortcuts = self.data_xml_filename(SKIN_SHORTCUTS_PATH, self.slugify(group))
+        defaultShortcuts = self.data_xml_filename(DEFAULT_PATH, self.slugify(group))
         if defaultGroup is not None:
-            skinShortcuts = os.path.join(SKIN_SHORTCUTS_PATH,
-                                         self.slugify(defaultGroup) + ".DATA.xml")
-            defaultShortcuts = os.path.join(DEFAULT_PATH, self.slugify(defaultGroup) + ".DATA.xml")
+            skinShortcuts = self.data_xml_filename(SKIN_SHORTCUTS_PATH, self.slugify(defaultGroup))
+            defaultShortcuts = self.data_xml_filename(DEFAULT_PATH, self.slugify(defaultGroup))
 
         if defaultsOnly:
             paths = [skinShortcuts, defaultShortcuts]
@@ -736,7 +735,7 @@ class DataFunctions:
                                                                defaultID])
 
         # Load icons out of mainmenu.DATA.xml
-        path = os.path.join(SKIN_SHORTCUTS_PATH, "mainmenu.DATA.xml")
+        path = self.data_xml_filename(SKIN_SHORTCUTS_PATH, "mainmenu")
         self.hashable.add(path)
 
         if xbmcvfs.exists(path):
@@ -1455,3 +1454,7 @@ class DataFunctions:
             return "ActivateWindow(%s,%s)" % (window, splitAction[1])
         else:
             return "ActivateWindow(%s,%s,return)" % (window, splitAction[1])
+
+    @staticmethod
+    def data_xml_filename(path, group):
+        return os.path.join(path, "%s.DATA.xml" % group)

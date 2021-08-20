@@ -8,7 +8,6 @@
 
 import _thread as thread
 import calendar
-import os
 import random
 import xml.etree.ElementTree as xmltree
 from time import gmtime
@@ -755,8 +754,8 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Save the shortcuts
             DATA.indent(root)
-            path = os.path.join(DATA_PATH,
-                                DATA.slugify(self.group, True, isSubLevel=isSubLevel) + ".DATA.xml")
+            path = DATA.data_xml_filename(DATA_PATH,
+                                          DATA.slugify(self.group, True, isSubLevel=isSubLevel))
 
             tree.write(path.replace(".shortcuts", ".DATA.xml"), encoding="UTF-8")
 
@@ -794,42 +793,35 @@ class GUI(xbmcgui.WindowXMLDialog):
                     if i == 0:
                         groupName = labelIDFrom
                         paths = [
-                            [os.path.join(
-                                DATA_PATH, DATA.slugify(labelIDFrom, True) + ".DATA.xml"
-                            ), "Move"],
-                            [os.path.join(
-                                SKIN_SHORTCUTS_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"
-                            ), "Copy"],
-                            [os.path.join(
-                                DEFAULT_PATH, DATA.slugify(defaultIDFrom) + ".DATA.xml"
-                            ), "Copy"],
+                            [DATA.data_xml_filename(DATA_PATH, DATA.slugify(labelIDFrom, True)),
+                             "Move"],
+                            [DATA.data_xml_filename(SKIN_SHORTCUTS_PATH,
+                                                    DATA.slugify(defaultIDFrom)),
+                             "Copy"],
+                            [DATA.data_xml_filename(DEFAULT_PATH, DATA.slugify(defaultIDFrom)),
+                             "Copy"],
                             [None, "New"]
                         ]
-                        target = os.path.join(DATA_PATH, DATA.slugify(labelIDTo, True) + ".DATA.xml")
+                        target = DATA.data_xml_filename(DATA_PATH, DATA.slugify(labelIDTo, True))
                     else:
                         groupName = "%s.%s" % (labelIDFrom, str(i))
                         paths = [
-                            [os.path.join(
+                            [DATA.data_xml_filename(
                                 DATA_PATH,
-                                DATA.slugify("%s.%s" %
-                                             (labelIDFrom, str(i)), True, isSubLevel=True) +
-                                ".DATA.xml"
+                                DATA.slugify("%s.%s" % (labelIDFrom, str(i)), True, isSubLevel=True)
                             ), "Move"],
-                            [os.path.join(
+                            [DATA.data_xml_filename(
                                 SKIN_SHORTCUTS_PATH,
-                                DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) +
-                                ".DATA.xml"
+                                DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True)
                             ), "Copy"],
-                            [os.path.join(
+                            [DATA.data_xml_filename(
                                 DEFAULT_PATH,
-                                DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True) +
-                                ".DATA.xml"
+                                DATA.slugify("%s.%s" % (defaultIDFrom, str(i)), isSubLevel=True)
                             ), "Copy"]
                         ]
-                        target = os.path.join(
+                        target = DATA.data_xml_filename(
                             DATA_PATH,
-                            DATA.slugify("%s.%s" % (labelIDTo, str(i)), True, isSubLevel=True) +
-                            ".DATA.xml"
+                            DATA.slugify("%s.%s" % (labelIDTo, str(i)), True, isSubLevel=True)
                         )
 
                     for path in paths:
