@@ -421,7 +421,7 @@ class XMLFunctions:
                 break
 
             itemidmainmenu = 0
-            if len(Template.otherTemplates) == 0:
+            if len(Template.other_templates) == 0:
                 percent = profilePercent / len(menuitems)
             else:
                 percent = float(profilePercent) / float(len(menuitems) * 2)
