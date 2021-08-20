@@ -747,7 +747,10 @@ class Template:
         return currentProperties
 
     def replaceElements(self, tree, visibilityCondition, profileVisibility, items,
-                        properties={}, customitems=None):
+                        properties=None, customitems=None):
+        if properties is None:
+            properties = {}
+
         if tree is None:
             return
         for elem in tree:

@@ -766,8 +766,11 @@ class XMLFunctions:
         write_hashes(hashlist)
 
     def buildElement(self, item, groupName, visibilityCondition, profileVisibility,
-                     submenuVisibility=None, itemid=-1, mainmenuid=None, options=[]):
+                     submenuVisibility=None, itemid=-1, mainmenuid=None, options=None):
         # This function will build an element for the passed Item in
+
+        if options is None:
+            options = []
 
         # Create the element
         newelement = xmltree.Element("item")
