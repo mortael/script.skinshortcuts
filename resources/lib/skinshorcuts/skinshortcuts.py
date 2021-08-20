@@ -405,7 +405,7 @@ class Main:
                                 try:
                                     xbmcvfs.delete(file_path)
                                 except:
-                                    print_exc()
+                                    log(print_exc())
                                     log("### ERROR could not delete file %s" % file)
                         else:
                             log("Not deleting file %s" % [file])
