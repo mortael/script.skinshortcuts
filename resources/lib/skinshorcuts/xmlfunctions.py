@@ -48,8 +48,8 @@ class XMLFunctions:
 
         self.checkForShortcuts = []
 
-    def build_menu(self, mainmenuID, groups, numLevels, buildMode, options, minitems,
-                   weEnabledSystemDebug=False, weEnabledScriptDebug=False):
+    def build_menu(self, mainmenu_id, groups, num_levels, build_mode, options, minitems,
+                   system_debug=False, script_debug=False):
         # Entry point for building includes.xml files
         if HOME_WINDOW.getProperty("skinshortcuts-isrunning") == "True":
             return
@@ -94,7 +94,7 @@ class XMLFunctions:
 
         # Write the menus
         try:
-            self.writexml(profilelist, mainmenuID, groups, numLevels, buildMode,
+            self.writexml(profilelist, mainmenu_id, groups, num_levels, build_mode,
                           progress, options, minitems)
             complete = True
         except:
@@ -113,11 +113,11 @@ class XMLFunctions:
             # Menu couldn't be built - generate a debug log
 
             # If we enabled debug logging
-            if weEnabledSystemDebug or weEnabledScriptDebug:
+            if system_debug or script_debug:
                 # Disable any logging we enabled
-                if weEnabledSystemDebug:
+                if system_debug:
                     toggle_debug_logging(enable=False)
-                if weEnabledScriptDebug:
+                if script_debug:
                     ADDON.setSetting("enable_logging", "false")
 
                 # Offer to upload a debug log
@@ -132,20 +132,20 @@ class XMLFunctions:
 
             else:
                 # Enable any debug logging needed
-                enabledSystemDebug = False
-                enabledScriptDebug = False
+                enabled_system_debug = False
+                enabled_script_debug = False
 
                 if toggle_debug_logging(enable=True):
-                    enabledSystemDebug = True
+                    enabled_system_debug = True
 
                 if not ADDON.getSettingBool("enable_logging"):
                     ADDON.setSetting("enable_logging", "true")
-                    enabledScriptDebug = True
+                    enabled_script_debug = True
 
-                if enabledSystemDebug or enabledScriptDebug:
+                if enabled_system_debug or enabled_script_debug:
                     # We enabled one or more of the debug options, re-run this function
-                    self.build_menu(mainmenuID, groups, numLevels, buildMode, options, minitems,
-                                    enabledSystemDebug, enabledScriptDebug)
+                    self.build_menu(mainmenu_id, groups, num_levels, build_mode, options, minitems,
+                                    enabled_system_debug, enabled_script_debug)
                 else:
                     # Offer to upload a debug log
                     if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
@@ -180,7 +180,7 @@ class XMLFunctions:
         skinpaths = []
 
         # Get the skin version
-        skinVersion = addon.getroot().attrib.get("version")
+        skin_version = addon.getroot().attrib.get("version")
 
         # Get the directories for resolutions this skin supports
         for extensionpoint in extensionpoints:
@@ -207,13 +207,13 @@ class XMLFunctions:
             log("No hashes found")
             return True
 
-        checkedXBMCVer = False
-        checkedSkinVer = False
-        checkedScriptVer = False
-        checkedProfileList = False
-        checkedPVRVis = False
-        checkedSharedMenu = False
-        foundFullMenu = False
+        checked_kodi_ver = False
+        checked_skin_ver = False
+        checked_script_ver = False
+        checked_profile_list = False
+        checked_pvr_vis = False
+        checked_shared_menu = False
+        found_full_menu = False
 
         for hashed in hashes:
             hashed_item = '' if not hashed else hashed[0]
@@ -225,35 +225,35 @@ class XMLFunctions:
             if hashed_value is not None:
                 if hashed_item == "::XBMCVER::":
                     # Check the skin version is still the same as hashed_value
-                    checkedXBMCVer = True
+                    checked_kodi_ver = True
                     if KODI_VERSION != hashed_value:
                         log("Now running a different version of Kodi")
                         return True
                 elif hashed_item == "::SKINVER::":
                     # Check the skin version is still the same as hashed_value
-                    checkedSkinVer = True
-                    if skinVersion != hashed_value:
+                    checked_skin_ver = True
+                    if skin_version != hashed_value:
                         log("Now running a different skin version")
                         return True
                 elif hashed_item == "::SCRIPTVER::":
                     # Check the script version is still the same as hashed_value
-                    checkedScriptVer = True
+                    checked_script_ver = True
                     if ADDON_VERSION != hashed_value:
                         log("Now running a different script version")
                         return True
                 elif hashed_item == "::PROFILELIST::":
                     # Check the profilelist is still the same as hashed_value
-                    checkedProfileList = True
+                    checked_profile_list = True
                     if profilelist != hashed_value:
                         log("Profiles have changes")
                         return True
                 elif hashed_item == "::HIDEPVR::":
-                    checkedPVRVis = True
+                    checked_pvr_vis = True
                     if ADDON.getSetting("donthidepvr") != hashed_value:
                         log("PVR visibility setting has changed")
                 elif hashed_item == "::SHARED::":
                     # Check whether shared-menu setting has changed
-                    checkedSharedMenu = True
+                    checked_shared_menu = True
                     if ADDON.getSetting("shared_menu") != hashed_value:
                         log("Shared menu setting has changed")
                         return True
@@ -269,7 +269,7 @@ class XMLFunctions:
                             xbmc.executebuiltin("Skin.Reset(%s)" % (hashed_value[1]))
                 elif hashed_item == "::FULLMENU::":
                     # Mark that we need to set the fullmenu bool
-                    foundFullMenu = True
+                    found_full_menu = True
                 elif hashed_item == "::SKINDIR::":
                     # Used to import menus from one skin to another, nothing to check here
                     pass
@@ -293,23 +293,23 @@ class XMLFunctions:
                     return True
 
         # Set or clear the FullMenu skin bool
-        if foundFullMenu:
+        if found_full_menu:
             xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
         else:
             xbmc.executebuiltin("Skin.Reset(SkinShortcuts-FullMenu)")
 
         # If the skin or script version, or profile list, haven't been checked,
         # we need to rebuild the menu (most likely we're running an old version of the script)
-        if checkedXBMCVer is False or checkedSkinVer is False or checkedScriptVer is False or \
-                checkedProfileList is False or checkedPVRVis is False or \
-                checkedSharedMenu is False:
+        if checked_kodi_ver is False or checked_skin_ver is False or \
+                checked_script_ver is False or checked_profile_list is False or \
+                checked_pvr_vis is False or checked_shared_menu is False:
             return True
 
         # If we get here, the menu does not need to be rebuilt.
         return False
 
     # noinspection PyListCreation
-    def writexml(self, profilelist, mainmenuID, groups, numLevels, buildMode,
+    def writexml(self, profilelist, mainmenu_id, groups, num_levels, build_mode,
                  progress, options, minitems):
         # Reset the hashlist, add the profile list and script version
         hashlist = []
@@ -329,58 +329,58 @@ class XMLFunctions:
         root = tree.getroot()
 
         # Create a Template object and pass it the root
-        Template = template.Template()
-        Template.includes = root
-        Template.progress = progress
+        temple_object = template.Template()
+        temple_object.includes = root
+        temple_object.progress = progress
 
         # Get any shortcuts we're checking for
         self.checkForShortcuts = []
         overridestree = self.data_func.get_overrides_skin()
-        checkForShortcutsOverrides = overridestree.getroot().findall("checkforshortcut")
-        for checkForShortcutOverride in checkForShortcutsOverrides:
-            if "property" in checkForShortcutOverride.attrib:
+        check_for_shortcuts_overrides = overridestree.getroot().findall("checkforshortcut")
+        for check_for_shortcut_override in check_for_shortcuts_overrides:
+            if "property" in check_for_shortcut_override.attrib:
                 # Add this to the list of shortcuts we'll check for
-                self.checkForShortcuts.append((checkForShortcutOverride.text.lower(),
-                                               checkForShortcutOverride.attrib.get("property"),
+                self.checkForShortcuts.append((check_for_shortcut_override.text.lower(),
+                                               check_for_shortcut_override.attrib.get("property"),
                                                "False"))
 
-        mainmenuTree = ETree.SubElement(root, "include")
-        mainmenuTree.set("name", "skinshortcuts-mainmenu")
+        mainmenu_tree = ETree.SubElement(root, "include")
+        mainmenu_tree.set("name", "skinshortcuts-mainmenu")
 
-        submenuTrees = []
-        for level in range(0, int(numLevels) + 1):
+        submenu_trees = []
+        for level in range(0, int(num_levels) + 1):
             _ = ETree.SubElement(root, "include")
             subtree = ETree.SubElement(root, "include")
             if level == 0:
                 subtree.set("name", "skinshortcuts-submenu")
             else:
                 subtree.set("name", "skinshortcuts-submenu-" + str(level))
-            if subtree not in submenuTrees:
-                submenuTrees.append(subtree)
+            if subtree not in submenu_trees:
+                submenu_trees.append(subtree)
 
-        allmenuTree = []
-        if buildMode == "single":
-            allmenuTree = ETree.SubElement(root, "include")
-            allmenuTree.set("name", "skinshortcuts-allmenus")
+        allmenu_tree = []
+        if build_mode == "single":
+            allmenu_tree = ETree.SubElement(root, "include")
+            allmenu_tree.set("name", "skinshortcuts-allmenus")
 
-        profilePercent = 100 / len(profilelist)
-        profileCount = -1
+        profile_percent = 100 / len(profilelist)
+        profile_count = -1
 
-        submenuNodes = {}
+        submenu_nodes = {}
 
         for profile in profilelist:
             log("Building menu for profile %s" % (profile[2]))
             # Load profile details
-            profileCount += 1
+            profile_count += 1
 
             # Reset whether we have settings
             self.hasSettings = False
 
             # Reset any checkForShortcuts to say we haven't found them
-            newCheckForShortcuts = []
-            for checkforShortcut in self.checkForShortcuts:
-                newCheckForShortcuts.append((checkforShortcut[0], checkforShortcut[1], "False"))
-            self.checkForShortcuts = newCheckForShortcuts
+            new_check_for_shortcuts = []
+            for check_for_shortcut in self.checkForShortcuts:
+                new_check_for_shortcuts.append((check_for_shortcut[0], check_for_shortcut[1], "False"))
+            self.checkForShortcuts = new_check_for_shortcuts
 
             # Clear any previous labelID's
             self.data_func.clear_labelID()
@@ -390,11 +390,11 @@ class XMLFunctions:
 
             # Create objects to hold the items
             menuitems = []
-            submenuItems = []
-            templateMainMenuItems = ETree.Element("includes")
+            submenu_items = []
+            template_main_menu_items = ETree.Element("includes")
 
             # If building the main menu, split the mainmenu shortcut nodes into the menuitems list
-            fullMenu = False
+            full_menu = False
             if groups == "" or groups.split("|")[0] == "mainmenu":
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
@@ -402,8 +402,8 @@ class XMLFunctions:
                 for node in self.data_func.get_shortcuts("mainmenu", profileDir=profile[0]) \
                         .findall("shortcut"):
                     menuitems.append(node)
-                    submenuItems.append(node)
-                fullMenu = True
+                    submenu_items.append(node)
+                full_menu = True
             else:
                 # Clear any skinstring marking that we're providing the whole menu
                 xbmc.executebuiltin("Skin.Reset(SkinShortcuts-FullMenu)")
@@ -421,28 +421,28 @@ class XMLFunctions:
                 break
 
             itemidmainmenu = 0
-            if len(Template.other_templates) == 0:
-                percent = profilePercent / len(menuitems)
+            if len(temple_object.other_templates) == 0:
+                percent = profile_percent / len(menuitems)
             else:
-                percent = float(profilePercent) / float(len(menuitems) * 2)
-            Template.percent = percent * (len(menuitems))
+                percent = float(profile_percent) / float(len(menuitems) * 2)
+            temple_object.percent = percent * (len(menuitems))
 
             i = 0
             for item in menuitems:
                 i += 1
                 itemidmainmenu += 1
-                currentProgress = (profilePercent * profileCount) + (percent * i)
-                progress.update(int(currentProgress))
-                Template.current = currentProgress
-                submenuDefaultID = None
-                templateCurrentMainMenuItem = None
+                current_progress = (profile_percent * profile_count) + (percent * i)
+                progress.update(int(current_progress))
+                temple_object.current = current_progress
+                submenu_default_id = None
+                template_current_main_menu_item = None
 
                 if not isinstance(item, str):
                     # This is a main menu item (we know this because it's an element, not a string)
                     submenu = item.find("labelID").text
 
                     # Build the menu item
-                    menuitem, allProps = self.build_element(
+                    menuitem, all_props = self.build_element(
                         item,
                         "mainmenu",
                         None,
@@ -452,77 +452,77 @@ class XMLFunctions:
                     )
 
                     # Save a copy for the template
-                    templateMainMenuItems.append(Template.copy_tree(menuitem))
-                    templateCurrentMainMenuItem = Template.copy_tree(menuitem)
+                    template_main_menu_items.append(temple_object.copy_tree(menuitem))
+                    template_current_main_menu_item = temple_object.copy_tree(menuitem)
 
                     # Get submenu defaultID
-                    submenuDefaultID = item.find("defaultID").text
+                    submenu_default_id = item.find("defaultID").text
 
                     # Remove any template-only properties
-                    otherProperties, requires, templateOnly = self.data_func.getPropertyRequires()
-                    for key in otherProperties:
-                        if key in list(allProps.keys()) and key in templateOnly:
+                    other_properties, requires, template_only = self.data_func.getPropertyRequires()
+                    for key in other_properties:
+                        if key in list(all_props.keys()) and key in template_only:
                             # This key is template-only
-                            menuitem.remove(allProps[key])
-                            allProps.pop(key)
+                            menuitem.remove(all_props[key])
+                            all_props.pop(key)
 
                     # Add the menu item to the various includes, retaining a reference to them
-                    mainmenuItemA = Template.copy_tree(menuitem)
-                    mainmenuTree.append(mainmenuItemA)
+                    mainmenu_item_a = temple_object.copy_tree(menuitem)
+                    mainmenu_tree.append(mainmenu_item_a)
 
-                    mainmenuItemB = None
-                    if buildMode == "single":
-                        mainmenuItemB = Template.copy_tree(menuitem)
-                        allmenuTree.append(mainmenuItemB)
+                    mainmenu_item_b = None
+                    if build_mode == "single":
+                        mainmenu_item_b = temple_object.copy_tree(menuitem)
+                        allmenu_tree.append(mainmenu_item_b)
 
                 else:
                     # It's an additional menu, so get its labelID
                     submenu = self.data_func.get_labelID(item, None)
 
-                    # And clear mainmenuItemA and mainmenuItemB, so we don't
+                    # And clear mainmenu_item_a and mainmenu_item_b, so we don't
                     # incorrectly add properties to an actual main menu item
-                    mainmenuItemA = None
-                    mainmenuItemB = None
+                    mainmenu_item_a = None
+                    mainmenu_item_b = None
 
                 # Build the submenu
                 count = 0  # Used to keep track of additional submenu
-                for submenuTree in submenuTrees:
-                    submenuVisibilityName = submenu
+                for submenu_tree in submenu_trees:
+                    submenu_visibility_name = submenu
                     if count == 1:
                         submenu = submenu + "." + str(count)
                     elif count != 0:
                         submenu = submenu[:-1] + str(count)
-                        submenuVisibilityName = submenu[:-2]
+                        submenu_visibility_name = submenu[:-2]
 
-                    justmenuTreeA = []
-                    justmenuTreeB = []
+                    justmenu_tree_a = []
+                    justmenu_tree_b = []
                     # Get the tree's we're going to write the menu to
                     if "noGroups" not in options:
-                        if submenu in submenuNodes:
-                            justmenuTreeA = submenuNodes[submenu][0]
-                            justmenuTreeB = submenuNodes[submenu][1]
+                        if submenu in submenu_nodes:
+                            justmenu_tree_a = submenu_nodes[submenu][0]
+                            justmenu_tree_b = submenu_nodes[submenu][1]
                         else:
                             # Create these nodes
-                            justmenuTreeA = ETree.SubElement(root, "include")
-                            justmenuTreeB = ETree.SubElement(root, "include")
+                            justmenu_tree_a = ETree.SubElement(root, "include")
+                            justmenu_tree_b = ETree.SubElement(root, "include")
 
                             if count != 0:
-                                groupInclude = self.data_func.slugify(
+                                group_include = self.data_func.slugify(
                                     submenu[:-2], convertInteger=True
                                 ) + "-" + submenu[-1:]
                             else:
-                                groupInclude = self.data_func.slugify(submenu, convertInteger=True)
+                                group_include = self.data_func.slugify(submenu, convertInteger=True)
 
-                            justmenuTreeA.set("name", "skinshortcuts-group-" + groupInclude)
-                            justmenuTreeB.set("name", "skinshortcuts-group-alt-" + groupInclude)
+                            justmenu_tree_a.set("name", "skinshortcuts-group-" + group_include)
+                            justmenu_tree_b.set("name", "skinshortcuts-group-alt-" + group_include)
 
-                            submenuNodes[submenu] = [justmenuTreeA, justmenuTreeB]
+                            submenu_nodes[submenu] = [justmenu_tree_a, justmenu_tree_b]
 
                     itemidsubmenu = 0
 
                     # Get the shortcuts for the submenu
                     if count == 0:
-                        submenudata = self.data_func.get_shortcuts(submenu, submenuDefaultID,
+                        submenudata = self.data_func.get_shortcuts(submenu, submenu_default_id,
                                                                    profile[0])
                     else:
                         submenudata = self.data_func.get_shortcuts(submenu, None,
@@ -537,45 +537,45 @@ class XMLFunctions:
                     if count == 0:
                         if len(submenuitems) != 0:
                             try:
-                                hasSubMenu = ETree.SubElement(mainmenuItemA, "property")
-                                hasSubMenu.set("name", "hasSubmenu")
-                                hasSubMenu.text = "True"
-                                if buildMode == "single":
-                                    hasSubMenu = ETree.SubElement(mainmenuItemB, "property")
-                                    hasSubMenu.set("name", "hasSubmenu")
-                                    hasSubMenu.text = "True"
+                                has_submenu = ETree.SubElement(mainmenu_item_a, "property")
+                                has_submenu.set("name", "hasSubmenu")
+                                has_submenu.text = "True"
+                                if build_mode == "single":
+                                    has_submenu = ETree.SubElement(mainmenu_item_b, "property")
+                                    has_submenu.set("name", "hasSubmenu")
+                                    has_submenu.text = "True"
                             except:
                                 # There probably isn't a main menu
                                 pass
                         else:
                             try:
-                                hasSubMenu = ETree.SubElement(mainmenuItemA, "property")
-                                hasSubMenu.set("name", "hasSubmenu")
-                                hasSubMenu.text = "False"
-                                if buildMode == "single":
-                                    hasSubMenu = ETree.SubElement(mainmenuItemB, "property")
-                                    hasSubMenu.set("name", "hasSubmenu")
-                                    hasSubMenu.text = "False"
+                                has_submenu = ETree.SubElement(mainmenu_item_a, "property")
+                                has_submenu.set("name", "hasSubmenu")
+                                has_submenu.text = "False"
+                                if build_mode == "single":
+                                    has_submenu = ETree.SubElement(mainmenu_item_b, "property")
+                                    has_submenu.set("name", "hasSubmenu")
+                                    has_submenu.text = "False"
                             except:
                                 # There probably isn't a main menu
                                 pass
 
                     # If we're building a single menu, update the onclicks of the main menu
-                    if buildMode == "single" and not len(submenuitems) == 0 and \
+                    if build_mode == "single" and not len(submenuitems) == 0 and \
                             not isinstance(item, str):
-                        for onclickelement in mainmenuItemB.findall("onclick"):
+                        for onclickelement in mainmenu_item_b.findall("onclick"):
                             if "condition" in onclickelement.attrib:
                                 onclickelement.set(
                                     "condition",
                                     "String.IsEqual(Window(10000)"
                                     ".Property(submenuVisibility),%s) + [%s]" %
-                                    (self.data_func.slugify(submenuVisibilityName,
+                                    (self.data_func.slugify(submenu_visibility_name,
                                                             convertInteger=True),
                                      onclickelement.attrib.get("condition"))
                                 )
-                                newonclick = ETree.SubElement(mainmenuItemB, "onclick")
+                                newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
-                                                  self.data_func.slugify(submenuVisibilityName,
+                                                  self.data_func.slugify(submenu_visibility_name,
                                                                          convertInteger=True) + \
                                                   ",10000)"
                                 newonclick.set("condition", onclickelement.attrib.get("condition"))
@@ -583,113 +583,113 @@ class XMLFunctions:
                                 onclickelement.set(
                                     "condition",
                                     "String.IsEqual(Window(10000).Property(submenuVisibility),%s)"
-                                    % (self.data_func.slugify(submenuVisibilityName,
+                                    % (self.data_func.slugify(submenu_visibility_name,
                                                               convertInteger=True))
                                 )
-                                newonclick = ETree.SubElement(mainmenuItemB, "onclick")
+                                newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
-                                                  self.data_func.slugify(submenuVisibilityName,
+                                                  self.data_func.slugify(submenu_visibility_name,
                                                                          convertInteger=True) + \
                                                   ",10000)"
 
                     # Build the submenu items
-                    templateSubMenuItems = ETree.Element("includes")
-                    for submenuItem in submenuitems:
+                    template_submenu_items = ETree.Element("includes")
+                    for submenu_item in submenuitems:
                         itemidsubmenu += 1
                         # Build the item without any visibility conditions
-                        menuitem, allProps = self.build_element(submenuItem, submenu, None,
-                                                                profile[1], itemid=itemidsubmenu,
-                                                                mainmenuid=itemidmainmenu,
-                                                                options=options)
-                        isSubMenuElement = ETree.SubElement(menuitem, "property")
-                        isSubMenuElement.set("name", "isSubmenu")
-                        isSubMenuElement.text = "True"
+                        menuitem, all_props = self.build_element(submenu_item, submenu, None,
+                                                                 profile[1], itemid=itemidsubmenu,
+                                                                 mainmenuid=itemidmainmenu,
+                                                                 options=options)
+                        is_submenu_element = ETree.SubElement(menuitem, "property")
+                        is_submenu_element.set("name", "isSubmenu")
+                        is_submenu_element.text = "True"
 
                         # Save a copy for the template
-                        templateSubMenuItems.append(Template.copy_tree(menuitem))
+                        template_submenu_items.append(temple_object.copy_tree(menuitem))
 
                         # Remove any template-only properties
-                        otherProperties, requires, templateOnly = \
+                        other_properties, requires, template_only = \
                             self.data_func.getPropertyRequires()
-                        for key in otherProperties:
-                            if key in list(allProps.keys()) and key in templateOnly:
+                        for key in other_properties:
+                            if key in list(all_props.keys()) and key in template_only:
                                 # This key is template-only
-                                menuitem.remove(allProps[key])
-                                allProps.pop(key)
+                                menuitem.remove(all_props[key])
+                                all_props.pop(key)
 
-                        menuitemCopy = Template.copy_tree(menuitem)
+                        menu_item_copy = temple_object.copy_tree(menuitem)
 
                         if "noGroups" not in options:
                             # Add it, with appropriate visibility conditions,
                             # to the various submenu includes
-                            justmenuTreeA.append(menuitem)
+                            justmenu_tree_a.append(menuitem)
 
-                            visibilityElement = menuitemCopy.find("visible")
-                            visibilityElement.text = "[%s] + %s" % \
-                                                     (visibilityElement.text,
-                                                      "String.IsEqual(Window(10000)"
-                                                      ".Property(submenuVisibility),%s)" %
-                                                      (self.data_func.slugify(submenuVisibilityName,
-                                                                              convertInteger=True)))
-                            justmenuTreeB.append(menuitemCopy)
+                            visibility_element = menu_item_copy.find("visible")
+                            visibility_element.text = "[%s] + %s" % \
+                                                      (visibility_element.text,
+                                                       "String.IsEqual(Window(10000)"
+                                                       ".Property(submenuVisibility),%s)" %
+                                                       (self.data_func.slugify(submenu_visibility_name,
+                                                                               convertInteger=True)))
+                            justmenu_tree_b.append(menu_item_copy)
 
-                        if buildMode == "single" and not isinstance(item, str):
+                        if build_mode == "single" and not isinstance(item, str):
                             # Add the property 'submenuVisibility'
-                            allmenuTreeCopy = Template.copy_tree(menuitemCopy)
-                            submenuVisibility = ETree.SubElement(allmenuTreeCopy, "property")
-                            submenuVisibility.set("name", "submenuVisibility")
-                            submenuVisibility.text = self.data_func.slugify(submenuVisibilityName,
-                                                                            convertInteger=True)
-                            allmenuTree.append(allmenuTreeCopy)
+                            allmenu_tree_copy = temple_object.copy_tree(menu_item_copy)
+                            submenu_visibility = ETree.SubElement(allmenu_tree_copy, "property")
+                            submenu_visibility.set("name", "submenuVisibility")
+                            submenu_visibility.text = self.data_func.slugify(submenu_visibility_name,
+                                                                             convertInteger=True)
+                            allmenu_tree.append(allmenu_tree_copy)
 
-                        menuitemCopy = Template.copy_tree(menuitem)
-                        visibilityElement = menuitemCopy.find("visible")
-                        visibilityElement.text = "[%s] + %s" % \
-                                                 (visibilityElement.text,
-                                                  "String.IsEqual(Container(%s)"
-                                                  ".ListItem.Property(submenuVisibility),%s)" %
-                                                  (mainmenuID,
-                                                   self.data_func.slugify(submenuVisibilityName,
-                                                                          convertInteger=True)))
-                        submenuTree.append(menuitemCopy)
+                        menu_item_copy = temple_object.copy_tree(menuitem)
+                        visibility_element = menu_item_copy.find("visible")
+                        visibility_element.text = "[%s] + %s" % \
+                                                  (visibility_element.text,
+                                                   "String.IsEqual(Container(%s)"
+                                                   ".ListItem.Property(submenuVisibility),%s)" %
+                                                   (mainmenu_id,
+                                                    self.data_func.slugify(submenu_visibility_name,
+                                                                           convertInteger=True)))
+                        submenu_tree.append(menu_item_copy)
                     if len(submenuitems) == 0 and "noGroups" not in options:
                         # There aren't any submenu items, so add a 'description'
                         # element to the group includes
                         # so that Kodi doesn't think they're invalid
                         newelement = ETree.Element("description")
                         newelement.text = "No items"
-                        justmenuTreeA.append(newelement)
-                        justmenuTreeB.append(newelement)
+                        justmenu_tree_a.append(newelement)
+                        justmenu_tree_b.append(newelement)
 
                     # Build the template for the submenu
-                    buildOthers = False
-                    if item in submenuItems:
-                        buildOthers = True
-                    Template.parse_items(
-                        "submenu", count, templateSubMenuItems, profile[2],
+                    build_others = False
+                    if item in submenu_items:
+                        build_others = True
+                    temple_object.parse_items(
+                        "submenu", count, template_submenu_items, profile[2],
                         profile[1], "String.IsEqual(Container(%s).ListItem"
                                     ".Property(submenuVisibility),%s)" %
-                                    (mainmenuID,
-                                     self.data_func.slugify(submenuVisibilityName,
+                                    (mainmenu_id,
+                                     self.data_func.slugify(submenu_visibility_name,
                                                             convertInteger=True)),
-                        item, None, buildOthers, mainmenuitems=templateCurrentMainMenuItem)
+                        item, None, build_others, mainmenuitems=template_current_main_menu_item)
 
                     count += 1
 
             if self.hasSettings is False:
                 # Check if the overrides asks for a forced settings...
                 overridestree = self.data_func.get_overrides_skin()
-                forceSettings = overridestree.getroot().find("forcesettings")
-                if forceSettings is not None:
+                force_settings = overridestree.getroot().find("forcesettings")
+                if force_settings is not None:
                     # We want a settings option to be added
-                    newelement = ETree.SubElement(mainmenuTree, "item")
+                    newelement = ETree.SubElement(mainmenu_tree, "item")
                     ETree.SubElement(newelement, "label").text = "$LOCALIZE[10004]"
                     ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
                     ETree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
                     ETree.SubElement(newelement, "visible").text = profile[1]
 
-                    if buildMode == "single":
-                        newelement = ETree.SubElement(mainmenuTree, "item")
+                    if build_mode == "single":
+                        newelement = ETree.SubElement(mainmenu_tree, "item")
                         ETree.SubElement(newelement, "label").text = "$LOCALIZE[10004]"
                         ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
                         ETree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
@@ -697,35 +697,35 @@ class XMLFunctions:
 
             if len(self.checkForShortcuts) != 0:
                 # Add a value to the variable for all checkForShortcuts
-                for checkForShortcut in self.checkForShortcuts:
+                for check_for_shortcut in self.checkForShortcuts:
                     if profile[1] is not None and xbmc.getCondVisibility(profile[1]):
                         # Current profile - set the skin bool
-                        if checkForShortcut[2] == "True":
-                            xbmc.executebuiltin("Skin.SetBool(%s)" % (checkForShortcut[1]))
+                        if check_for_shortcut[2] == "True":
+                            xbmc.executebuiltin("Skin.SetBool(%s)" % (check_for_shortcut[1]))
                         else:
-                            xbmc.executebuiltin("Skin.Reset(%s)" % (checkForShortcut[1]))
+                            xbmc.executebuiltin("Skin.Reset(%s)" % (check_for_shortcut[1]))
                     # Save this to the hashes file, so we can set it on profile changes
-                    hashlist.append(["::SKINBOOL::", [profile[1], checkForShortcut[1],
-                                                      checkForShortcut[2]]])
+                    hashlist.append(["::SKINBOOL::", [profile[1], check_for_shortcut[1],
+                                                      check_for_shortcut[2]]])
 
             # Build the template for the main menu
-            Template.parse_items("mainmenu", 0, templateMainMenuItems, profile[2], profile[1],
-                                 "", "", mainmenuID, True)
+            temple_object.parse_items("mainmenu", 0, template_main_menu_items, profile[2],
+                                      profile[1], "", "", mainmenu_id, True)
 
             # If we haven't built enough main menu items, copy the ones we have
-            while itemidmainmenu < minitems and fullMenu and len(mainmenuTree) != 0:
-                updatedMenuTree = Template.copy_tree(mainmenuTree)
-                for item in updatedMenuTree:
+            while itemidmainmenu < minitems and full_menu and len(mainmenu_tree) != 0:
+                updated_menu_tree = temple_object.copy_tree(mainmenu_tree)
+                for item in updated_menu_tree:
                     itemidmainmenu += 1
                     # Update ID
                     item.set("id", str(itemidmainmenu))
-                    for idElement in item.findall("property"):
-                        if idElement.attrib.get("name") == "id":
-                            idElement.text = "$NUM[%s]" % (str(itemidmainmenu))
-                    mainmenuTree.append(item)
+                    for id_element in item.findall("property"):
+                        if id_element.attrib.get("name") == "id":
+                            id_element.text = "$NUM[%s]" % (str(itemidmainmenu))
+                    mainmenu_tree.append(item)
 
         # Build any 'Other' templates
-        Template.write_others()
+        temple_object.write_others()
 
         progress.update(100, message=LANGUAGE(32098))
 
@@ -734,9 +734,9 @@ class XMLFunctions:
         addon = ETree.parse(addon_xml)
         extensionpoints = addon.findall("extension")
 
-        skinVersion = addon.getroot().attrib.get("version")
+        skin_version = addon.getroot().attrib.get("version")
         # Append the skin version to the hashlist
-        hashlist.append(["::SKINVER::", skinVersion])
+        hashlist.append(["::SKINVER::", skin_version])
 
         # indent the tree
         self.data_func.indent(tree.getroot())
@@ -755,7 +755,7 @@ class XMLFunctions:
                     hashable.add(path)
 
         hashable.update(self.data_func.hashable)
-        hashable.update(Template.hashable)
+        hashable.update(temple_object.hashable)
 
         for item in hashable:  # generate a hash for all paths
             hexdigest = generate_file_hash(item)
@@ -765,8 +765,8 @@ class XMLFunctions:
         # Save the hashes
         write_hashes(hashlist)
 
-    def build_element(self, item, groupName, visibilityCondition, profileVisibility,
-                      submenuVisibility=None, itemid=-1, mainmenuid=None, options=None):
+    def build_element(self, item, group_name, visibility_condition, profile_visibility,
+                      submenu_visibility=None, itemid=-1, mainmenuid=None, options=None):
         # This function will build an element for the passed Item in
 
         if options is None:
@@ -774,7 +774,7 @@ class XMLFunctions:
 
         # Create the element
         newelement = ETree.Element("item")
-        allProps = {}
+        all_props = {}
 
         # Set ID
         if itemid != -1:
@@ -782,14 +782,14 @@ class XMLFunctions:
         idproperty = ETree.SubElement(newelement, "property")
         idproperty.set("name", "id")
         idproperty.text = "$NUMBER[%s]" % (str(itemid))
-        allProps["id"] = idproperty
+        all_props["id"] = idproperty
 
         # Set main menu id
         if mainmenuid:
             mainmenuidproperty = ETree.SubElement(newelement, "property")
             mainmenuidproperty.set("name", "mainmenuid")
             mainmenuidproperty.text = "%s" % (str(mainmenuid))
-            allProps[mainmenuid] = mainmenuidproperty
+            all_props[mainmenuid] = mainmenuidproperty
 
         # Label and label2
         ETree.SubElement(newelement, "label").text = \
@@ -810,24 +810,24 @@ class XMLFunctions:
             ETree.SubElement(newelement, "thumb").text = item.find("thumb").text
 
         # labelID and defaultID
-        labelID = ETree.SubElement(newelement, "property")
-        labelID.text = item.find("labelID").text
-        labelID.set("name", "labelID")
-        allProps["labelID"] = labelID
-        defaultID = ETree.SubElement(newelement, "property")
-        defaultID.text = item.find("defaultID").text
-        defaultID.set("name", "defaultID")
-        allProps["defaultID"] = defaultID
+        label_id = ETree.SubElement(newelement, "property")
+        label_id.text = item.find("labelID").text
+        label_id.set("name", "labelID")
+        all_props["labelID"] = label_id
+        default_id = ETree.SubElement(newelement, "property")
+        default_id.text = item.find("defaultID").text
+        default_id.set("name", "defaultID")
+        all_props["defaultID"] = default_id
 
         # Check if the item is disabled
         if item.find("disabled") is not None:
             # It is, so we set it to be invisible, add an empty onclick and return
             ETree.SubElement(newelement, "visible").text = "False"
             ETree.SubElement(newelement, "onclick").text = "noop"
-            return newelement, allProps
+            return newelement, all_props
 
         # Clear cloned options if main menu
-        if groupName == "mainmenu":
+        if group_name == "mainmenu":
             self.MAINWIDGET = {}
             self.MAINBACKGROUND = {}
             self.MAINPROPERTIES = {}
@@ -837,19 +837,19 @@ class XMLFunctions:
         if len(properties) != 0:
             for prop in properties:
                 if prop[0] == "node.visible":
-                    visibleProperty = ETree.SubElement(newelement, "visible")
-                    visibleProperty.text = prop[1]
+                    visible_property = ETree.SubElement(newelement, "visible")
+                    visible_property.text = prop[1]
                 else:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", prop[0])
                     additionalproperty.text = prop[1]
-                    allProps[prop[0]] = additionalproperty
+                    all_props[prop[0]] = additionalproperty
 
                     # If this is a widget or background, set a skin setting to say it's enabled
                     if prop[0] == "widget":
                         xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-" + prop[1] + ")")
                         # And if it's the main menu, list it
-                        if groupName == "mainmenu":
+                        if group_name == "mainmenu":
                             xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-" +
                                                 str(self.widgetCount) + "," + prop[1] + ")")
                             self.widgetCount += 1
@@ -859,16 +859,16 @@ class XMLFunctions:
 
                     # If this is the main menu, and we're cloning widgets,
                     # backgrounds or properties...
-                    if groupName == "mainmenu":
+                    if group_name == "mainmenu":
                         if "clonewidgets" in options:
-                            widgetProperties = ["widget", "widgetName", "widgetType",
-                                                "widgetTarget", "widgetPath", "widgetPlaylist"]
-                            if prop[0] in widgetProperties:
+                            widget_properties = ["widget", "widgetName", "widgetType",
+                                                 "widgetTarget", "widgetPath", "widgetPlaylist"]
+                            if prop[0] in widget_properties:
                                 self.MAINWIDGET[prop[0]] = prop[1]
                         if "clonebackgrounds" in options:
-                            backgroundProperties = ["background", "backgroundName",
-                                                    "backgroundPlaylist", "backgroundPlaylistName"]
-                            if prop[0] in backgroundProperties:
+                            background_properties = ["background", "backgroundName",
+                                                     "backgroundPlaylist", "backgroundPlaylistName"]
+                            if prop[0] in background_properties:
                                 self.MAINBACKGROUND[prop[0]] = prop[1]
                         if "cloneproperties" in options:
                             self.MAINPROPERTIES[prop[0]] = prop[1]
@@ -879,42 +879,42 @@ class XMLFunctions:
                         additionalproperty.set("name", "widgetPath")
                         additionalproperty.text = prop[1]
 
-        # Get fallback properties, property requirements, templateOnly value of properties
-        fallbackProperties, fallbacks = self.data_func.getCustomPropertyFallbacks(groupName)
+        # Get fallback properties, property requirements, template_only value of properties
+        fallback_properties, fallbacks = self.data_func.getCustomPropertyFallbacks(group_name)
 
         # Add fallback properties
-        for key in fallbackProperties:
-            if key not in list(allProps.keys()):
+        for key in fallback_properties:
+            if key not in list(all_props.keys()):
                 # Check whether we have a fallback for the value
-                for propertyMatch in fallbacks[key]:
+                for property_match in fallbacks[key]:
                     matches = False
-                    if propertyMatch[1] is None:
+                    if property_match[1] is None:
                         # This has no conditions, so it matched
                         matches = True
                     else:
                         # This has an attribute and a value to match against
                         for prop in properties:
-                            if prop[0] == propertyMatch[1] and prop[1] == propertyMatch[2]:
+                            if prop[0] == property_match[1] and prop[1] == property_match[2]:
                                 matches = True
                                 break
 
                     if matches:
                         additionalproperty = ETree.SubElement(newelement, "property")
                         additionalproperty.set("name", key)
-                        additionalproperty.text = propertyMatch[0]
-                        allProps[key] = additionalproperty
+                        additionalproperty.text = property_match[0]
+                        all_props[key] = additionalproperty
                         break
 
         # Get property requirements
-        otherProperties, requires, templateOnly = self.data_func.getPropertyRequires()
+        other_properties, requires, template_only = self.data_func.getPropertyRequires()
 
         # Remove any properties whose requirements haven't been met
-        for key in otherProperties:
-            if key in list(allProps.keys()) and key in list(requires.keys()) and \
-                    requires[key] not in list(allProps.keys()):
+        for key in other_properties:
+            if key in list(all_props.keys()) and key in list(requires.keys()) and \
+                    requires[key] not in list(all_props.keys()):
                 # This properties requirements aren't met
-                newelement.remove(allProps[key])
-                allProps.pop(key)
+                newelement.remove(all_props[key])
+                all_props.pop(key)
 
         # Primary visibility
         visibility = item.find("visibility")
@@ -948,42 +948,42 @@ class XMLFunctions:
             elif onclick.text.startswith("ActivateWindow(") and SKIN_PATH in onclick.text:
                 # Skin-relative links
                 try:
-                    actionParts = onclick.text[15:-1].split(",")
-                    actionParts[1] = actionParts[1].replace(SKIN_PATH, "")
-                    _ = actionParts[1].split(os.sep)
-                    newAction = "special://skin"
-                    for actionPart in actionParts[1].split(os.sep):
-                        if actionPart != "":
-                            newAction = newAction + "/" + actionPart
-                    if len(actionParts) == 2:
-                        onclickelement.text = "ActivateWindow(" + actionParts[0] + "," + \
-                                              newAction + ")"
+                    action_parts = onclick.text[15:-1].split(",")
+                    action_parts[1] = action_parts[1].replace(SKIN_PATH, "")
+                    _ = action_parts[1].split(os.sep)
+                    new_action = "special://skin"
+                    for action_part in action_parts[1].split(os.sep):
+                        if action_part != "":
+                            new_action = new_action + "/" + action_part
+                    if len(action_parts) == 2:
+                        onclickelement.text = "ActivateWindow(" + action_parts[0] + "," + \
+                                              new_action + ")"
                     else:
-                        onclickelement.text = "ActivateWindow(" + actionParts[0] + "," + \
-                                              newAction + "," + actionParts[2] + ")"
+                        onclickelement.text = "ActivateWindow(" + action_parts[0] + "," + \
+                                              new_action + "," + action_parts[2] + ")"
                 except:
                     pass
             else:
                 onclickelement.text = onclick.text
 
             # Also add it as a path property
-            if not self.property_exists("path", newelement) and "path" not in list(allProps.keys()):
+            if not self.property_exists("path", newelement) and "path" not in list(all_props.keys()):
                 # we only add the path property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 pathelement = ETree.SubElement(newelement, "property")
                 pathelement.set("name", "path")
                 pathelement.text = onclickelement.text
-                allProps["path"] = pathelement
+                all_props["path"] = pathelement
 
             # Get 'list' property (the action property of an ActivateWindow shortcut)
-            if not self.property_exists("list", newelement) and "list" not in list(allProps.keys()):
+            if not self.property_exists("list", newelement) and "list" not in list(all_props.keys()):
                 # we only add the list property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
-                listElement = ETree.SubElement(newelement, "property")
-                listElement.set("name", "list")
-                listElement.text = \
+                list_element = ETree.SubElement(newelement, "property")
+                list_element.set("name", "list")
+                list_element.text = \
                     self.data_func.getListProperty(onclickelement.text.replace('"', ''))
-                allProps["list"] = listElement
+                all_props["list"] = list_element
 
             if onclick.text == "ActivateWindow(Settings)":
                 self.hasSettings = True
@@ -993,127 +993,127 @@ class XMLFunctions:
 
             if len(self.checkForShortcuts) != 0:
                 # Check if we've been asked to watch for this shortcut
-                newCheckForShortcuts = []
-                for checkforShortcut in self.checkForShortcuts:
-                    if onclick.text.lower() == checkforShortcut[0]:
+                new_check_for_shortcuts = []
+                for check_for_shortcut in self.checkForShortcuts:
+                    if onclick.text.lower() == check_for_shortcut[0]:
                         # They match, change the value to True
-                        newCheckForShortcuts.append((checkforShortcut[0],
-                                                     checkforShortcut[1], "True"))
+                        new_check_for_shortcuts.append((check_for_shortcut[0],
+                                                        check_for_shortcut[1], "True"))
                     else:
-                        newCheckForShortcuts.append(checkforShortcut)
-                self.checkForShortcuts = newCheckForShortcuts
+                        new_check_for_shortcuts.append(check_for_shortcut)
+                self.checkForShortcuts = new_check_for_shortcuts
 
         # Visibility
-        if visibilityCondition is not None:
-            visibilityElement = ETree.SubElement(newelement, "visible")
-            if profileVisibility is not None:
-                visibilityElement.text = profileVisibility + " + [" + visibilityCondition + "]"
+        if visibility_condition is not None:
+            visibility_element = ETree.SubElement(newelement, "visible")
+            if profile_visibility is not None:
+                visibility_element.text = profile_visibility + " + [" + visibility_condition + "]"
             else:
-                visibilityElement.text = visibilityCondition
-            issubmenuElement = ETree.SubElement(newelement, "property")
-            issubmenuElement.set("name", "isSubmenu")
-            issubmenuElement.text = "True"
-            allProps["isSubmenu"] = issubmenuElement
-        elif profileVisibility is not None:
-            visibilityElement = ETree.SubElement(newelement, "visible")
-            visibilityElement.text = profileVisibility
+                visibility_element.text = visibility_condition
+            is_submenu_element = ETree.SubElement(newelement, "property")
+            is_submenu_element.set("name", "isSubmenu")
+            is_submenu_element.text = "True"
+            all_props["isSubmenu"] = is_submenu_element
+        elif profile_visibility is not None:
+            visibility_element = ETree.SubElement(newelement, "visible")
+            visibility_element.text = profile_visibility
 
         # Submenu visibility
-        if submenuVisibility is not None:
-            submenuVisibilityElement = ETree.SubElement(newelement, "property")
-            submenuVisibilityElement.set("name", "submenuVisibility")
-            if submenuVisibility.isdigit():
-                submenuVisibilityElement.text = "$NUMBER[" + submenuVisibility + "]"
+        if submenu_visibility is not None:
+            submenu_visibility_element = ETree.SubElement(newelement, "property")
+            submenu_visibility_element.set("name", "submenuVisibility")
+            if submenu_visibility.isdigit():
+                submenu_visibility_element.text = "$NUMBER[" + submenu_visibility + "]"
             else:
-                submenuVisibilityElement.text = self.data_func.slugify(submenuVisibility)
+                submenu_visibility_element.text = self.data_func.slugify(submenu_visibility)
 
         # Group name
         group = ETree.SubElement(newelement, "property")
         group.set("name", "group")
-        group.text = groupName
-        allProps["group"] = group
+        group.text = group_name
+        all_props["group"] = group
 
         # If this isn't the main menu, and we're cloning widgets or backgrounds...
-        if groupName != "mainmenu":
+        if group_name != "mainmenu":
             if "clonewidgets" in options and len(self.MAINWIDGET) != 0:
                 for key in self.MAINWIDGET:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.MAINWIDGET[key]
-                    allProps[key] = additionalproperty
+                    all_props[key] = additionalproperty
             if "clonebackgrounds" in options and len(self.MAINBACKGROUND) != 0:
                 for key in self.MAINBACKGROUND:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.MAINBACKGROUND[key])[1]
-                    allProps[key] = additionalproperty
+                    all_props[key] = additionalproperty
             if "cloneproperties" in options and len(self.MAINPROPERTIES) != 0:
                 for key in self.MAINPROPERTIES:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.MAINPROPERTIES[key])[1]
-                    allProps[key] = additionalproperty
+                    all_props[key] = additionalproperty
 
-        propertyPatterns = self.get_property_patterns(labelID.text, groupName)
-        if len(propertyPatterns) > 0:
-            propertyReplacements = self.get_property_replacements(newelement)
-            for propertyName in propertyPatterns:
-                propertyPattern = propertyPatterns[propertyName][0]
-                for original, replacement in propertyReplacements:
-                    regexpPattern = re.compile(re.escape(original), re.IGNORECASE)
-                    propertyPattern = regexpPattern.sub(replacement.replace("\\", r"\\"),
-                                                        propertyPattern)
+        property_patterns = self.get_property_patterns(label_id.text, group_name)
+        if len(property_patterns) > 0:
+            property_replacements = self.get_property_replacements(newelement)
+            for property_name in property_patterns:
+                property_pattern = property_patterns[property_name][0]
+                for original, replacement in property_replacements:
+                    regexp_pattern = re.compile(re.escape(original), re.IGNORECASE)
+                    property_pattern = regexp_pattern.sub(replacement.replace("\\", r"\\"),
+                                                          property_pattern)
 
                 additionalproperty = ETree.SubElement(newelement, "property")
-                additionalproperty.set("name", propertyName)
-                additionalproperty.text = propertyPattern
-                allProps[propertyName] = additionalproperty
+                additionalproperty.set("name", property_name)
+                additionalproperty.text = property_pattern
+                all_props[property_name] = additionalproperty
 
-        return newelement, allProps
+        return newelement, all_props
 
-    def get_property_patterns(self, labelID, group):
-        propertyPatterns = {}
+    def get_property_patterns(self, label_id, group):
+        property_patterns = {}
         if not self.loadedPropertyPatterns:
             overrides = self.data_func.get_overrides_skin()
             self.propertyPatterns = overrides.getroot().findall("propertypattern")
             self.loadedPropertyPatterns = True
 
-        for propertyPatternElement in self.propertyPatterns:
-            propertyName = propertyPatternElement.get("property")
-            propertyGroup = propertyPatternElement.get("group")
+        for property_pattern_element in self.propertyPatterns:
+            property_name = property_pattern_element.get("property")
+            property_group = property_pattern_element.get("group")
 
-            if not propertyName or not propertyGroup or propertyGroup != group or \
-                    not propertyPatternElement.text:
+            if not property_name or not property_group or property_group != group or \
+                    not property_pattern_element.text:
                 continue
 
-            propertyLabelID = propertyPatternElement.get("labelID")
-            if not propertyLabelID:
-                if propertyName not in propertyPatterns:
-                    propertyPatterns[propertyName] = [propertyPatternElement.text, False]
-            elif propertyLabelID == labelID:
-                if propertyName not in propertyPatterns or \
-                        propertyPatterns[propertyName][1] is False:
-                    propertyPatterns[propertyName] = [propertyPatternElement.text, True]
+            property_label_id = property_pattern_element.get("labelID")
+            if not property_label_id:
+                if property_name not in property_patterns:
+                    property_patterns[property_name] = [property_pattern_element.text, False]
+            elif property_label_id == label_id:
+                if property_name not in property_patterns or \
+                        property_patterns[property_name][1] is False:
+                    property_patterns[property_name] = [property_pattern_element.text, True]
 
-        return propertyPatterns
+        return property_patterns
 
     @staticmethod
     def get_property_replacements(element):
-        propertyReplacements = []
-        for subElement in list(element):
-            if subElement.tag == "property":
-                propertyName = subElement.get("name")
-                if propertyName and subElement.text:
-                    propertyReplacements.append(("::%s::" % propertyName, subElement.text))
-            elif subElement.text:
-                propertyReplacements.append(("::%s::" % subElement.tag, subElement.text))
+        property_replacements = []
+        for sub_element in list(element):
+            if sub_element.tag == "property":
+                property_name = sub_element.get("name")
+                if property_name and sub_element.text:
+                    property_replacements.append(("::%s::" % property_name, sub_element.text))
+            elif sub_element.text:
+                property_replacements.append(("::%s::" % sub_element.tag, sub_element.text))
 
-        return propertyReplacements
+        return property_replacements
 
     @staticmethod
-    def property_exists(propertyName, element):
+    def property_exists(property_name, element):
         for item in element.findall("property"):
-            if propertyName in item.attrib:
+            if property_name in item.attrib:
                 return True
         return False
 
