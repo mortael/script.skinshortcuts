@@ -35,7 +35,7 @@ script.skinshortcuts was written with the intention of making user customizable 
 
 ## Where To Get Help - Users
 
-[End User FAQ](./resources/docs/FAQ.md)
+[End User FAQ](./docs/FAQ.md)
 
 If you have issues with using the script, your first port of call should be the End User FAQ. If your query isn't listed there, then the next place to ask for help is the [Kodi forum for the skin that you are using](https://forum.kodi.tv/forumdisplay.php?fid=67). There are a lot of very knowledgeable skinners and users who will be able to answer most questions.
 
@@ -51,11 +51,11 @@ Though hopefully Skin Shortcuts will save you a lot of code in the long-run, it 
 
 To help, it includes a lot of documentation covering the various features of the script
 
-* [What is Skin Shortcuts](./resources/docs/What%20is%20Skin%20Shortcuts.md)
-* [Getting Started](./resources/docs/started/Getting%20Started.md)
-* [Providing default shortcuts](./resources/docs/Providing%20default%20shortcuts.md)
-* [Advanced usage topics](./resources/docs/advanced/Advanced%20Usage.md)
-* [labelID and localisation](./resources/docs/labelID%20and%20Localisation.md)
+* [What is Skin Shortcuts](./docs/What%20is%20Skin%20Shortcuts.md)
+* [Getting Started](./docs/started/Getting%20Started.md)
+* [Providing default shortcuts](./docs/Providing%20default%20shortcuts.md)
+* [Advanced usage topics](./docs/advanced/Advanced%20Usage.md)
+* [labelID and localisation](./docs/labelID%20and%20Localisation.md)
 
 It's highly recommended taking the time to read through these documents before you begin.
 

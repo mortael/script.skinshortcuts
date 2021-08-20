@@ -39,7 +39,7 @@ jobs:
           mv ../.git .
           rm LICENSE.txt
           rm README.md
-          rm -rf resources/docs/
+          rm -rf docs/
           git add .
           git commit -m "Remove unwanted files"
         working-directory: ${{ github.event.repository.name }}
