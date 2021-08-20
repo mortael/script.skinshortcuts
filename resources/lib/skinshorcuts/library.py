@@ -704,9 +704,7 @@ class LibraryFunctions:
         if thumbnail is not None:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({
-                'icon': displayIcon
-            })
-            listitem.setArt({
+                'icon': displayIcon,
                 'thumb': thumbnail
             })
             listitem.setProperty("thumbnail", thumbnail)
@@ -1910,9 +1908,7 @@ class LibraryFunctions:
                 listitem = xbmcgui.ListItem(label=label[len(label) - 1].replace("  >", ""),
                                             label2=localItemType)
                 listitem.setArt({
-                    'icon': "DefaultShortcut.png"
-                })
-                listitem.setArt({
+                    'icon': "DefaultShortcut.png",
                     'thumb': thumbnail[len(thumbnail) - 1]
                 })
 
@@ -2730,9 +2726,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         for item in self.listing:
             listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
             listitem.setArt({
-                'icon': item.getProperty("icon")
-            })
-            listitem.setArt({
+                'icon': item.getProperty("icon"),
                 'thumb': item.getProperty("thumbnail")
             })
             listitem.setProperty("Addon.Summary", item.getLabel2())

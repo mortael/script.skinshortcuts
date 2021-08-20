@@ -358,9 +358,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Create the list item
         listitem = xbmcgui.ListItem(label=localLabel[2], label2=localLabel2[2])
         listitem.setArt({
-            'icon': xbmc.getInfoLabel(icon)
-        })
-        listitem.setArt({
+            'icon': xbmc.getInfoLabel(icon),
             'thumb': xbmc.getInfoLabel(thumb)
         })
         listitem.setProperty("localizedString", localLabel[0])
@@ -2274,10 +2272,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                 if propertyName == "thumb":
                     # Special treatment if we try to set the thumb with the property method
                     listitem.setArt({
+                        'icon': xbmc.getInfoLabel(propertyValue),
                         'thumb': xbmc.getInfoLabel(propertyValue)
-                    })
-                    listitem.setArt({
-                        'icon': xbmc.getInfoLabel(propertyValue)
                     })
                     listitem.setProperty("thumbnail", propertyValue)
                     listitem.setProperty("icon", propertyValue)
@@ -2461,9 +2457,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Create a copy of an existing listitem
         listitemCopy = xbmcgui.ListItem(label=listitem.getLabel(), label2=listitem.getLabel2())
         listitem.setArt({
-            'icon': listitem.getProperty("icon")
-        })
-        listitem.setArt({
+            'icon': listitem.getProperty("icon"),
             'thumb': listitem.getProperty("thumbnail")
         })
         listitemCopy.setProperty("path", listitem.getProperty("path"))
