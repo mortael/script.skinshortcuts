@@ -262,7 +262,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
     def load_shortcuts(self, includeUserShortcuts=True):
         log("Loading shortcuts")
-        self.data_func._clear_labelID()
+        self.data_func.clear_labelID()
 
         isSubLevel = False
         if "." in self.group and self.group.rsplit(".", 1)[1].isdigit() and \
@@ -270,11 +270,11 @@ class GUI(xbmcgui.WindowXMLDialog):
             isSubLevel = True
 
         if includeUserShortcuts:
-            shortcuts = self.data_func._get_shortcuts(self.group, defaultGroup=self.defaultGroup,
-                                                      isSubLevel=isSubLevel)
+            shortcuts = self.data_func.get_shortcuts(self.group, defaultGroup=self.defaultGroup,
+                                                     isSubLevel=isSubLevel)
         else:
-            shortcuts = self.data_func._get_shortcuts(self.group, defaultGroup=self.defaultGroup,
-                                                      defaultsOnly=True)
+            shortcuts = self.data_func.get_shortcuts(self.group, defaultGroup=self.defaultGroup,
+                                                     defaultsOnly=True)
 
         # listitems = []
         for shortcut in shortcuts.getroot().findall("shortcut"):
@@ -291,7 +291,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Initial properties
         count = 0
         visible = False
-        self.data_func._clear_labelID()
+        self.data_func.clear_labelID()
         listitems = []
 
         for listitem in self.allListItems:
@@ -466,7 +466,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             )
 
         # Get fallback properties
-        fallbackProperties, fallbacks = self.data_func._getCustomPropertyFallbacks(self.group)
+        fallbackProperties, fallbacks = self.data_func.getCustomPropertyFallbacks(self.group)
 
         # Add fallback properties
         for key in fallbackProperties:
@@ -486,7 +486,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         break
 
         # Get property requirements
-        otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
+        otherProperties, requires, templateOnly = self.data_func.getPropertyRequires()
 
         # Remove any properties whose requirements haven't been met
         for key in otherProperties:
@@ -535,8 +535,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             labelID = listitem.getProperty("localizedString")
             if labelID is None or labelID == "":
                 labelID = listitem.getLabel()
-            labelID = self.data_func._get_labelID(self.data_func.local(labelID)[3],
-                                                  listitem.getProperty("path"))
+            labelID = self.data_func.get_labelID(self.data_func.local(labelID)[3],
+                                                 listitem.getProperty("path"))
 
         # Retrieve icon
         icon = listitem.getProperty("icon")
@@ -560,7 +560,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             iconIsVar = True
 
         # Check for overrides
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
         for elem in tree.findall("icon"):
             if oldicon is None:
                 if ("labelID" in elem.attrib and elem.attrib.get("labelID") == labelID) or \
@@ -673,7 +673,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             labelIDChanges = []
             labelIDChangesDict = {}
 
-            self.data_func._clear_labelID()
+            self.data_func.clear_labelID()
 
             for listitem in self.allListItems:
 
@@ -693,8 +693,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                         localLabel = self.data_func.local(listitem.getLabel())
                     else:
                         localLabel = self.data_func.local(localizedString)
-                    newlabelID = self.data_func._get_labelID(localLabel[3],
-                                                             listitem.getProperty("path"))
+                    newlabelID = self.data_func.get_labelID(localLabel[3],
+                                                            listitem.getProperty("path"))
                     if self.group == "mainmenu":
                         labelIDChanges.append([labelID, newlabelID, defaultID])
                         labelIDChangesDict[labelID] = newlabelID
@@ -950,7 +950,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         self.thumbnails = "LOADING"
 
         # Load skin overrides
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
 
         # Should we allow the user to select a playlist as a widget...
         elem = tree.find('widgetPlaylists')
@@ -1006,9 +1006,9 @@ class GUI(xbmcgui.WindowXMLDialog):
         for overrideType in ["skin", "script"]:
             # Load overrides
             if overrideType == "skin":
-                tree = self.data_func._get_overrides_skin()
+                tree = self.data_func.get_overrides_skin()
             else:
-                tree = self.data_func._get_overrides_script()
+                tree = self.data_func.get_overrides_script()
 
             # Check if context menu overrides in tree
             elem = tree.find("contextmenu")
@@ -1039,7 +1039,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Load additional onlcicks from overrides
 
         # Get overrides
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
 
         # Get additional onclick handlers
         for control in tree.findall("onclick"):
@@ -1051,7 +1051,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         thumbnails = []
 
         # Load skin overrides
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
 
         # Get backgrounds
         elems = tree.findall('background')
@@ -1099,7 +1099,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Load a list of addition button IDs we'll handle for setting additional properties
 
         # Load skin overrides
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
 
         for elem in tree.findall("propertySettings"):
             if "buttonID" in elem.attrib and "property" in elem.attrib:
@@ -1192,7 +1192,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         listitemCopy = self._duplicate_listitem(returnVal,
                                                                 listControl.getListItem(itemIndex))
                     else:
-                        returnVal = self.lib_func._sourcelink_choice(returnVal)
+                        returnVal = self.lib_func.sourcelink_choice(returnVal)
                         if returnVal is not None:
                             listitemCopy = self._duplicate_listitem(
                                 returnVal, listControl.getListItem(itemIndex)
@@ -1251,7 +1251,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             self.allListItems[orderIndex] = listitemCopy
 
             # Delete playlist (TO BE REMOVED!)
-            self.lib_func._delete_playlist(listControl.getListItem(itemIndex).getProperty("path"))
+            self.lib_func.delete_playlist(listControl.getListItem(itemIndex).getProperty("path"))
 
             # Display list items
             self._display_listitems(focus=itemIndex)
@@ -1293,7 +1293,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             if self.warnonremoval(listControl.getListItem(num)) is False:
                 return
 
-            self.lib_func._delete_playlist(listControl.getListItem(num).getProperty("path"))
+            self.lib_func.delete_playlist(listControl.getListItem(num).getProperty("path"))
 
             self.changeMade = True
 
@@ -1473,7 +1473,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 return
 
             self.changeMade = True
-            self.lib_func._delete_playlist(listitem.getProperty("path"))
+            self.lib_func.delete_playlist(listitem.getProperty("path"))
 
             # Update the action
             listitem.setProperty("path", action)
@@ -1521,10 +1521,10 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # Get a list of all shortcuts that were originally in the menu and
                 # restore labelIDList
-                self.data_func._clear_labelID()
-                shortcuts = self.data_func._get_shortcuts(self.group,
-                                                          defaultGroup=self.defaultGroup,
-                                                          defaultsOnly=True)
+                self.data_func.clear_labelID()
+                shortcuts = self.data_func.get_shortcuts(self.group,
+                                                         defaultGroup=self.defaultGroup,
+                                                         defaultsOnly=True)
                 self.data_func.labelIDList = originalLabelIDList
 
                 for shortcut in shortcuts.getroot().findall("shortcut"):
@@ -1533,7 +1533,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                     # Check if a shortcuts labelID is already in the list
                     if item[1].getProperty("labelID") not in self.data_func.labelIDList:
-                        restorePretty.append(self.lib_func._create(
+                        restorePretty.append(self.lib_func.create(
                             ["", item[1].getLabel(), item[1].getLabel2(), {
                                 "icon": item[1].getProperty("icon")
                             }]
@@ -1570,7 +1570,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # Delete any auto-generated source playlists
                 for x in range(0, self.getControl(211).size()):
-                    self.lib_func._delete_playlist(
+                    self.lib_func.delete_playlist(
                         self.getControl(211).getListItem(x).getProperty("path")
                     )
 
@@ -1599,7 +1599,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # Delete any auto-generated source playlists
                 for x in range(0, self.getControl(211).size()):
-                    self.lib_func._delete_playlist(
+                    self.lib_func.delete_playlist(
                         self.getControl(211).getListItem(x).getProperty("path")
                     )
 
@@ -1823,35 +1823,35 @@ class GUI(xbmcgui.WindowXMLDialog):
                 log("Adding both browse options")
                 background = ["", "", ""]
                 backgroundLabel = [LANGUAGE(32053), LANGUAGE(32051), LANGUAGE(32052)]
-                backgroundPretty = [self.lib_func._create(["", LANGUAGE(32053), "", {
+                backgroundPretty = [self.lib_func.create(["", LANGUAGE(32053), "", {
                     "icon": "DefaultAddonNone.png"
-                }]), self.lib_func._create(["", LANGUAGE(32051), "", {
+                }]), self.lib_func.create(["", LANGUAGE(32051), "", {
                     "icon": "DefaultFile.png"
-                }]), self.lib_func._create(["", LANGUAGE(32052), "", {
+                }]), self.lib_func.create(["", LANGUAGE(32052), "", {
                     "icon": "DefaultFolder.png"
                 }])]
             elif self.backgroundBrowse == "single":
                 log("Adding single browse option")
                 background = ["", ""]
                 backgroundLabel = [LANGUAGE(32053), LANGUAGE(32051)]
-                backgroundPretty = [self.lib_func._create(["", LANGUAGE(32053), "", {
+                backgroundPretty = [self.lib_func.create(["", LANGUAGE(32053), "", {
                     "icon": "DefaultAddonNone.png"
-                }]), self.lib_func._create(["", LANGUAGE(32051), "", {
+                }]), self.lib_func.create(["", LANGUAGE(32051), "", {
                     "icon": "DefaultFile.png"
                 }])]
             elif self.backgroundBrowse == "multi":
                 log("Adding multi browse option")
                 background = ["", ""]
                 backgroundLabel = [LANGUAGE(32053), LANGUAGE(32052)]
-                backgroundPretty = [self.lib_func._create(["", LANGUAGE(32053), "", {
+                backgroundPretty = [self.lib_func.create(["", LANGUAGE(32053), "", {
                     "icon": "DefaultAddonNone.png"
-                }]), self.lib_func._create(["", LANGUAGE(32052), "", {
+                }]), self.lib_func.create(["", LANGUAGE(32052), "", {
                     "icon": "DefaultFolder.png"
                 }])]
             else:
                 background = [""]
                 backgroundLabel = [LANGUAGE(32053)]
-                backgroundPretty = [self.lib_func._create(["", LANGUAGE(32053), "", {
+                backgroundPretty = [self.lib_func.create(["", LANGUAGE(32053), "", {
                     "icon": "DefaultAddonNone.png"
                 }])]
 
@@ -1875,7 +1875,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         background.append([key[0], playlist[0], playlist[1]])
                         backgroundLabel.append(key[1].replace("::PLAYLIST::", playlist[1]))
                         backgroundPretty.append(
-                            self.lib_func._create(
+                            self.lib_func.create(
                                 ["", key[1].replace("::PLAYLIST::", playlist[1]), "", {}]
                             )
                         )
@@ -1883,7 +1883,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         background.append([key[0], playlist[0], playlist[1]])
                         backgroundLabel.append(key[1].replace("::PLAYLIST::", playlist[1]))
                         backgroundPretty.append(
-                            self.lib_func._create(
+                            self.lib_func.create(
                                 ["", key[1].replace("::PLAYLIST::", playlist[1]), "", {}]
                             )
                         )
@@ -1909,11 +1909,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                     backgroundLabel.append(label)
                     if xbmc.skinHasImage(key[0]) or virtualImage:
                         usePrettyDialog = True
-                        backgroundPretty.append(self.lib_func._create(["", label, "", {
+                        backgroundPretty.append(self.lib_func.create(["", label, "", {
                             "icon": key[0]
                         }]))
                     else:
-                        backgroundPretty.append(self.lib_func._create(["", label, "", {}]))
+                        backgroundPretty.append(self.lib_func.create(["", label, "", {}]))
 
             if usePrettyDialog:
                 w = library.ShowDialog("DialogSelect.xml", CWD, listing=backgroundPretty,
@@ -1998,12 +1998,12 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Create lists for the select dialog
             thumbnail = [""]
-            thumbnailLabel = [self.lib_func._create(["", LANGUAGE(32096), "", {}])]
+            thumbnailLabel = [self.lib_func.create(["", LANGUAGE(32096), "", {}])]
 
             # Add a None option if the skin specified it
             if self.thumbnailNone:
                 thumbnail.append("")
-                thumbnailLabel.insert(0, self.lib_func._create(["", self.thumbnailNone, "", {}]))
+                thumbnailLabel.insert(0, self.lib_func.create(["", self.thumbnailNone, "", {}]))
 
             # Ensure thumbnails have been loaded
             count = 0
@@ -2018,7 +2018,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             for key in self.thumbnails:
                 log(repr(key[0]) + " " + repr(key[1]))
                 thumbnail.append(key[0])
-                thumbnailLabel.append(self.lib_func._create(["", key[1], "", {
+                thumbnailLabel.append(self.lib_func.create(["", key[1], "", {
                     "icon": key[0]
                 }]))
 
@@ -2149,7 +2149,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     listitemCopy.setProperty("path", selectedShortcut.getProperty("chosenPath"))
                     listitemCopy.setProperty("displayPath",
                                              selectedShortcut.getProperty("chosenPath"))
-                self.lib_func._delete_playlist(
+                self.lib_func.delete_playlist(
                     self.getControl(211).getListItem(num).getProperty("path")
                 )
 
@@ -2182,25 +2182,25 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # If the labelID property is empty, we need to generate one
             if launchGroup is None or launchGroup == "":
-                self.data_func._clear_labelID()
+                self.data_func.clear_labelID()
                 num = self.getControl(211).getSelectedPosition()
                 orderIndex = self.getControl(211).getListItem(num)
 
                 # Get the labelID's of all other menu items
                 for listitem in self.allListItems:
                     if listitem != orderIndex:
-                        self.data_func._get_labelID(listitem.getProperty("labelID"),
-                                                    listitem.getProperty("path"))
+                        self.data_func.get_labelID(listitem.getProperty("labelID"),
+                                                   listitem.getProperty("path"))
 
                 # Now generate labelID for this menu item, if it doesn't have one
                 labelID = self.getControl(211).getListItem(num).getProperty("localizedString")
                 if labelID is None or labelID == "":
-                    launchGroup = self.data_func._get_labelID(
+                    launchGroup = self.data_func.get_labelID(
                         self.getControl(211).getListItem(num).getLabel(),
                         self.getControl(211).getListItem(num).getProperty("path")
                     )
                 else:
-                    launchGroup = self.data_func._get_labelID(
+                    launchGroup = self.data_func.get_labelID(
                         labelID,
                         self.getControl(211).getListItem(num).getProperty("path")
                     )
@@ -2302,7 +2302,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     propertyName = self.customPropertyButtons[controlID]
 
                 # Get the overrides
-                tree = self.data_func._get_overrides_skin()
+                tree = self.data_func.get_overrides_skin()
 
                 # Set options
                 dialogTitle = LANGUAGE(32101)
@@ -2331,16 +2331,16 @@ class GUI(xbmcgui.WindowXMLDialog):
                     # Add a 'None' option to the list
                     prop.append("")
                     propertyLabel.append(LANGUAGE(32053))
-                    propertyPretty.append(self.lib_func._create(["", LANGUAGE(32053), "", {
+                    propertyPretty.append(self.lib_func.create(["", LANGUAGE(32053), "", {
                         "icon": "DefaultAddonNone.png"
                     }]))
                 if imageBrowse:
                     # Add browse single/multi options to the list
                     prop.extend(["", ""])
                     propertyLabel.extend([LANGUAGE(32051), LANGUAGE(32052)])
-                    propertyPretty.extend([self.lib_func._create(["", LANGUAGE(32051), "", {
+                    propertyPretty.extend([self.lib_func.create(["", LANGUAGE(32051), "", {
                         "icon": "DefaultFile.png"
-                    }]), self.lib_func._create(["", LANGUAGE(32052), "", {
+                    }]), self.lib_func.create(["", LANGUAGE(32052), "", {
                         "icon": "DefaultFolder.png"
                     }])])
 
@@ -2366,19 +2366,19 @@ class GUI(xbmcgui.WindowXMLDialog):
                                     labelValue.startswith("$NUMBER"):
                                 propertyLabel.append(xbmc.getInfoLabel(labelValue))
                                 propertyPretty.append(
-                                    self.lib_func._create(
+                                    self.lib_func.create(
                                         ["", xbmc.getInfoLabel(labelValue), "", iconImage]
                                     )
                                 )
                             else:
                                 propertyLabel.append(self.data_func.local(labelValue)[2])
                                 propertyPretty.append(
-                                    self.lib_func._create(["", labelValue, "", iconImage])
+                                    self.lib_func.create(["", labelValue, "", iconImage])
                                 )
                         else:
                             propertyLabel.append(self.data_func.local(foundProperty)[2])
                             propertyPretty.append(
-                                self.lib_func._create(["", foundProperty, "", iconImage])
+                                self.lib_func.create(["", foundProperty, "", iconImage])
                             )
 
                 # Show the dialog
@@ -2482,7 +2482,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         else:
             listitemCopy.setProperty(
                 "defaultID",
-                self.data_func._get_labelID(
+                self.data_func.get_labelID(
                     self.data_func.local(listitem.getProperty("localizedString"))[3],
                     listitem.getProperty("path"),
                     True
@@ -2581,7 +2581,7 @@ class GUI(xbmcgui.WindowXMLDialog):
     def warnonremoval(self, item):
         # This function will warn the user before they modify a settings link
         # (if the skin has enabled this function)
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
 
         for elem in tree.findall("warn"):
             if elem.text.lower() == item.getProperty("displaypath").lower():
@@ -2648,7 +2648,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         if labelID is None:
             labelID = defaultID
 
-        tree = self.data_func._get_overrides_skin()
+        tree = self.data_func.get_overrides_skin()
         if backgroundorwidget == "background":
             elems = tree.getroot().findall("backgrounddefault")
         elif backgroundorwidget == "widgetdefaultnode":
@@ -2679,7 +2679,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         listitem.setLabel(label)
         listitem.setProperty("localizedString", None)
 
-        self.lib_func._rename_playlist(listitem.getProperty("path"), label)
+        self.lib_func.rename_playlist(listitem.getProperty("path"), label)
 
         # If there's no label2, set it to custom shortcut
         if not listitem.getLabel2():

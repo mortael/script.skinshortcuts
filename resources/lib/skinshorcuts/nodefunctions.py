@@ -396,8 +396,8 @@ class NodeFunctions:
             allLabelIDs.append("mainmenu")
 
         # Get main menu items
-        menuitems = data_func._get_shortcuts("mainmenu", processShortcuts=False)
-        data_func._clear_labelID()
+        menuitems = data_func.get_shortcuts("mainmenu", processShortcuts=False)
+        data_func.clear_labelID()
         for menuitem in menuitems.findall("shortcut"):
             # Get existing items labelID's
             listitem = xbmcgui.ListItem(label=data_func.local(menuitem.find("label").text)[2])
@@ -405,7 +405,7 @@ class NodeFunctions:
                 'icon': menuitem.find("icon").text
             })
             allMenuItems.append(listitem)
-            allLabelIDs.append(data_func._get_labelID(
+            allLabelIDs.append(data_func.get_labelID(
                 data_func.local(menuitem.find("label").text)[3], menuitem.find("action").text)
             )
 
@@ -439,11 +439,11 @@ class NodeFunctions:
 
         # Add the shortcut to the menu the user has selected
         # Load existing main menu items
-        menuitems = data_func._get_shortcuts(allLabelIDs[selectedMenu], processShortcuts=False)
-        data_func._clear_labelID()
+        menuitems = data_func.get_shortcuts(allLabelIDs[selectedMenu], processShortcuts=False)
+        data_func.clear_labelID()
 
         # Generate a new labelID
-        newLabelID = data_func._get_labelID(label, action)
+        newLabelID = data_func.get_labelID(label, action)
 
         # Write the updated mainmenu.DATA.xml
         newelement = xmltree.SubElement(menuitems.getroot(), "shortcut")
@@ -527,8 +527,8 @@ class NodeFunctions:
             return
 
         # Load the properties
-        currentProperties, defaultProperties = data_func._get_additionalproperties()
-        otherProperties, requires, templateOnly = data_func._getPropertyRequires()
+        currentProperties, defaultProperties = data_func.get_additionalproperties()
+        otherProperties, requires, templateOnly = data_func.getPropertyRequires()
 
         # If there aren't any currentProperties, use the defaultProperties instead
         if currentProperties == [None]:
@@ -581,7 +581,7 @@ class NodeFunctions:
         # The properties will only be used if the .DATA.xml file exists in the
         # addon_data folder( otherwise the script will use the default values),
         # so we're going to open and write the 'group' that has been passed to us
-        menuitems = data_func._get_shortcuts(group, processShortcuts=False)
+        menuitems = data_func.get_shortcuts(group, processShortcuts=False)
         data_func.indent(menuitems.getroot())
         path = data_func.data_xml_filename(DATA_PATH, data_func.slugify(group, True))
         menuitems.write(path, encoding="UTF-8")

@@ -72,6 +72,8 @@ class DataFunctions:
             "templateOnly": None
         }
 
+        self.labelIDList = []
+
         self.default_overrides_file = os.path.join(DEFAULT_PATH, "overrides.xml")
         self.skin_overrides_file = os.path.join(SKIN_SHORTCUTS_PATH, "overrides.xml")
 
@@ -80,8 +82,8 @@ class DataFunctions:
         self.hashable.add(self.default_overrides_file)
         self.hashable.add(self.skin_overrides_file)
 
-    def _get_labelID(self, labelID, action, getDefaultID=False,
-                     includeAddOnID=True, noNonLocalized=False):
+    def get_labelID(self, labelID, action, getDefaultID=False,
+                    includeAddOnID=True, noNonLocalized=False):
         # This gets the unique labelID for the item we've been passed.
         # We'll also store it, to make sure we don't give it to any other item.
 
@@ -138,15 +140,15 @@ class DataFunctions:
 
         return None
 
-    def _clear_labelID(self):
+    def clear_labelID(self):
         # This clears our stored list of labelID's
         self.labelIDList = []
 
     def _pop_labelID(self):
         self.labelIDList.pop()
 
-    def _get_shortcuts(self, group, defaultGroup=None, profileDir=None,
-                       defaultsOnly=False, processShortcuts=True, isSubLevel=False):
+    def get_shortcuts(self, group, defaultGroup=None, profileDir=None,
+                      defaultsOnly=False, processShortcuts=True, isSubLevel=False):
         # This will load the shortcut file
         # Additionally, if the override files haven't been loaded, we'll load them too
         log("Loading shortcuts for group " + group)
@@ -209,10 +211,10 @@ class DataFunctions:
                            isUserShortcuts=False):
         # This function will process any overrides and add them to the tree ready to be displayed
         #  - We will process graphics overrides, action overrides, visibility conditions
-        skinoverrides = self._get_overrides_skin()
+        skinoverrides = self.get_overrides_skin()
         useroverrides = self._get_overrides_user(profileDir)
 
-        self._clear_labelID()
+        self.clear_labelID()
 
         # Iterate through all <shortcut/> nodes
         for node in tree.getroot().findall("shortcut"):
@@ -243,7 +245,7 @@ class DataFunctions:
                     newaction.set("condition", override.attrib.get("condition"))
 
             # Generate the labelID
-            labelID = self._get_labelID(
+            labelID = self.get_labelID(
                 self.local(node.find("label").text)[3].replace(" ", "").lower(), action.text
             )
             xmltree.SubElement(node, "labelID").text = labelID
@@ -444,7 +446,7 @@ class DataFunctions:
         # Once the tree is built, it sends them to _process_shortcuts for any overrides, etc,
         # then adds them to the menu tree
 
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
 
         # Get an array of all actions currently in the menu
         actions = []
@@ -514,7 +516,7 @@ class DataFunctions:
 
         return newicon
 
-    def _get_overrides_script(self):
+    def get_overrides_script(self):
         # Get overrides.xml provided by script
         if "script" in self.overrides:
             return self.overrides["script"]
@@ -531,7 +533,7 @@ class DataFunctions:
             self.overrides["script"] = tree
             return tree
 
-    def _get_overrides_skin(self):
+    def get_overrides_skin(self):
         # Get overrides.xml provided by skin
         if "skin" in self.overrides:
             return self.overrides["skin"]
@@ -567,7 +569,7 @@ class DataFunctions:
             self.overrides["user"] = tree
             return tree
 
-    def _get_additionalproperties(self):
+    def get_additionalproperties(self):
         # Load all saved properties (widgets, backgrounds, custom properties)
 
         if self.currentProperties is not None:
@@ -602,7 +604,7 @@ class DataFunctions:
             self.currentProperties = [None]
 
         # Load skin defaults (in case we need them...)
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
         for elemSearch in [["widget", tree.findall("widgetdefault")],
                            ["widget:node", tree.findall("widgetdefaultnode")],
                            ["background", tree.findall("backgrounddefault")],
@@ -744,20 +746,20 @@ class DataFunctions:
             for node in tree.getroot().findall("shortcut"):
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()
                 action = node.find("action.text")
-                labelID = self._get_labelID(label, action, getDefaultID=True)
+                labelID = self.get_labelID(label, action, getDefaultID=True)
                 self.defaultProperties.append(["mainmenu", labelID, "icon", node.find("icon").text])
 
         returnVal = [self.currentProperties, self.defaultProperties]
         return returnVal
 
-    def _getCustomPropertyFallbacks(self, group):
+    def getCustomPropertyFallbacks(self, group):
         if group in self.propertyInformation["fallbacks"]:
             # We've already loaded everything, return it all
             return self.propertyInformation["fallbackProperties"][group], \
                    self.propertyInformation["fallbacks"][group]
 
         # Get skin overrides
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
 
         # Find all fallbacks
         fallbackProperties = []
@@ -794,14 +796,14 @@ class DataFunctions:
             self.propertyInformation["fallbackProperties"][group], \
             self.propertyInformation["fallbacks"][group]
 
-    def _getPropertyRequires(self):
+    def getPropertyRequires(self):
         if self.propertyInformation["requires"] is not None:
             # We've already loaded requires and templateOnly properties, return eveything
             return self.propertyInformation["otherProperties"], \
                    self.propertyInformation["requires"], self.propertyInformation["templateOnly"]
 
         # Get skin overrides
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
 
         # Find all property requirements
         requires = {}
@@ -831,7 +833,7 @@ class DataFunctions:
         if widgetID in self.widgetNameAndType:
             return self.widgetNameAndType[widgetID]
 
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
         for elem in tree.findall("widget"):
             if elem.text == widgetID:
                 widgetInfo = {
@@ -853,7 +855,7 @@ class DataFunctions:
         if backgroundID in self.backgroundName:
             return self.backgroundName[backgroundID]
 
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
         for elem in tree.findall("background"):
             if elem.text == backgroundID:
                 returnString = elem.attrib.get("label")
@@ -863,10 +865,10 @@ class DataFunctions:
         self.backgroundName[backgroundID] = None
         return None
 
-    def _reset_backgroundandwidgets(self):
+    def reset_backgroundandwidgets(self):
         # This function resets all skin properties used to identify if specific backgrounds or
         # widgets are active
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
         for elem in tree.findall("widget"):
             xbmc.executebuiltin("Skin.Reset(skinshortcuts-widget-" + elem.text + ")")
         for elem in tree.findall("background"):
@@ -1006,7 +1008,7 @@ class DataFunctions:
     def checkVersionEquivalency(self, action, check_type="shortcuts"):
         # Check whether the version specified for a shortcut has an equivalency
         # to the version of Kodi we're running
-        trees = [self._get_overrides_skin(), self._get_overrides_script()]
+        trees = [self.get_overrides_skin(), self.get_overrides_script()]
 
         # Set up so we can handle both groupings and shortcuts in one
         findElem = ""
@@ -1054,7 +1056,7 @@ class DataFunctions:
 
     def checkAdditionalProperties(self, group, labelID, defaultID, isUserShortcuts):
         # Return any additional properties, including widgets, backgrounds, icons and thumbnails
-        allProperties = self._get_additionalproperties()
+        allProperties = self.get_additionalproperties()
         currentProperties = allProperties[1]
 
         returnProperties = []
@@ -1088,7 +1090,7 @@ class DataFunctions:
         return returnProperties
 
     def checkShortcutLabelOverride(self, action):
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
         if tree is not None:
             elemSearch = tree.findall("availableshortcutlabel")
             for elem in elemSearch:
@@ -1103,7 +1105,7 @@ class DataFunctions:
 
     def checkIfMenusShared(self, isSubLevel=False):
         # Check if the skin required the menu not to be shared
-        tree = self._get_overrides_skin()
+        tree = self.get_overrides_skin()
         if tree is not None:
             # If this is a sublevel, and the skin has asked for sub levels to not be shared...
             if isSubLevel and tree.find("doNotShareLevels") is not None:

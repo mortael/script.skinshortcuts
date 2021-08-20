@@ -321,7 +321,7 @@ class XMLFunctions:
         hashlist.append(["::SKINDIR::", SKIN_DIR])
 
         # Clear any skin settings for backgrounds and widgets
-        self.data_func._reset_backgroundandwidgets()
+        self.data_func.reset_backgroundandwidgets()
         self.widgetCount = 1
 
         # Create a new tree and includes for the various groups
@@ -335,7 +335,7 @@ class XMLFunctions:
 
         # Get any shortcuts we're checking for
         self.checkForShortcuts = []
-        overridestree = self.data_func._get_overrides_skin()
+        overridestree = self.data_func.get_overrides_skin()
         checkForShortcutsOverrides = overridestree.getroot().findall("checkforshortcut")
         for checkForShortcutOverride in checkForShortcutsOverrides:
             if "property" in checkForShortcutOverride.attrib:
@@ -383,7 +383,7 @@ class XMLFunctions:
             self.checkForShortcuts = newCheckForShortcuts
 
             # Clear any previous labelID's
-            self.data_func._clear_labelID()
+            self.data_func.clear_labelID()
 
             # Clear any additional properties, which may be for a different profile
             self.data_func.currentProperties = None
@@ -399,7 +399,7 @@ class XMLFunctions:
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
                 hashlist.append(["::FULLMENU::", "True"])
-                for node in self.data_func._get_shortcuts("mainmenu", profileDir=profile[0]) \
+                for node in self.data_func.get_shortcuts("mainmenu", profileDir=profile[0]) \
                         .findall("shortcut"):
                     menuitems.append(node)
                     submenuItems.append(node)
@@ -459,7 +459,7 @@ class XMLFunctions:
                     submenuDefaultID = item.find("defaultID").text
 
                     # Remove any template-only properties
-                    otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
+                    otherProperties, requires, templateOnly = self.data_func.getPropertyRequires()
                     for key in otherProperties:
                         if key in list(allProps.keys()) and key in templateOnly:
                             # This key is template-only
@@ -477,7 +477,7 @@ class XMLFunctions:
 
                 else:
                     # It's an additional menu, so get its labelID
-                    submenu = self.data_func._get_labelID(item, None)
+                    submenu = self.data_func.get_labelID(item, None)
 
                     # And clear mainmenuItemA and mainmenuItemB, so we don't
                     # incorrectly add properties to an actual main menu item
@@ -522,11 +522,11 @@ class XMLFunctions:
 
                     # Get the shortcuts for the submenu
                     if count == 0:
-                        submenudata = self.data_func._get_shortcuts(submenu, submenuDefaultID,
-                                                                    profile[0])
+                        submenudata = self.data_func.get_shortcuts(submenu, submenuDefaultID,
+                                                                   profile[0])
                     else:
-                        submenudata = self.data_func._get_shortcuts(submenu, None,
-                                                                    profile[0], isSubLevel=True)
+                        submenudata = self.data_func.get_shortcuts(submenu, None,
+                                                                   profile[0], isSubLevel=True)
 
                     if isinstance(submenudata, list):
                         submenuitems = submenudata
@@ -610,7 +610,7 @@ class XMLFunctions:
 
                         # Remove any template-only properties
                         otherProperties, requires, templateOnly = \
-                            self.data_func._getPropertyRequires()
+                            self.data_func.getPropertyRequires()
                         for key in otherProperties:
                             if key in list(allProps.keys()) and key in templateOnly:
                                 # This key is template-only
@@ -678,7 +678,7 @@ class XMLFunctions:
 
             if self.hasSettings is False:
                 # Check if the overrides asks for a forced settings...
-                overridestree = self.data_func._get_overrides_skin()
+                overridestree = self.data_func.get_overrides_skin()
                 forceSettings = overridestree.getroot().find("forcesettings")
                 if forceSettings is not None:
                     # We want a settings option to be added
@@ -880,7 +880,7 @@ class XMLFunctions:
                         additionalproperty.text = prop[1]
 
         # Get fallback properties, property requirements, templateOnly value of properties
-        fallbackProperties, fallbacks = self.data_func._getCustomPropertyFallbacks(groupName)
+        fallbackProperties, fallbacks = self.data_func.getCustomPropertyFallbacks(groupName)
 
         # Add fallback properties
         for key in fallbackProperties:
@@ -906,7 +906,7 @@ class XMLFunctions:
                         break
 
         # Get property requirements
-        otherProperties, requires, templateOnly = self.data_func._getPropertyRequires()
+        otherProperties, requires, templateOnly = self.data_func.getPropertyRequires()
 
         # Remove any properties whose requirements haven't been met
         for key in otherProperties:
@@ -1074,7 +1074,7 @@ class XMLFunctions:
     def getPropertyPatterns(self, labelID, group):
         propertyPatterns = {}
         if not self.loadedPropertyPatterns:
-            overrides = self.data_func._get_overrides_skin()
+            overrides = self.data_func.get_overrides_skin()
             self.propertyPatterns = overrides.getroot().findall("propertypattern")
             self.loadedPropertyPatterns = True
 
