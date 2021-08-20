@@ -499,7 +499,7 @@ class NodeFunctions:
 
     # noinspection PyDictCreation
     @staticmethod
-    def setProperties(properties, values, labelID, group, DATA):
+    def setProperties(properties, values, labelID, group, data_func):
         # This function will take a list of properties and values and apply them to the
         # main menu item with the given labelID
         if not group:
@@ -527,8 +527,8 @@ class NodeFunctions:
             return
 
         # Load the properties
-        currentProperties, defaultProperties = DATA._get_additionalproperties(PROFILE_PATH)
-        otherProperties, requires, templateOnly = DATA._getPropertyRequires()
+        currentProperties, defaultProperties = data_func._get_additionalproperties(PROFILE_PATH)
+        otherProperties, requires, templateOnly = data_func._getPropertyRequires()
 
         # If there aren't any currentProperties, use the defaultProperties instead
         if currentProperties == [None]:
@@ -581,9 +581,9 @@ class NodeFunctions:
         # The properties will only be used if the .DATA.xml file exists in the
         # addon_data folder( otherwise the script will use the default values),
         # so we're going to open and write the 'group' that has been passed to us
-        menuitems = DATA._get_shortcuts(group, processShortcuts=False)
-        DATA.indent(menuitems.getroot())
-        path = DATA.data_xml_filename(DATA_PATH, DATA.slugify(group, True))
+        menuitems = data_func._get_shortcuts(group, processShortcuts=False)
+        data_func.indent(menuitems.getroot())
+        path = data_func.data_xml_filename(DATA_PATH, data_func.slugify(group, True))
         menuitems.write(path, encoding="UTF-8")
 
         log("Properties updated")
