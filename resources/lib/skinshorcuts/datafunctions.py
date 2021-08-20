@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-import json
 import os
 import re
 import unicodedata
@@ -21,7 +20,6 @@ import xbmc
 import xbmcvfs
 from . import nodefunctions
 from .common import log
-from .common import read_file
 from .constants import ADDON
 from .constants import ADDON_ID
 from .constants import DATA_PATH
@@ -32,6 +30,7 @@ from .constants import PROFILE_PATH
 from .constants import PROPERTIES_FILE
 from .constants import SKIN_DIR
 from .constants import SKIN_SHORTCUTS_PATH
+from .hash_utils import read_hashes
 from .property_utils import read_properties
 
 NODE = nodefunctions.NodeFunctions()
@@ -1167,15 +1166,12 @@ class DataFunctions:
         return skinFiles
 
     @staticmethod
-    def parseHashFile(file):
-        try:
-            hashes = json.loads(read_file(file))
-        except:
-            # There is no hash list, return False
-            return False, ""
-
+    def parseHashFile(hash_file):
         canImport = False
-        skinName = None
+        skinName = ""
+
+        hashes = read_hashes(hash_file)
+
         for _hash in hashes:
             if _hash[0] == "::FULLMENU::":
                 canImport = True

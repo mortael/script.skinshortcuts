@@ -34,12 +34,15 @@ def generate_file_hash(filename):
         raise
 
 
-def read_hashes():
+def read_hashes(hash_file=None):
+    if not hash_file:
+        hash_file = HASH_FILE
+
     payload = []
-    if xbmcvfs.exists(HASH_FILE):
+    if xbmcvfs.exists(hash_file):
         # The properties file exists, load from it
 
-        raw_hashes = read_file(HASH_FILE)
+        raw_hashes = read_file(hash_file)
 
         try:
             payload = json.loads(raw_hashes)
