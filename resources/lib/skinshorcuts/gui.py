@@ -526,8 +526,8 @@ class GUI(xbmcgui.WindowXMLDialog):
         intersect = set_current.intersection(set_past)
 
         #       Added                    Removed               Changed
-        return set_current - intersect, set_past - intersect, \
-               set(o for o in intersect if past_dict[o] != current_dict[o])
+        changed = set(o for o in intersect if past_dict[o] != current_dict[o])
+        return set_current - intersect, set_past - intersect, changed
 
     def _get_icon_overrides(self, listitem, setToDefault=True, labelID=None):
         # Start by getting the labelID
@@ -1966,8 +1966,10 @@ class GUI(xbmcgui.WindowXMLDialog):
                     self._add_additionalproperty(
                         listitem,
                         "backgroundName",
-                        backgroundLabel[selectedBackground]
-                            .replace("::PLAYLIST::", background[selectedBackground][1])
+                        backgroundLabel[selectedBackground].replace(
+                            "::PLAYLIST::",
+                            background[selectedBackground][1]
+                        )
                     )
                     self._add_additionalproperty(listitem, "backgroundPlaylist",
                                                  background[selectedBackground][1])

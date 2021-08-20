@@ -295,8 +295,9 @@ class DataFunctions:
                 iconNode.text = "DefaultShortcut.png"
 
             # Get a skin-overridden icon
-            overriddenIcon = self._get_icon_overrides(skinoverrides, node.find("icon").text,
-                                                      group, labelID)
+            overriddenIcon = self._get_icon_overrides(
+                skinoverrides, node.find("icon").text, group, labelID
+            )
             if overriddenIcon is not None:
                 # Add a new node with the overridden icon
                 xmltree.SubElement(node, "override-icon").text = overriddenIcon
@@ -789,8 +790,9 @@ class DataFunctions:
         self.propertyInformation["fallbackProperties"][group] = fallbackProperties
         self.propertyInformation["fallbacks"][group] = fallbacks
 
-        return self.propertyInformation["fallbackProperties"][group], \
-               self.propertyInformation["fallbacks"][group]
+        return \
+            self.propertyInformation["fallbackProperties"][group], \
+            self.propertyInformation["fallbacks"][group]
 
     def _getPropertyRequires(self):
         if self.propertyInformation["requires"] is not None:
@@ -820,8 +822,10 @@ class DataFunctions:
         self.propertyInformation["requires"] = requires
         self.propertyInformation["templateOnly"] = templateOnly
 
-        return self.propertyInformation["otherProperties"], self.propertyInformation["requires"], \
-               self.propertyInformation["templateOnly"]
+        return \
+            self.propertyInformation["otherProperties"], \
+            self.propertyInformation["requires"], \
+            self.propertyInformation["templateOnly"]
 
     def _getWidgetNameAndType(self, widgetID):
         if widgetID in self.widgetNameAndType:
