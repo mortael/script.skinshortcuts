@@ -6,6 +6,7 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
+# noinspection PyCompatibility
 import _thread as thread
 import calendar
 import random

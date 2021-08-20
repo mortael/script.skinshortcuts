@@ -10,6 +10,7 @@ import os
 import re
 import unicodedata
 import xml.etree.ElementTree as xmltree
+# noinspection PyCompatibility
 from html.entities import name2codepoint
 from traceback import print_exc
 

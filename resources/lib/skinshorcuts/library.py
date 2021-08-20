@@ -9,7 +9,9 @@
 import os
 import xml.etree.ElementTree as xmltree
 from traceback import print_exc
+# noinspection PyCompatibility
 from urllib.parse import unquote
+# noinspection PyCompatibility
 from urllib.request import url2pathname
 from xml.dom.minidom import parse
 
