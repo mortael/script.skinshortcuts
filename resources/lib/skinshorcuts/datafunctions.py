@@ -353,8 +353,8 @@ class DataFunctions:
                     for elem in override_tree.findall("override"):
                         # Pull out the current action, and any already-overridden actions
                         items_to_override = []
-                        for itemToOverride in node.findall("override-visibility"):
-                            items_to_override.append(itemToOverride)
+                        for item_to_override in node.findall("override-visibility"):
+                            items_to_override.append(item_to_override)
 
                         if len(items_to_override) == 0:
                             items_to_override = [action]
@@ -365,12 +365,12 @@ class DataFunctions:
                             check_group = elem.attrib.get("group")
 
                         # Iterate through items
-                        for itemToOverride in items_to_override:
+                        for item_to_override in items_to_override:
                             # If the action and (if provided) the group match...
                             # OR if we have a global override specified
                             newaction = None
 
-                            if (elem.attrib.get("action") == itemToOverride.text and
+                            if (elem.attrib.get("action") == item_to_override.text and
                                 (check_group is None or check_group == group)) or \
                                     (elem.attrib.get("action") == "globaloverride" and
                                      (check_group is None or check_group == group)):
@@ -380,7 +380,7 @@ class DataFunctions:
                                         continue
 
                                 has_overriden = True
-                                itemToOverride.set("overridden", "True")
+                                item_to_override.set("overridden", "True")
 
                                 # Get the visibility condition
                                 condition = elem.find("condition")
@@ -393,7 +393,7 @@ class DataFunctions:
                                     newaction = ETree.SubElement(node, "override-action")
                                     if "::ACTION::" in actions.text:
                                         newaction.text = actions.text.replace("::ACTION::",
-                                                                              itemToOverride.text)
+                                                                              item_to_override.text)
                                     else:
                                         newaction.text = actions.text
                                     if override_visibility is not None:
@@ -402,14 +402,14 @@ class DataFunctions:
                                 # Add visibility if no action specified
                                 if len(elem.findall("action")) == 0:
                                     newaction = ETree.SubElement(node, "override-action")
-                                    newaction.text = itemToOverride.text
+                                    newaction.text = item_to_override.text
                                     if override_visibility is not None:
                                         newaction.set("condition", override_visibility)
 
                                 # If there's already a condition, add it
-                                if newaction is not None and itemToOverride.get("condition"):
+                                if newaction is not None and item_to_override.get("condition"):
                                     newaction.set("condition", "[%s] + [%s]" %
-                                                  (itemToOverride.get("condition"),
+                                                  (item_to_override.get("condition"),
                                                    newaction.get("condition")))
 
             # Sort any visibility overrides
@@ -1140,11 +1140,11 @@ class DataFunctions:
         remove_files = []
         for skin_name in skin_names:
             matched = False
-            for skinFile in skin_files:
-                if skinFile.startswith("%s-" % skin_name):
+            for skin_file in skin_files:
+                if skin_file.startswith("%s-" % skin_name):
                     if matched is False:
                         matched = True
-                    remove_files.append(skinFile)
+                    remove_files.append(skin_file)
             if matched is False:
                 # This skin doesn't have a custom menu
                 remove_skins.append(skin_name)
