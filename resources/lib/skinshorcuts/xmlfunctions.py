@@ -937,7 +937,7 @@ class XMLFunctions:
         for onclick in onclicks:
             onclickelement = ETree.SubElement(newelement, "onclick")
 
-            # Updrage action if necessary
+            # Upgrade action if necessary
             onclick.text = self.data_func.upgrade_action(onclick.text)
 
             # PVR Action

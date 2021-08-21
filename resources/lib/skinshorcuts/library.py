@@ -281,7 +281,7 @@ class LibraryFunctions:
             return ["Error", []]
 
         else:
-            # Heirachical groupings
+            # Hierarchical groupings
             if group == "":
                 # We're going to get the root nodes
                 self.install_widget = False
@@ -769,7 +769,7 @@ class LibraryFunctions:
         return item
 
     # ===================================
-    # === LOAD VIDEO LIBRARY HEIRACHY ===
+    # === LOAD VIDEO LIBRARY HIERARCHY ===
     # ===================================
 
     def videolibrary(self):

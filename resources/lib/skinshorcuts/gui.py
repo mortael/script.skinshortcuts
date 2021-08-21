@@ -1387,7 +1387,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             list_control = self.getControl(211)
             listitem = list_control.getSelectedItem()
 
-            # Retreive current label and labelID
+            # Retrieve current label and labelID
             label = listitem.getLabel()
 
             # If the item is blank, set the current label to empty
