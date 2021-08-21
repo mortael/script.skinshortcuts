@@ -31,7 +31,6 @@ from .common import log
 from .common import rpc_request
 from .constants import ADDON
 from .constants import ADDON_NAME
-from .constants import ADDON_VERSION
 from .constants import CWD
 from .constants import DATA_PATH
 from .constants import HOME_WINDOW
@@ -441,22 +440,3 @@ class Main:
             xbmc.executebuiltin("Control.Move(" + menuid + "," + str(count) + " )")
 
         xbmc.executebuiltin(unquote(action))
-
-
-if __name__ == "__main__":
-    log('script version %s started' % ADDON_VERSION)
-
-    # Uncomment when profiling performance
-    # filename = os.path.join( DATA_PATH, strftime( "%Y%m%d%H%M%S",gmtime() ) + "-" +
-    # str( random.randrange(0,100000) ) + ".log" )
-    # cProfile.run( 'Main()', filename )
-
-    # stream = open( filename + ".txt", 'w')
-    # p = pstats.Stats( filename, stream = stream )
-    # p.sort_stats( "cumulative" )
-    # p.print_stats()
-
-    # Comment out the following line when profiling performance
-    Main()
-
-    log('script stopped')

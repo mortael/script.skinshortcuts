@@ -7,5 +7,9 @@
 """
 
 from skinshorcuts import skinshortcuts
+from skinshorcuts.common import log
+from skinshorcuts.constants import ADDON_VERSION
 
+log('script version %s started' % ADDON_VERSION)
 skinshortcuts.Main()
+log('script stopped')
