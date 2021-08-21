@@ -1043,20 +1043,20 @@ class XMLFunctions:
 
         # If this isn't the main menu, and we're cloning widgets or backgrounds...
         if group_name != "mainmenu":
-            if "clonewidgets" in options and len(self.main_widget) != 0:
-                for key in self.main_widget:
+            if "clonewidgets" in options and len(self.main_widget.keys()) != 0:
+                for key in list(self.main_widget.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.main_widget[key]
                     all_props[key] = additionalproperty
-            if "clonebackgrounds" in options and len(self.main_background) != 0:
-                for key in self.main_background:
+            if "clonebackgrounds" in options and len(self.main_background.keys()) != 0:
+                for key in list(self.main_background.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.main_background[key])[1]
                     all_props[key] = additionalproperty
-            if "cloneproperties" in options and len(self.main_properties) != 0:
-                for key in self.main_properties:
+            if "cloneproperties" in options and len(self.main_properties.keys()) != 0:
+                for key in list(self.main_properties.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.main_properties[key])[1]
@@ -1065,7 +1065,7 @@ class XMLFunctions:
         property_patterns = self.get_property_patterns(label_id.text, group_name)
         if len(property_patterns) > 0:
             property_replacements = self.get_property_replacements(newelement)
-            for property_name in property_patterns:
+            for property_name in list(property_patterns.keys()):
                 property_pattern = property_patterns[property_name][0]
                 for original, replacement in property_replacements:
                     regexp_pattern = re.compile(re.escape(original), re.IGNORECASE)

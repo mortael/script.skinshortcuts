@@ -297,15 +297,14 @@ class Template:
                 limited_variables[profile] = all_variables[profile][variable_name]
 
         num_profiles = len(limited_variables)
-
-        for profile in limited_variables:
+        for profile in list(limited_variables.keys()):
             while len(limited_variables[profile]) != 0:
                 # Grab the first value from the list
                 value = limited_variables[profile].pop(0)
                 profiles = [profile]
 
                 # Now check if any other profile has that value
-                for additional_profile in limited_variables:
+                for additional_profile in list(limited_variables.keys()):
                     if value in limited_variables[additional_profile]:
                         # It does - remove it and add the profile visibility
                         # to the one we already have
@@ -745,7 +744,7 @@ class Template:
     def combine_properties(self, elem, items, current_properties):
         # Combines an existing set of properties with additional properties
         new_properties = self.get_properties(elem, items)
-        for property_name in new_properties:
+        for property_name in list(new_properties.keys()):
             if property_name in list(current_properties.keys()):
                 continue
             current_properties[property_name] = new_properties[property_name]

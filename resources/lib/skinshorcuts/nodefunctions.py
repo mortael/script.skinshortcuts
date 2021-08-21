@@ -553,7 +553,7 @@ class NodeFunctions:
 
         # Build the list of all properties to save
         save_data = []
-        for save_group in all_props:
+        for save_group in list(all_props.keys()):
             for save_label_id in all_props[save_group]:
                 for save_property in all_props[save_group][save_label_id]:
                     save_data.append([save_group, save_label_id, save_property,
