@@ -71,7 +71,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         self.thumbnail_none = None
         self.background_browse = None
         self.background_browse_default = None
-        self.widgetPlaylists = False
+        self.widget_playlists = False
         self.widget_playlists_type = None
         self.widget_rename = True
 
@@ -542,7 +542,6 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Retrieve icon
         icon = listitem.getProperty("icon")
-        oldicon = None
         icon_is_var = False
 
         if listitem.getProperty("untranslatedIcon"):
@@ -563,37 +562,23 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Check for overrides
         tree = self.data_func.get_overrides_skin()
-        for elem in tree.findall("icon"):
-            if oldicon is None:
-                if ("labelID" in elem.attrib and elem.attrib.get("labelID") == label_id) or \
-                        ("image" in elem.attrib and elem.attrib.get("image") == icon):
-                    # LabelID matched
-                    if "group" in elem.attrib:
-                        if elem.attrib.get("group") == self.group:
-                            # Group also matches - change icon
-                            oldicon = icon
-                            icon = elem.text
-
-                    elif "grouping" not in elem.attrib:
-                        # No group - change icon
-                        oldicon = icon
-                        icon = elem.text
+        old_icon, _ = self.data_func.icon_override(tree, icon, self.group, label_id)
 
         # If the skin doesn't have the icon, replace it with DefaultShortcut.png
         set_default = False
         if (not xbmc.skinHasImage(icon) and set_to_default is True) and not icon_is_var:
-            if oldicon is None:
-                oldicon = icon
+            if old_icon is None:
+                old_icon = icon
             set_default = True
             icon = "DefaultShortcut.png"
 
         # If we changed the icon, update the listitem
-        if oldicon is not None:
+        if old_icon is not None:
             listitem.setArt({
                 'icon': 'icon'
             })
             listitem.setProperty("icon", icon)
-            listitem.setProperty("original-icon", oldicon)
+            listitem.setProperty("original-icon", old_icon)
 
         if set_default is True and set_to_default is True:
             # We set this to the default icon, so we need to check if /that/ icon is overridden
@@ -960,7 +945,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Should we allow the user to select a playlist as a widget...
         elem = tree.find('widgetPlaylists')
         if elem is not None and elem.text == "True":
-            self.widgetPlaylists = True
+            self.widget_playlists = True
             if "type" in elem.attrib:
                 self.widget_playlists_type = elem.attrib.get("type")
 
@@ -1662,7 +1647,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     widget_label.append(key[1])
 
             # If playlists have been enabled for widgets, add them too
-            if self.widgetPlaylists:
+            if self.widget_playlists:
                 # Ensure playlists are loaded
                 self.lib_func.load_library("playlists")
 

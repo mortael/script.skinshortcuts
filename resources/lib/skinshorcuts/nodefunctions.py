@@ -6,17 +6,16 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 import os
-import re
 import xml.etree.ElementTree as ETree
-# noinspection PyCompatibility
-from html.entities import name2codepoint
 from traceback import print_exc
 
 import xbmc
 import xbmcgui
 import xbmcvfs
 from .common import log
-from .common import rpc_request
+from .common import validate_rpc_response
+from .common_utils import ShowDialog
+from .common_utils import rpc_file_get_directory
 from .constants import ADDON
 from .constants import CWD
 from .constants import DATA_PATH
@@ -25,19 +24,6 @@ from .constants import KODI_PATH
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
 from .property_utils import write_properties
-
-# character entity reference
-CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
-
-# decimal character reference
-DECIMAL_REXP = re.compile(r'&#(\d+);')
-
-# hexadecimal character reference
-HEX_REXP = re.compile(r'&#x([\da-fA-F]+);')
-
-REPLACE1_REXP = re.compile(r'[\']+')
-REPLACE2_REXP = re.compile(r'[^-a-z0-9]+')
-REMOVE_REXP = re.compile(r'-{2,}')
 
 
 class NodeFunctions:
@@ -345,22 +331,12 @@ class NodeFunctions:
         # Work out if it's a single item, or a node
         is_node = False
         json_path = path.replace("\\", "\\\\")
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Files.GetDirectory",
-            "params": {
-                "properties": ["title", "file", "thumbnail"],
-                "directory": "%s" % json_path,
-                "media": "files"
-            }
-        }
-        json_response = rpc_request(json_payload)
-
+        json_response = rpc_file_get_directory(json_path)
+        rpc_success = validate_rpc_response(json_response)
         node_paths = []
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'files' in json_response['result'] and \
+        if rpc_success and 'files' in json_response['result'] and \
                 json_response['result']['files'] is not None:
             labels = [LANGUAGE(32058)]
             paths = ["ActivateWindow(%s,%s,return)" % (window, path)]
@@ -421,7 +397,9 @@ class NodeFunctions:
         dialog.close()
 
         # Show a select dialog so the user can pick where in the menu to add the item
-        w = ShowDialog("DialogSelect.xml", CWD, listing=all_menu_items, windowtitle=LANGUAGE(32114))
+        w = ShowDialog(
+            "DialogSelect.xml", CWD, listing=all_menu_items, window_title=LANGUAGE(32114)
+        )
         w.doModal()
         selected_menu = w.result
         del w
@@ -598,64 +576,3 @@ class NodeFunctions:
 
         # Mark that the menu needs to be rebuilt
         HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
-
-
-# ============================
-# === PRETTY SELECT DIALOG ===
-# ============================
-
-class ShowDialog(xbmcgui.WindowXMLDialog):
-    def __init__(self, *args, **kwargs):
-        xbmcgui.WindowXMLDialog.__init__(self, *args)
-        self.listing = kwargs.get("listing")
-        self.windowtitle = kwargs.get("windowtitle")
-        self.getmore = kwargs.get("getmore")
-        self.result = -1
-        self.fav_list = None
-
-    def onInit(self):
-        try:
-            self.fav_list = self.getControl(6)
-            self.getControl(3).setVisible(False)
-        except:
-            print_exc()
-            self.fav_list = self.getControl(3)
-
-        if self.getmore is True:
-            self.getControl(5).setLabel(xbmc.getLocalizedString(21452))
-        else:
-            self.getControl(5).setVisible(False)
-        self.getControl(1).setLabel(self.windowtitle)
-
-        # Set Cancel label (Kodi 17+)
-        self.getControl(7).setLabel(xbmc.getLocalizedString(222))
-
-        for item in self.listing:
-            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
-            listitem.setArt({
-                'icon': item.getProperty("icon"),
-                'thumb': item.getProperty("thumbnail")
-            })
-            listitem.setProperty("Addon.Summary", item.getLabel2())
-            self.fav_list.addItem(listitem)
-
-        self.setFocus(self.fav_list)
-
-    def onAction(self, action):
-        if action.getId() in (9, 10, 92, 216, 247, 257, 275, 61467, 61448,):
-            self.result = -1
-            self.close()
-
-    def onClick(self, control_id):
-        if control_id == 5:
-            self.result = -2
-        elif control_id == 6 or control_id == 3:
-            num = self.fav_list.getSelectedPosition()
-            self.result = num
-        else:
-            self.result = -1
-
-        self.close()
-
-    def onFocus(self, control_id):
-        pass

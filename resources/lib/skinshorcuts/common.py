@@ -39,17 +39,23 @@ def rpc_request(request):
     return response
 
 
-def validate_rpc_response(request, response):
+def validate_rpc_response(response, request=None):
     if 'result' in response:
         return True
 
     if 'error' in response:
         message = response['error']['message']
         code = response['error']['code']
-        error = 'JSONRPC: Requested |%s| received error |%s| and code: |%s|' % \
-                (request, message, code)
+        if request:
+            error = 'JSONRPC: Requested |%s| received error |%s| and code: |%s|' % \
+                    (request, message, code)
+        else:
+            error = 'JSONRPC: Received error |%s| and code: |%s|' % (message, code)
     else:
-        error = 'JSONRPC: Requested |%s| received error |%s|' % (request, str(response))
+        if request:
+            error = 'JSONRPC: Requested |%s| received error |%s|' % (request, str(response))
+        else:
+            error = 'JSONRPC: Received error |%s|' % str(response)
 
     log(error)
     return False
@@ -64,7 +70,7 @@ def toggle_debug_logging(enable=False):
     }
 
     response = rpc_request(payload)
-    if not validate_rpc_response(payload, response):
+    if not validate_rpc_response(response, payload):
         return None
 
     logging_enabled = True
@@ -86,7 +92,7 @@ def toggle_debug_logging(enable=False):
         }
 
         response = rpc_request(payload)
-        if not validate_rpc_response(payload, response):
+        if not validate_rpc_response(response, payload):
             return None
 
         logging_enabled = not logging_enabled

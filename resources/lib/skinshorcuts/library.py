@@ -24,6 +24,9 @@ from . import nodefunctions
 from .common import log
 from .common import read_file
 from .common import rpc_request
+from .common import validate_rpc_response
+from .common_utils import ShowDialog
+from .common_utils import rpc_file_get_directory
 from .constants import ADDON_ID
 from .constants import CWD
 from .constants import DATA_PATH
@@ -216,18 +219,8 @@ class LibraryFunctions:
         # Do a JSON query for upnp sources
         # (so that they'll show first time the user asks to see them)
         if self.loaded["upnp"][0] is False:
-            json_payload = {
-                "jsonrpc": "2.0",
-                "id": 0,
-                "method": "Files.GetDirectory",
-                "params": {
-                    "properties": ["title", "file", "thumbnail"],
-                    "directory": "upnp://",
-                    "media": "files"
-                }
-            }
-            _ = rpc_request(json_payload)
-            self.loaded["upnp"][0] = True
+            response = rpc_file_get_directory('upnp://')
+            self.loaded["upnp"][0] = validate_rpc_response(response)
 
     # ==============================================
     # === BUILD/DISPLAY AVAILABLE SHORTCUT NODES ===
@@ -1184,18 +1177,8 @@ class LibraryFunctions:
         # Do a JSON query for upnp sources (so that they'll show first time
         # the user asks to see them)
         if self.loaded["upnp"][0] is False:
-            json_payload = {
-                "jsonrpc": "2.0",
-                "id": 0,
-                "method": "Files.GetDirectory",
-                "params": {
-                    "properties": ["title", "file", "thumbnail"],
-                    "directory": "upnp://",
-                    "media": "files"
-                }
-            }
-            _ = rpc_request(json_payload)
-            self.loaded["upnp"][0] = True
+            response = rpc_file_get_directory('upnp://')
+            self.loaded["upnp"][0] = validate_rpc_response(response)
 
     def librarysources(self):
         # Add video sources
@@ -1754,22 +1737,15 @@ class LibraryFunctions:
         dialog.create(dialog_label, LANGUAGE(32063))
 
         # we retrieve a whole bunch of properties, needed to guess the content type properly
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Files.GetDirectory",
-            "params": {
-                "properties": ["title", "file", "thumbnail", "episode", "showtitle",
-                               "season", "album", "artist", "imdbnumber", "firstaired",
-                               "mpaa", "trailer", "studio", "art"],
-                "directory": "%s" % location,
-                "media": "files"
-            }
-        }
-        json_response = rpc_request(json_payload)
+        json_response = rpc_file_get_directory(location, ["title", "file", "thumbnail",
+                                                          "episode", "showtitle", "season",
+                                                          "album", "artist", "imdbnumber",
+                                                          "firstaired", "mpaa", "trailer",
+                                                          "studio", "art"])
+        rpc_success = validate_rpc_response(json_response)
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'files' in json_response['result'] and \
+        if rpc_success and 'files' in json_response['result'] and \
                 json_response['result']['files']:
             json_result = json_response['result']['files']
 
@@ -1881,8 +1857,9 @@ class LibraryFunctions:
 
         # Show select dialog
         get_more = self._allow_install_widget_provider(location, is_widget)
-        w = ShowDialog("DialogSelect.xml", CWD, listing=listings, windowtitle=dialog_label,
-                       getmore=get_more)
+        w = ShowDialog(
+            "DialogSelect.xml", CWD, listing=listings, window_title=dialog_label, more=get_more
+        )
         w.doModal()
         selected_item = w.result
         del w
@@ -2393,18 +2370,11 @@ class LibraryFunctions:
     def get_images_from_vfs(path):
         # this gets images from a vfs path to be used as backgrounds or icons
         images = []
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Files.GetDirectory",
-            "params": {
-                "properties": ["title", "art", "file", "fanart"],
-                "directory": "%s" % path,
-                "media": "files"
-            }
-        }
-        json_response = rpc_request(json_payload)
-        if 'result' in json_response and 'files' in json_response['result'] and \
+
+        json_response = rpc_file_get_directory(path, ["title", "art", "file", "fanart"])
+        rpc_success = validate_rpc_response(json_response)
+
+        if rpc_success and 'files' in json_response['result'] and \
                 json_response['result']['files']:
             json_result = json_response['result']['files']
             for item in json_result:
@@ -2695,64 +2665,3 @@ class LibraryFunctions:
 
         # And return it all
         return "%s%sreload=%s" % (widget_path, reload_splitter, reload_param)
-
-
-# ============================
-# === PRETTY SELECT DIALOG ===
-# ============================
-
-class ShowDialog(xbmcgui.WindowXMLDialog):
-    def __init__(self, *args, **kwargs):
-        xbmcgui.WindowXMLDialog.__init__(self, *args)
-        self.listing = kwargs.get("listing")
-        self.windowtitle = kwargs.get("windowtitle")
-        self.getmore = kwargs.get("getmore")
-        self.result = -1
-        self.fav_list = None
-
-    def onInit(self):
-        try:
-            self.fav_list = self.getControl(6)
-            self.getControl(3).setVisible(False)
-        except:
-            print_exc()
-            self.fav_list = self.getControl(3)
-
-        if self.getmore is True:
-            self.getControl(5).setLabel(xbmc.getLocalizedString(21452))
-        else:
-            self.getControl(5).setVisible(False)
-        self.getControl(1).setLabel(self.windowtitle)
-
-        # Set Cancel label (Kodi 17+)
-        self.getControl(7).setLabel(xbmc.getLocalizedString(222))
-
-        for item in self.listing:
-            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
-            listitem.setArt({
-                'icon': item.getProperty("icon"),
-                'thumb': item.getProperty("thumbnail")
-            })
-            listitem.setProperty("Addon.Summary", item.getLabel2())
-            self.fav_list.addItem(listitem)
-
-        self.setFocus(self.fav_list)
-
-    def onAction(self, action):
-        if action.getId() in (9, 10, 92, 216, 247, 257, 275, 61467, 61448,):
-            self.result = -1
-            self.close()
-
-    def onClick(self, control_id):
-        if control_id == 5:
-            self.result = -2
-        elif control_id == 6 or control_id == 3:
-            num = self.fav_list.getSelectedPosition()
-            self.result = num
-        else:
-            self.result = -1
-
-        self.close()
-
-    def onFocus(self, control_id):
-        pass

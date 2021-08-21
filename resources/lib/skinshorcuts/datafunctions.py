@@ -36,10 +36,8 @@ from .property_utils import read_properties
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
-
 # decimal character reference
 DECIMAL_REXP = re.compile(r'&#(\d+);')
-
 # hexadecimal character reference
 HEX_REXP = re.compile(r'&#x([\da-fA-F]+);')
 
@@ -483,6 +481,29 @@ class DataFunctions:
                 # management directory when using this skin
                 ETree.SubElement(required_shortcut, "lock").text = SKIN_DIR
 
+    @staticmethod
+    def icon_override(tree, icon, group, label_id):
+        old_icon = None
+        new_icon = icon
+
+        if tree is not None:
+            for elem in tree.findall("icon"):
+                if old_icon is None:
+                    if ("labelID" in elem.attrib and elem.attrib.get("labelID") == label_id) or \
+                            ("image" in elem.attrib and elem.attrib.get("image") == icon):
+                        # LabelID matched
+                        if "group" in elem.attrib:
+                            if elem.attrib.get("group") == group:
+                                # Group also matches - change icon
+                                old_icon = icon
+                                new_icon = elem.text
+
+                        elif "grouping" not in elem.attrib:
+                            # No group - change icon
+                            old_icon = icon
+                            new_icon = elem.text
+        return old_icon, new_icon
+
     def _get_icon_overrides(self, tree, icon, group, label_id, set_to_default=True):
         # This function will get any icon overrides based on label_id or group
         if icon is None:
@@ -492,31 +513,12 @@ class DataFunctions:
         if icon.startswith("$"):
             return icon
 
-        oldicon = None
-        newicon = icon
+        _, new_icon = self.icon_override(tree, icon, group, label_id)
 
-        # Check for overrides
-        if tree is not None:
-            for elem in tree.findall("icon"):
-                if oldicon is None:
-                    if ("labelID" in elem.attrib and elem.attrib.get("labelID") == label_id) or \
-                            ("image" in elem.attrib and elem.attrib.get("image") == icon):
-                        # LabelID matched
-                        if "group" in elem.attrib:
-                            if elem.attrib.get("group") == group:
-                                # Group also matches - change icon
-                                oldicon = icon
-                                newicon = elem.text
+        if not (xbmc.skinHasImage(new_icon) or xbmcvfs.exists(new_icon)) and set_to_default is True:
+            new_icon = self._get_icon_overrides(tree, "DefaultShortcut.png", group, label_id, False)
 
-                        elif "grouping" not in elem.attrib:
-                            # No group - change icon
-                            oldicon = icon
-                            newicon = elem.text
-
-        if not (xbmc.skinHasImage(newicon) or xbmcvfs.exists(newicon)) and set_to_default is True:
-            newicon = self._get_icon_overrides(tree, "DefaultShortcut.png", group, label_id, False)
-
-        return newicon
+        return new_icon
 
     def get_overrides_script(self):
         # Get overrides.xml provided by script
