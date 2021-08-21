@@ -42,7 +42,7 @@ REMOVE_REXP = re.compile(r'-{2,}')
 
 class NodeFunctions:
     def __init__(self):
-        self.indexCounter = 0
+        self.index_counter = 0
 
     ##############################################
     # Functions used by library.py to list nodes #
@@ -87,8 +87,8 @@ class NodeFunctions:
                     index += 1
                     index = str(index)
             else:
-                self.indexCounter -= 1
-                index = str(self.indexCounter)
+                self.index_counter -= 1
+                index = str(self.index_counter)
                 orig_index = "-"
 
             # Try to get media type from visibility condition
