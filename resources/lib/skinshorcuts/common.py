@@ -24,12 +24,18 @@ def log(txt):
 
 
 def read_file(filename, mode='r'):
-    with open(filename, mode) as file_handle:
+    encoding = None
+    if 'b' not in mode:
+        encoding = 'utf-8'
+    with open(filename, mode, encoding=encoding) as file_handle:
         return file_handle.read()
 
 
 def write_file(filename, contents, mode='w'):
-    with open(filename, mode) as file_handle:
+    encoding = None
+    if 'b' not in mode:
+        encoding = 'utf-8'
+    with open(filename, mode, encoding=encoding) as file_handle:
         file_handle.write(contents)
 
 
