@@ -132,7 +132,7 @@ class Main:
                                         selected_shortcut.getProperty("thumbnail") + ")")
                 if self.LIST is not None:
                     xbmc.executebuiltin("Skin.SetString(" + self.LIST + "," +
-                                        self.data_func.getListProperty(path) + ")")
+                                        self.data_func.get_list_property(path) + ")")
             elif selected_shortcut is not None and selected_shortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
                 if self.LABEL is not None:
@@ -382,7 +382,7 @@ class Main:
             should_run = dialog.yesno(LANGUAGE(32037), LANGUAGE(32038))
 
         if should_run:
-            is_shared = self.data_func.checkIfMenusShared()
+            is_shared = self.data_func.check_if_menus_shared()
             for files in xbmcvfs.listdir(DATA_PATH):
                 # Try deleting all shortcuts
                 if files:

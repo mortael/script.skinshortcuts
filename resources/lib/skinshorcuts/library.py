@@ -264,7 +264,7 @@ class LibraryFunctions:
                 if "version" in node.attrib:
                     version = node.attrib.get("version")
                     if KODI_VERSION != version and \
-                            self.data_func.checkVersionEquivalency(
+                            self.data_func.check_version_equivalency(
                                 node.attrib.get("condition"), "groupings"
                             ) is False:
                         group += 1
@@ -310,7 +310,7 @@ class LibraryFunctions:
             if "version" in subnode.attrib:
                 version = subnode.attrib.get("version")
                 if KODI_VERSION != version and \
-                        self.data_func.checkVersionEquivalency(
+                        self.data_func.check_version_equivalency(
                             subnode.attrib.get("condition"), "groupings"
                         ) is False:
                     number += 1
@@ -335,7 +335,7 @@ class LibraryFunctions:
             if "version" in node.attrib:
                 version = node.attrib.get("version")
                 if KODI_VERSION != version and \
-                        self.data_func.checkVersionEquivalency(
+                        self.data_func.check_version_equivalency(
                             node.attrib.get("condition"), "groupings"
                         ) is False:
                     continue
@@ -410,7 +410,7 @@ class LibraryFunctions:
             for listitem in items:
                 path = listitem.getProperty("path")
                 if path.lower().startswith("activatewindow"):
-                    path = self.data_func.getListProperty(path)
+                    path = self.data_func.get_list_property(path)
                     listitem.setProperty("widget", "Library")
                     if content == "video":
                         listitem.setProperty("widgetType", "video")
@@ -610,7 +610,7 @@ class LibraryFunctions:
 
         if allowOverrideLabel:
             # Check for a replaced label
-            replacementLabel = self.data_func.checkShortcutLabelOverride(item[0])
+            replacementLabel = self.data_func.check_shortcut_label_override(item[0])
             if replacementLabel is not None:
 
                 localLabel = self.data_func.local(replacementLabel[0])[0]
@@ -637,20 +637,20 @@ class LibraryFunctions:
             displayLabel2 = xbmc.getInfoLabel(displayLabel2)
 
         # If this launches our explorer, append a notation to the displayLabel
-        noNonLocalized = False
+        localized_only = False
         if item[0].startswith("||"):
             displayLabel = displayLabel + "  >"
             # We'll also mark that we don't want to use a non-localised labelID, as this
             # causes issues with some folders picking up overridden icons incorrectly
-            noNonLocalized = True
+            localized_only = True
 
         # Get the items labelID
-        self.data_func.clear_labelID()
-        labelID = self.data_func.get_labelID(
-            self.data_func.createNiceName(self.data_func.local(localLabel)[0],
-                                          noNonLocalized=noNonLocalized),
+        self.data_func.clear_label_id()
+        labelID = self.data_func.get_label_id(
+            self.data_func.create_nice_name(self.data_func.local(localLabel)[0],
+                                            localized_only=localized_only),
             item[0],
-            noNonLocalized=noNonLocalized
+            localized_only=localized_only
         )
 
         # Retrieve icon and thumbnail

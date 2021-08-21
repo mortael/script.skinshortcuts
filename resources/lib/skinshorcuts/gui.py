@@ -262,19 +262,19 @@ class GUI(xbmcgui.WindowXMLDialog):
 
     def load_shortcuts(self, includeUserShortcuts=True):
         log("Loading shortcuts")
-        self.data_func.clear_labelID()
+        self.data_func.clear_label_id()
 
-        isSubLevel = False
+        is_sub_level = False
         if "." in self.group and self.group.rsplit(".", 1)[1].isdigit() and \
                 int(self.group.rsplit(".", 1)[1]) in range(1, 6):
-            isSubLevel = True
+            is_sub_level = True
 
         if includeUserShortcuts:
-            shortcuts = self.data_func.get_shortcuts(self.group, defaultGroup=self.defaultGroup,
-                                                     isSubLevel=isSubLevel)
+            shortcuts = self.data_func.get_shortcuts(self.group, default_group=self.defaultGroup,
+                                                     is_sub_level=is_sub_level)
         else:
-            shortcuts = self.data_func.get_shortcuts(self.group, defaultGroup=self.defaultGroup,
-                                                     defaultsOnly=True)
+            shortcuts = self.data_func.get_shortcuts(self.group, default_group=self.defaultGroup,
+                                                     defaults_only=True)
 
         # listitems = []
         for shortcut in shortcuts.getroot().findall("shortcut"):
@@ -291,7 +291,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Initial properties
         count = 0
         visible = False
-        self.data_func.clear_labelID()
+        self.data_func.clear_label_id()
         listitems = []
 
         for listitem in self.allListItems:
@@ -466,7 +466,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             )
 
         # Get fallback properties
-        fallbackProperties, fallbacks = self.data_func.getCustomPropertyFallbacks(self.group)
+        fallbackProperties, fallbacks = self.data_func.get_custom_property_fallbacks(self.group)
 
         # Add fallback properties
         for key in fallbackProperties:
@@ -486,7 +486,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         break
 
         # Get property requirements
-        otherProperties, requires, templateOnly = self.data_func.getPropertyRequires()
+        otherProperties, requires, templateOnly = self.data_func.get_property_requires()
 
         # Remove any properties whose requirements haven't been met
         for key in otherProperties:
@@ -535,8 +535,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             labelID = listitem.getProperty("localizedString")
             if labelID is None or labelID == "":
                 labelID = listitem.getLabel()
-            labelID = self.data_func.get_labelID(self.data_func.local(labelID)[3],
-                                                 listitem.getProperty("path"))
+            labelID = self.data_func.get_label_id(self.data_func.local(labelID)[3],
+                                                  listitem.getProperty("path"))
 
         # Retrieve icon
         icon = listitem.getProperty("icon")
@@ -673,7 +673,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             labelIDChanges = []
             labelIDChangesDict = {}
 
-            self.data_func.clear_labelID()
+            self.data_func.clear_label_id()
 
             for listitem in self.allListItems:
 
@@ -693,8 +693,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                         localLabel = self.data_func.local(listitem.getLabel())
                     else:
                         localLabel = self.data_func.local(localizedString)
-                    newlabelID = self.data_func.get_labelID(localLabel[3],
-                                                            listitem.getProperty("path"))
+                    newlabelID = self.data_func.get_label_id(localLabel[3],
+                                                             listitem.getProperty("path"))
                     if self.group == "mainmenu":
                         labelIDChanges.append([labelID, newlabelID, defaultID])
                         labelIDChangesDict[labelID] = newlabelID
@@ -750,16 +750,16 @@ class GUI(xbmcgui.WindowXMLDialog):
                         properties.append([newlabelID, additionalProperties])
 
             # Check whether this is an additional level
-            isSubLevel = False
+            is_sub_level = False
             if "." in self.group and self.group.rsplit(".", 1)[1].isdigit() and \
                     int(self.group.rsplit(".", 1)[1]) in range(1, 6):
-                isSubLevel = True
+                is_sub_level = True
 
             # Save the shortcuts
             self.data_func.indent(root)
             path = self.data_func.data_xml_filename(DATA_PATH,
                                                     self.data_func.slugify(self.group, True,
-                                                                           isSubLevel=isSubLevel))
+                                                                           is_sub_level=is_sub_level))
 
             tree.write(path.replace(".shortcuts", ".self.data_func.xml"), encoding="UTF-8")
 
@@ -822,23 +822,23 @@ class GUI(xbmcgui.WindowXMLDialog):
                             [self.data_func.data_xml_filename(
                                 DATA_PATH,
                                 self.data_func.slugify("%s.%s" % (labelIDFrom, str(i)),
-                                                       True, isSubLevel=True)
+                                                       True, is_sub_level=True)
                             ), "Move"],
                             [self.data_func.data_xml_filename(
                                 SKIN_SHORTCUTS_PATH,
                                 self.data_func.slugify("%s.%s" % (defaultIDFrom, str(i)),
-                                                       isSubLevel=True)
+                                                       is_sub_level=True)
                             ), "Copy"],
                             [self.data_func.data_xml_filename(
                                 DEFAULT_PATH,
                                 self.data_func.slugify("%s.%s" % (defaultIDFrom, str(i)),
-                                                       isSubLevel=True)
+                                                       is_sub_level=True)
                             ), "Copy"]
                         ]
                         target = self.data_func.data_xml_filename(
                             DATA_PATH,
                             self.data_func.slugify("%s.%s" % (labelIDTo, str(i)), True,
-                                                   isSubLevel=True)
+                                                   is_sub_level=True)
                         )
 
                     for path in paths:
@@ -1496,7 +1496,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 response = 0
             else:
                 # No skin override, so let user decide to restore or reset
-                if not self.data_func.checkIfMenusShared():
+                if not self.data_func.check_if_menus_shared():
                     # Also offer to import from another skin
                     response = xbmcgui.Dialog().select(LANGUAGE(32102),
                                                        [LANGUAGE(32103),
@@ -1521,10 +1521,10 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # Get a list of all shortcuts that were originally in the menu and
                 # restore labelIDList
-                self.data_func.clear_labelID()
+                self.data_func.clear_label_id()
                 shortcuts = self.data_func.get_shortcuts(self.group,
-                                                         defaultGroup=self.defaultGroup,
-                                                         defaultsOnly=True)
+                                                         default_group=self.defaultGroup,
+                                                         defaults_only=True)
                 self.data_func.labelIDList = originalLabelIDList
 
                 for shortcut in shortcuts.getroot().findall("shortcut"):
@@ -1584,7 +1584,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             else:
                 # We're going to offer to import menus from another compatible skin
-                skinList, sharedFiles = self.data_func.getSharedSkinList()
+                skinList, sharedFiles = self.data_func.get_shared_skin_list()
 
                 if len(skinList) == 0:
                     xbmcgui.Dialog().ok(LANGUAGE(32110), LANGUAGE(32109))
@@ -1605,11 +1605,12 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 if importMenu == 0 and not len(sharedFiles) == 0:
                     # User has chosen to import the shared menu
-                    self.data_func.importSkinMenu(sharedFiles)
+                    self.data_func.import_skin_menu(sharedFiles)
                 else:
                     # User has chosen to import from a particular skin
-                    self.data_func.importSkinMenu(
-                        self.data_func.getFilesForSkin(skinList[importMenu]), skinList[importMenu]
+                    self.data_func.import_skin_menu(
+                        self.data_func.get_files_for_skin(skinList[importMenu]),
+                        skinList[importMenu]
                     )
 
                 self.getControl(211).reset()
@@ -2182,25 +2183,25 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # If the labelID property is empty, we need to generate one
             if launchGroup is None or launchGroup == "":
-                self.data_func.clear_labelID()
+                self.data_func.clear_label_id()
                 num = self.getControl(211).getSelectedPosition()
                 orderIndex = self.getControl(211).getListItem(num)
 
                 # Get the labelID's of all other menu items
                 for listitem in self.allListItems:
                     if listitem != orderIndex:
-                        self.data_func.get_labelID(listitem.getProperty("labelID"),
-                                                   listitem.getProperty("path"))
+                        self.data_func.get_label_id(listitem.getProperty("labelID"),
+                                                    listitem.getProperty("path"))
 
                 # Now generate labelID for this menu item, if it doesn't have one
                 labelID = self.getControl(211).getListItem(num).getProperty("localizedString")
                 if labelID is None or labelID == "":
-                    launchGroup = self.data_func.get_labelID(
+                    launchGroup = self.data_func.get_label_id(
                         self.getControl(211).getListItem(num).getLabel(),
                         self.getControl(211).getListItem(num).getProperty("path")
                     )
                 else:
-                    launchGroup = self.data_func.get_labelID(
+                    launchGroup = self.data_func.get_label_id(
                         labelID,
                         self.getControl(211).getListItem(num).getProperty("path")
                     )
@@ -2235,7 +2236,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # Execute the script
             self.currentWindow.setProperty("additionalDialog", "True")
             ui = GUI("script-skinshortcuts.xml", CWD, "default", group=launchGroup,
-                     defaultGroup=launchDefaultGroup, nolabels=self.nolabels, groupname=groupName)
+                     default_group=launchDefaultGroup, nolabels=self.nolabels, groupname=groupName)
             ui.doModal()
             del ui
             self.currentWindow.clearProperty("additionalDialog")
@@ -2482,7 +2483,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         else:
             listitemCopy.setProperty(
                 "defaultID",
-                self.data_func.get_labelID(
+                self.data_func.get_label_id(
                     self.data_func.local(listitem.getProperty("localizedString"))[3],
                     listitem.getProperty("path"),
                     True

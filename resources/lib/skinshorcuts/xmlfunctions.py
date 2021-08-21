@@ -383,7 +383,7 @@ class XMLFunctions:
             self.checkForShortcuts = new_check_for_shortcuts
 
             # Clear any previous labelID's
-            self.data_func.clear_labelID()
+            self.data_func.clear_label_id()
 
             # Clear any additional properties, which may be for a different profile
             self.data_func.currentProperties = None
@@ -399,7 +399,7 @@ class XMLFunctions:
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
                 hashlist.append(["::FULLMENU::", "True"])
-                for node in self.data_func.get_shortcuts("mainmenu", profileDir=profile[0]) \
+                for node in self.data_func.get_shortcuts("mainmenu", profile_dir=profile[0]) \
                         .findall("shortcut"):
                     menuitems.append(node)
                     submenu_items.append(node)
@@ -446,7 +446,7 @@ class XMLFunctions:
                         item,
                         "mainmenu",
                         None,
-                        profile[1], self.data_func.slugify(submenu, convertInteger=True),
+                        profile[1], self.data_func.slugify(submenu, convert_int=True),
                         itemid=itemidmainmenu,
                         options=options
                     )
@@ -459,7 +459,7 @@ class XMLFunctions:
                     submenu_default_id = item.find("defaultID").text
 
                     # Remove any template-only properties
-                    other_properties, requires, template_only = self.data_func.getPropertyRequires()
+                    other_properties, requires, template_only = self.data_func.get_property_requires()
                     for key in other_properties:
                         if key in list(all_props.keys()) and key in template_only:
                             # This key is template-only
@@ -477,7 +477,7 @@ class XMLFunctions:
 
                 else:
                     # It's an additional menu, so get its labelID
-                    submenu = self.data_func.get_labelID(item, None)
+                    submenu = self.data_func.get_label_id(item, None)
 
                     # And clear mainmenu_item_a and mainmenu_item_b, so we don't
                     # incorrectly add properties to an actual main menu item
@@ -508,10 +508,10 @@ class XMLFunctions:
 
                             if count != 0:
                                 group_include = self.data_func.slugify(
-                                    submenu[:-2], convertInteger=True
+                                    submenu[:-2], convert_int=True
                                 ) + "-" + submenu[-1:]
                             else:
-                                group_include = self.data_func.slugify(submenu, convertInteger=True)
+                                group_include = self.data_func.slugify(submenu, convert_int=True)
 
                             justmenu_tree_a.set("name", "skinshortcuts-group-" + group_include)
                             justmenu_tree_b.set("name", "skinshortcuts-group-alt-" + group_include)
@@ -526,7 +526,7 @@ class XMLFunctions:
                                                                    profile[0])
                     else:
                         submenudata = self.data_func.get_shortcuts(submenu, None,
-                                                                   profile[0], isSubLevel=True)
+                                                                   profile[0], is_sub_level=True)
 
                     if isinstance(submenudata, list):
                         submenuitems = submenudata
@@ -570,13 +570,13 @@ class XMLFunctions:
                                     "String.IsEqual(Window(10000)"
                                     ".Property(submenuVisibility),%s) + [%s]" %
                                     (self.data_func.slugify(submenu_visibility_name,
-                                                            convertInteger=True),
+                                                            convert_int=True),
                                      onclickelement.attrib.get("condition"))
                                 )
                                 newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
                                                   self.data_func.slugify(submenu_visibility_name,
-                                                                         convertInteger=True) + \
+                                                                         convert_int=True) + \
                                                   ",10000)"
                                 newonclick.set("condition", onclickelement.attrib.get("condition"))
                             else:
@@ -584,12 +584,12 @@ class XMLFunctions:
                                     "condition",
                                     "String.IsEqual(Window(10000).Property(submenuVisibility),%s)"
                                     % (self.data_func.slugify(submenu_visibility_name,
-                                                              convertInteger=True))
+                                                              convert_int=True))
                                 )
                                 newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
                                 newonclick.text = "SetProperty(submenuVisibility," + \
                                                   self.data_func.slugify(submenu_visibility_name,
-                                                                         convertInteger=True) + \
+                                                                         convert_int=True) + \
                                                   ",10000)"
 
                     # Build the submenu items
@@ -610,7 +610,7 @@ class XMLFunctions:
 
                         # Remove any template-only properties
                         other_properties, requires, template_only = \
-                            self.data_func.getPropertyRequires()
+                            self.data_func.get_property_requires()
                         for key in other_properties:
                             if key in list(all_props.keys()) and key in template_only:
                                 # This key is template-only
@@ -630,7 +630,7 @@ class XMLFunctions:
                                                        "String.IsEqual(Window(10000)"
                                                        ".Property(submenuVisibility),%s)" %
                                                        (self.data_func.slugify(submenu_visibility_name,
-                                                                               convertInteger=True)))
+                                                                               convert_int=True)))
                             justmenu_tree_b.append(menu_item_copy)
 
                         if build_mode == "single" and not isinstance(item, str):
@@ -639,7 +639,7 @@ class XMLFunctions:
                             submenu_visibility = ETree.SubElement(allmenu_tree_copy, "property")
                             submenu_visibility.set("name", "submenuVisibility")
                             submenu_visibility.text = self.data_func.slugify(submenu_visibility_name,
-                                                                             convertInteger=True)
+                                                                             convert_int=True)
                             allmenu_tree.append(allmenu_tree_copy)
 
                         menu_item_copy = temple_object.copy_tree(menuitem)
@@ -650,7 +650,7 @@ class XMLFunctions:
                                                    ".ListItem.Property(submenuVisibility),%s)" %
                                                    (mainmenu_id,
                                                     self.data_func.slugify(submenu_visibility_name,
-                                                                           convertInteger=True)))
+                                                                           convert_int=True)))
                         submenu_tree.append(menu_item_copy)
                     if len(submenuitems) == 0 and "noGroups" not in options:
                         # There aren't any submenu items, so add a 'description'
@@ -671,7 +671,7 @@ class XMLFunctions:
                                     ".Property(submenuVisibility),%s)" %
                                     (mainmenu_id,
                                      self.data_func.slugify(submenu_visibility_name,
-                                                            convertInteger=True)),
+                                                            convert_int=True)),
                         item, None, build_others, mainmenuitems=template_current_main_menu_item)
 
                     count += 1
@@ -880,7 +880,7 @@ class XMLFunctions:
                         additionalproperty.text = prop[1]
 
         # Get fallback properties, property requirements, template_only value of properties
-        fallback_properties, fallbacks = self.data_func.getCustomPropertyFallbacks(group_name)
+        fallback_properties, fallbacks = self.data_func.get_custom_property_fallbacks(group_name)
 
         # Add fallback properties
         for key in fallback_properties:
@@ -906,7 +906,7 @@ class XMLFunctions:
                         break
 
         # Get property requirements
-        other_properties, requires, template_only = self.data_func.getPropertyRequires()
+        other_properties, requires, template_only = self.data_func.get_property_requires()
 
         # Remove any properties whose requirements haven't been met
         for key in other_properties:
@@ -938,7 +938,7 @@ class XMLFunctions:
             onclickelement = ETree.SubElement(newelement, "onclick")
 
             # Updrage action if necessary
-            onclick.text = self.data_func.upgradeAction(onclick.text)
+            onclick.text = self.data_func.upgrade_action(onclick.text)
 
             # PVR Action
             if onclick.text.startswith("pvr-channel://"):
@@ -982,7 +982,7 @@ class XMLFunctions:
                 list_element = ETree.SubElement(newelement, "property")
                 list_element.set("name", "list")
                 list_element.text = \
-                    self.data_func.getListProperty(onclickelement.text.replace('"', ''))
+                    self.data_func.get_list_property(onclickelement.text.replace('"', ''))
                 all_props["list"] = list_element
 
             if onclick.text == "ActivateWindow(Settings)":

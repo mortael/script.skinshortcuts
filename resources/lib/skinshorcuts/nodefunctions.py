@@ -405,7 +405,7 @@ class NodeFunctions:
 
         # Get main menu items
         menuitems = data_func.get_shortcuts("mainmenu", processShortcuts=False)
-        data_func.clear_labelID()
+        data_func.clear_label_id()
         for menuitem in menuitems.findall("shortcut"):
             # Get existing items labelID's
             listitem = xbmcgui.ListItem(label=data_func.local(menuitem.find("label").text)[2])
@@ -413,7 +413,7 @@ class NodeFunctions:
                 'icon': menuitem.find("icon").text
             })
             all_menu_items.append(listitem)
-            all_label_ids.append(data_func.get_labelID(
+            all_label_ids.append(data_func.get_label_id(
                 data_func.local(menuitem.find("label").text)[3], menuitem.find("action").text)
             )
 
@@ -448,10 +448,10 @@ class NodeFunctions:
         # Add the shortcut to the menu the user has selected
         # Load existing main menu items
         menuitems = data_func.get_shortcuts(all_label_ids[selected_menu], processShortcuts=False)
-        data_func.clear_labelID()
+        data_func.clear_label_id()
 
         # Generate a new labelID
-        new_label_id = data_func.get_labelID(label, action)
+        new_label_id = data_func.get_label_id(label, action)
 
         # Write the updated mainmenu.DATA.xml
         newelement = ETree.SubElement(menuitems.getroot(), "shortcut")
@@ -536,7 +536,7 @@ class NodeFunctions:
 
         # Load the properties
         current_properties, default_properties = data_func.get_additionalproperties()
-        other_properties, requires, _ = data_func.getPropertyRequires()
+        other_properties, requires, _ = data_func.get_property_requires()
 
         # If there aren't any current_properties, use the default_properties instead
         if current_properties == [None]:
