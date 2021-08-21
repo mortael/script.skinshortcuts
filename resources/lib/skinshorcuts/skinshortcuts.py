@@ -248,8 +248,9 @@ class Main:
             if not xbmc.getCondVisibility("Skin.HasSetting(SkinShortcuts-FullMenu)"):
                 xbmcgui.Dialog().ok(ADDON_NAME, ADDON.getLocalizedString(32116))
             else:
-                self.node_func.add_to_menu(self.CONTEXTFILENAME, self.CONTEXTLABEL, self.CONTEXTICON,
-                                           self.CONTEXTCONTENT, self.CONTEXTWINDOW, self.data_func)
+                self.node_func.add_to_menu(self.CONTEXTFILENAME, self.CONTEXTLABEL,
+                                           self.CONTEXTICON, self.CONTEXTCONTENT,
+                                           self.CONTEXTWINDOW, self.data_func)
 
         if self.TYPE == "setProperty":
             # External request to set properties of a menu item

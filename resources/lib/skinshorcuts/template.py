@@ -72,8 +72,9 @@ class Template:
         self.hashable = set()
         self.hashable.add(self.templatepath)
 
-    def parse_items(self, menu_type, level, items, profile, profile_visibility, visibility_condition,
-                    menu_name, mainmenu_id=None, build_others=False, mainmenuitems=None):
+    def parse_items(self, menu_type, level, items, profile, profile_visibility,
+                    visibility_condition, menu_name,
+                    mainmenu_id=None, build_others=False, mainmenuitems=None):
         # This will build an item in our includes for a menu
         if self.includes is None or self.tree is None:
             return
@@ -102,7 +103,8 @@ class Template:
                 include_name += "-%s" % (template.attrib.get("include"))
 
             _ = self.get_include(self.includes, include_name, profile_visibility, profile)
-            include_tree = self.get_include(self.includes, include_name + "-%s" % profile, None, None)
+            include_tree = self.get_include(self.includes, include_name + "-%s" % profile,
+                                            None, None)
 
             # If we've been passed any mainmenu items, retrieve their properties
             properties = {}
@@ -110,8 +112,9 @@ class Template:
                 properties = self.get_properties(template, mainmenuitems)
 
             # Now replace all <skinshortcuts> elements with correct data
-            self.replace_elements(template.find("controls"), visibility_condition, profile_visibility,
-                                  items, properties, customitems=template.findall("items"))
+            self.replace_elements(template.find("controls"), visibility_condition,
+                                  profile_visibility, items, properties,
+                                  customitems=template.findall("items"))
 
             # Add the template to the includes
             for child in template.find("controls"):
@@ -159,7 +162,8 @@ class Template:
 
                 # Handle auto visibility condition if the labelID is a number that translates to
                 # a localised string
-                if visibility_name.isdigit() and xbmc.getLocalizedString(int(visibility_name)) != "":
+                if visibility_name.isdigit() and \
+                        xbmc.getLocalizedString(int(visibility_name)) != "":
                     visibility_name = "$LOCALIZE[%s]" % visibility_name
 
                 final_visibility = "[%s + String.IsEqual(Container(::SUBMENUCONTAINER::)" \
@@ -168,8 +172,9 @@ class Template:
 
             # Now find a matching template - if one matches, it will be saved to be processed
             # at the end (when we have all visibility conditions)
-            num_templates += self.find_other(item, profile, profile_visibility, visibility_condition,
-                                             final_visibility, menu_type, root_id)
+            num_templates += self.find_other(item, profile, profile_visibility,
+                                             visibility_condition, final_visibility,
+                                             menu_type, root_id)
             if menu_type == "mainmenu":
                 self.progress.update(
                     int(self.current + ((float(self.percent) / float(len(items))) * progress_count))
@@ -219,7 +224,8 @@ class Template:
 
                 # Create a copy of the node with any changes within (this time it'll be visibility)
                 final = self.copy_tree(template)
-                self.replace_elements(final, visibility_condition, profile.attrib.get("visible"), [])
+                self.replace_elements(final, visibility_condition,
+                                      profile.attrib.get("visible"), [])
 
                 # Add the template to the includes
                 controls = final.find("controls")
@@ -824,7 +830,8 @@ class Template:
                     string_end = string_start[1].split("]", 1)
 
                     if string_end[0] in properties:
-                        elem.set(attrib, string_start[0] + properties[string_end[0]] + string_end[1])
+                        elem.set(attrib,
+                                 string_start[0] + properties[string_end[0]] + string_end[1])
                     else:
                         elem.set(attrib, string_start[0] + string_end[1])
 

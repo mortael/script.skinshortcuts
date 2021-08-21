@@ -2013,7 +2013,8 @@ class LibraryFunctions:
                 return self.explorer(history, history[len(history) - 1], label, thumbnail,
                                      item_type, is_widget=is_widget)
 
-            elif selected_action.startswith("ActivateWindow(") or selected_action.startswith("$INFO"):
+            elif selected_action.startswith("ActivateWindow(") or \
+                    selected_action.startswith("$INFO"):
                 # The user wants to create a shortcut to a specific shortcut listed
                 listitem = listings[selected_item]
 
@@ -2461,7 +2462,8 @@ class LibraryFunctions:
 
         # Show select dialog
         _ = self._allow_install_widget_provider(None, is_widget, self.allow_widget_install)
-        w = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts, windowtitle=window_title)
+        w = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts,
+                       windowtitle=window_title)
         w.doModal()
         number = w.result
         del w

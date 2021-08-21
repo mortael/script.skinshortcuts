@@ -380,7 +380,9 @@ class XMLFunctions:
             # Reset any checkForShortcuts to say we haven't found them
             new_check_for_shortcuts = []
             for check_for_shortcut in self.check_for_shortcuts:
-                new_check_for_shortcuts.append((check_for_shortcut[0], check_for_shortcut[1], "False"))
+                new_check_for_shortcuts.append(
+                    (check_for_shortcut[0], check_for_shortcut[1], "False")
+                )
             self.check_for_shortcuts = new_check_for_shortcuts
 
             # Clear any previous labelID's
@@ -460,7 +462,8 @@ class XMLFunctions:
                     submenu_default_id = item.find("defaultID").text
 
                     # Remove any template-only properties
-                    other_properties, requires, template_only = self.data_func.get_property_requires()
+                    other_properties, requires, template_only = \
+                        self.data_func.get_property_requires()
                     for key in other_properties:
                         if key in list(all_props.keys()) and key in template_only:
                             # This key is template-only
@@ -626,12 +629,14 @@ class XMLFunctions:
                             justmenu_tree_a.append(menuitem)
 
                             visibility_element = menu_item_copy.find("visible")
-                            visibility_element.text = "[%s] + %s" % \
-                                                      (visibility_element.text,
-                                                       "String.IsEqual(Window(10000)"
-                                                       ".Property(submenuVisibility),%s)" %
-                                                       (self.data_func.slugify(submenu_visibility_name,
-                                                                               convert_int=True)))
+                            visibility_element.text = \
+                                "[%s] + %s" % (
+                                    visibility_element.text,
+                                    "String.IsEqual(Window(10000).Property(submenuVisibility),%s)" %
+                                    (self.data_func.slugify(submenu_visibility_name,
+                                                            convert_int=True))
+                                )
+
                             justmenu_tree_b.append(menu_item_copy)
 
                         if build_mode == "single" and not isinstance(item, str):
@@ -639,19 +644,21 @@ class XMLFunctions:
                             allmenu_tree_copy = temple_object.copy_tree(menu_item_copy)
                             submenu_visibility = ETree.SubElement(allmenu_tree_copy, "property")
                             submenu_visibility.set("name", "submenuVisibility")
-                            submenu_visibility.text = self.data_func.slugify(submenu_visibility_name,
-                                                                             convert_int=True)
+                            submenu_visibility.text = \
+                                self.data_func.slugify(submenu_visibility_name, convert_int=True)
                             allmenu_tree.append(allmenu_tree_copy)
 
                         menu_item_copy = temple_object.copy_tree(menuitem)
                         visibility_element = menu_item_copy.find("visible")
-                        visibility_element.text = "[%s] + %s" % \
-                                                  (visibility_element.text,
-                                                   "String.IsEqual(Container(%s)"
-                                                   ".ListItem.Property(submenuVisibility),%s)" %
-                                                   (mainmenu_id,
-                                                    self.data_func.slugify(submenu_visibility_name,
-                                                                           convert_int=True)))
+                        visibility_element.text = \
+                            "[%s] + %s" % (
+                                visibility_element.text,
+                                "String.IsEqual(Container(%s)"
+                                ".ListItem.Property(submenuVisibility),%s)" %
+                                (mainmenu_id,
+                                 self.data_func.slugify(submenu_visibility_name,
+                                                        convert_int=True))
+                            )
                         submenu_tree.append(menu_item_copy)
                     if len(submenuitems) == 0 and "noGroups" not in options:
                         # There aren't any submenu items, so add a 'description'
@@ -968,7 +975,8 @@ class XMLFunctions:
                 onclickelement.text = onclick.text
 
             # Also add it as a path property
-            if not self.property_exists("path", newelement) and "path" not in list(all_props.keys()):
+            if not self.property_exists("path", newelement) and "path" \
+                    not in list(all_props.keys()):
                 # we only add the path property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 pathelement = ETree.SubElement(newelement, "property")
@@ -977,7 +985,8 @@ class XMLFunctions:
                 all_props["path"] = pathelement
 
             # Get 'list' property (the action property of an ActivateWindow shortcut)
-            if not self.property_exists("list", newelement) and "list" not in list(all_props.keys()):
+            if not self.property_exists("list", newelement) and "list" \
+                    not in list(all_props.keys()):
                 # we only add the list property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 list_element = ETree.SubElement(newelement, "property")

@@ -157,11 +157,13 @@ class DataFunctions:
             profile_dir = PROFILE_PATH
 
         user_shortcuts = self.data_xml_filename(os.path.join(profile_dir, "addon_data", ADDON_ID),
-                                                self.slugify(group, True, is_sub_level=is_sub_level))
+                                                self.slugify(group, True,
+                                                             is_sub_level=is_sub_level))
         skin_shortcuts = self.data_xml_filename(SKIN_SHORTCUTS_PATH, self.slugify(group))
         default_shortcuts = self.data_xml_filename(DEFAULT_PATH, self.slugify(group))
         if default_group is not None:
-            skin_shortcuts = self.data_xml_filename(SKIN_SHORTCUTS_PATH, self.slugify(default_group))
+            skin_shortcuts = self.data_xml_filename(SKIN_SHORTCUTS_PATH,
+                                                    self.slugify(default_group))
             default_shortcuts = self.data_xml_filename(DEFAULT_PATH, self.slugify(default_group))
 
         if defaults_only:
@@ -667,18 +669,23 @@ class DataFunctions:
                             # Set all widget properties from the default
                             if elem.text:
                                 self.default_properties.append(["mainmenu", label_id, "widget",
-                                                                elem.attrib.get("label"), default_id])
+                                                                elem.attrib.get("label"),
+                                                                default_id])
                             if "label" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id, "widgetName",
-                                                                elem.attrib.get("label"), default_id])
+                                                                elem.attrib.get("label"),
+                                                                default_id])
                             if "type" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id, "widgetType",
-                                                                elem.attrib.get("type"), default_id])
+                                                                elem.attrib.get("type"),
+                                                                default_id])
                             if "path" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id, "widgetPath",
-                                                                elem.attrib.get("path"), default_id])
+                                                                elem.attrib.get("path"),
+                                                                default_id])
                             if "target" in elem.attrib:
-                                self.default_properties.append(["mainmenu", label_id, "widgetTarget",
+                                self.default_properties.append(["mainmenu", label_id,
+                                                                "widgetTarget",
                                                                 elem.attrib.get("target"),
                                                                 default_id])
                     else:
@@ -698,8 +705,10 @@ class DataFunctions:
                             # Get and set widget type and name
                             widget_details = self._get_widget_name_and_type(elem.text)
                             if widget_details is not None:
-                                self.default_properties.append([elem.attrib.get("group"), label_id,
-                                                                "widgetName", widget_details["name"],
+                                self.default_properties.append([elem.attrib.get("group"),
+                                                                label_id,
+                                                                "widgetName",
+                                                                widget_details["name"],
                                                                 default_id])
                                 if "type" in widget_details:
                                     self.default_properties.append([elem.attrib.get("group"),
@@ -722,15 +731,18 @@ class DataFunctions:
                             if "label" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetName",
-                                                                elem.attrib.get("label"), default_id])
+                                                                elem.attrib.get("label"),
+                                                                default_id])
                             if "type" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetType",
-                                                                elem.attrib.get("type"), default_id])
+                                                                elem.attrib.get("type"),
+                                                                default_id])
                             if "path" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetPath",
-                                                                elem.attrib.get("path"), default_id])
+                                                                elem.attrib.get("path"),
+                                                                default_id])
                             if "target" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetTarget",
@@ -747,7 +759,8 @@ class DataFunctions:
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()
                 action = node.find("action.text")
                 label_id = self.get_label_id(label, action, get_default_id=True)
-                self.default_properties.append(["mainmenu", label_id, "icon", node.find("icon").text])
+                self.default_properties.append(["mainmenu", label_id, "icon",
+                                                node.find("icon").text])
 
         return_val = [self.current_properties, self.default_properties]
         return return_val
