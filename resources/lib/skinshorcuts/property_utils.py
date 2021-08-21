@@ -11,6 +11,7 @@ import json
 import traceback
 
 import xbmcvfs
+
 from .common import log
 from .common import read_file
 from .common import write_file

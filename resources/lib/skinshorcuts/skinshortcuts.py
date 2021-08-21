@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-# noinspection PyCompatibility
 import _thread as thread
 import calendar
 import os
@@ -14,15 +13,14 @@ import sys
 from time import gmtime
 from time import strftime
 from traceback import print_exc
-# noinspection PyCompatibility
 from urllib.parse import parse_qsl
-# noinspection PyCompatibility
 from urllib.parse import unquote
 
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
+
 from . import datafunctions
 from . import library
 from . import nodefunctions

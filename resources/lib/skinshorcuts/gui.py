@@ -6,7 +6,6 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-# noinspection PyCompatibility
 import _thread as thread
 import ast
 import calendar
@@ -18,6 +17,7 @@ from traceback import print_exc
 import xbmc
 import xbmcgui
 import xbmcvfs
+
 from . import datafunctions
 from . import library
 from .common import log

@@ -10,15 +10,14 @@ import ast
 import os
 import xml.etree.ElementTree as ETree
 from traceback import print_exc
-# noinspection PyCompatibility
 from urllib.parse import unquote
-# noinspection PyCompatibility
 from urllib.request import url2pathname
 from xml.dom.minidom import parse
 
 import xbmc
 import xbmcgui
 import xbmcvfs
+
 from . import datafunctions
 from . import nodefunctions
 from .common import log

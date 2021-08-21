@@ -10,15 +10,13 @@ import os
 import re
 import unicodedata
 import xml.etree.ElementTree as ETree
-# noinspection PyCompatibility
 from html.entities import name2codepoint
 from traceback import print_exc
 
-# noinspection PyPackageRequirements
-from unidecode import unidecode
-
 import xbmc
 import xbmcvfs
+from unidecode import unidecode
+
 from . import nodefunctions
 from .common import log
 from .constants import ADDON

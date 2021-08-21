@@ -11,13 +11,11 @@ import operator
 import os
 import xml.etree.ElementTree as ETree
 
-# noinspection PyPackageRequirements
-from simpleeval import SimpleEval
-# noinspection PyPackageRequirements
-from simpleeval import simple_eval
-
 import xbmc
 import xbmcvfs
+from simpleeval import SimpleEval
+from simpleeval import simple_eval
+
 from .common import log
 from .constants import SKIN_SHORTCUTS_PATH
 

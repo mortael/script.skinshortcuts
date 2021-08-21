@@ -12,6 +12,7 @@ from traceback import print_exc
 import xbmc
 import xbmcgui
 import xbmcvfs
+
 from .common import log
 from .common import validate_rpc_response
 from .common_utils import ShowDialog

@@ -9,6 +9,7 @@
 import json
 
 import xbmc
+
 from .constants import ADDON
 from .constants import ADDON_ID
 

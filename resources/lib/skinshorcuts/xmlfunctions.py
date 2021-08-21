@@ -15,6 +15,7 @@ from traceback import print_exc
 import xbmc
 import xbmcgui
 import xbmcvfs
+
 from . import datafunctions
 from . import template
 from .common import log

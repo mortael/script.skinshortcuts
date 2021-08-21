@@ -10,6 +10,7 @@ from traceback import print_exc
 
 import xbmc
 import xbmcgui
+
 from .common import log
 from .common import rpc_request
 
