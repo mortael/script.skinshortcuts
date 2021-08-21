@@ -58,7 +58,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         self.group = kwargs["group"]
         try:
-            self.default_group = kwargs["defaultGroup"]
+            self.default_group = kwargs["default_group"]
             if self.default_group == "":
                 self.default_group = None
         except:
