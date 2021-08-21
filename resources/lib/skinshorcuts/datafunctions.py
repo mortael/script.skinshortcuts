@@ -54,17 +54,17 @@ class DataFunctions:
 
         self.overrides = {}
 
-        self.widgetNameAndType = {}
-        self.backgroundName = {}
-        self.fallbackProperties = {}
-        self.fallbackRequires = {}
-        self.propertyRequires = None
-        self.templateOnlyProperties = None
+        self.widget_name_and_type = {}
+        self.background_name = {}
+        self.fallback_properties = {}
+        self.fallback_requires = {}
+        self.property_requires = None
+        self.template_only_properties = None
 
-        self.currentProperties = None
-        self.defaultProperties = None
+        self.current_properties = None
+        self.default_properties = None
 
-        self.propertyInformation = {
+        self.property_information = {
             "fallbackProperties": {},
             "fallbacks": {},
             "otherProperties": [],
@@ -72,7 +72,7 @@ class DataFunctions:
             "templateOnly": None
         }
 
-        self.labelIDList = []
+        self.label_id_list = []
 
         self.default_overrides_file = os.path.join(DEFAULT_PATH, "overrides.xml")
         self.skin_overrides_file = os.path.join(SKIN_SHORTCUTS_PATH, "overrides.xml")
@@ -100,18 +100,18 @@ class DataFunctions:
             return label_id
 
         # Check if the label_id exists in the list
-        if label_id in self.labelIDList:
+        if label_id in self.label_id_list:
             # We're going to add an --[int] to the end of this
             count = 0
-            while label_id + "--" + str(count) in self.labelIDList:
+            while label_id + "--" + str(count) in self.label_id_list:
                 count += 1
 
             # We can now use this one
-            self.labelIDList.append(label_id + "--" + str(count))
+            self.label_id_list.append(label_id + "--" + str(count))
             return label_id + "--" + str(count)
         else:
             # We can use this one
-            self.labelIDList.append(label_id)
+            self.label_id_list.append(label_id)
             return label_id
 
     @staticmethod
@@ -142,10 +142,10 @@ class DataFunctions:
 
     def clear_label_id(self):
         # This clears our stored list of label_id's
-        self.labelIDList = []
+        self.label_id_list = []
 
     def _pop_label_id(self):
-        self.labelIDList.pop()
+        self.label_id_list.pop()
 
     def get_shortcuts(self, group, default_group=None, profile_dir=None,
                       defaults_only=False, process_shortcuts=True, is_sub_level=False):
@@ -572,11 +572,11 @@ class DataFunctions:
     def get_additionalproperties(self):
         # Load all saved properties (widgets, backgrounds, custom properties)
 
-        if self.currentProperties is not None:
-            return [self.currentProperties, self.defaultProperties]
+        if self.current_properties is not None:
+            return [self.current_properties, self.default_properties]
 
-        self.currentProperties = []
-        self.defaultProperties = []
+        self.current_properties = []
+        self.default_properties = []
 
         if xbmcvfs.exists(PROPERTIES_FILE):
             # The properties file exists, load from it
@@ -594,14 +594,14 @@ class DataFunctions:
                     # unnecessary localisation
                     if list_property[3].startswith("$SKIN["):
                         list_property[3] = self.local(list_property[3])[3]
-                    self.currentProperties.append([list_property[0], list_property[1],
-                                                   list_property[2], list_property[3]])
+                    self.current_properties.append([list_property[0], list_property[1],
+                                                    list_property[2], list_property[3]])
             except:
                 log("Failed to load current properties")
                 print_exc()
-                self.currentProperties = [None]
+                self.current_properties = [None]
         else:
-            self.currentProperties = [None]
+            self.current_properties = [None]
 
         # Load skin defaults (in case we need them...)
         tree = self.get_overrides_skin()
@@ -619,123 +619,123 @@ class DataFunctions:
                 if elem_search[0] == "custom":
                     # Custom property
                     if "group" not in elem.attrib:
-                        self.defaultProperties.append(["mainmenu", label_id,
-                                                       elem.attrib.get('property'),
-                                                       elem.text, default_id])
+                        self.default_properties.append(["mainmenu", label_id,
+                                                        elem.attrib.get('property'),
+                                                        elem.text, default_id])
                     else:
-                        self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                       elem.attrib.get('property'),
-                                                       elem.text, default_id])
+                        self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                        elem.attrib.get('property'),
+                                                        elem.text, default_id])
                 else:
                     # Widget or background
                     if "group" not in elem.attrib:
-                        self.defaultProperties.append(["mainmenu", label_id,
-                                                       elem_search[0].split(":")[0],
-                                                       elem.text, default_id])
+                        self.default_properties.append(["mainmenu", label_id,
+                                                        elem_search[0].split(":")[0],
+                                                        elem.text, default_id])
 
                         if elem_search[0] == "background":
                             # Get and set the background name
                             background_name = self._get_background_name(elem.text)
                             if background_name is not None:
-                                self.defaultProperties.append(["mainmenu", label_id,
-                                                               "backgroundName", background_name,
-                                                               default_id])
+                                self.default_properties.append(["mainmenu", label_id,
+                                                                "backgroundName", background_name,
+                                                                default_id])
 
                         if elem_search[0] == "widget":
                             # Get and set widget type and name
                             widget_details = self._get_widget_name_and_type(elem.text)
                             if widget_details is not None:
-                                self.defaultProperties.append(["mainmenu", label_id, "widgetName",
-                                                               widget_details["name"], default_id])
+                                self.default_properties.append(["mainmenu", label_id, "widgetName",
+                                                                widget_details["name"], default_id])
                                 if "type" in widget_details:
-                                    self.defaultProperties.append(["mainmenu", label_id,
-                                                                   "widgetType",
-                                                                   widget_details["type"],
-                                                                   default_id])
+                                    self.default_properties.append(["mainmenu", label_id,
+                                                                    "widgetType",
+                                                                    widget_details["type"],
+                                                                    default_id])
                                 if "path" in widget_details:
-                                    self.defaultProperties.append(["mainmenu", label_id,
-                                                                   "widgetPath",
-                                                                   widget_details["path"],
-                                                                   default_id])
+                                    self.default_properties.append(["mainmenu", label_id,
+                                                                    "widgetPath",
+                                                                    widget_details["path"],
+                                                                    default_id])
                                 if "target" in widget_details:
-                                    self.defaultProperties.append(["mainmenu", label_id,
-                                                                   "widgetTarget",
-                                                                   widget_details["target"],
-                                                                   default_id])
+                                    self.default_properties.append(["mainmenu", label_id,
+                                                                    "widgetTarget",
+                                                                    widget_details["target"],
+                                                                    default_id])
 
                         if elem_search[0] == "widget:node":
                             # Set all widget properties from the default
                             if elem.text:
-                                self.defaultProperties.append(["mainmenu", label_id, "widget",
-                                                               elem.attrib.get("label"), default_id])
+                                self.default_properties.append(["mainmenu", label_id, "widget",
+                                                                elem.attrib.get("label"), default_id])
                             if "label" in elem.attrib:
-                                self.defaultProperties.append(["mainmenu", label_id, "widgetName",
-                                                               elem.attrib.get("label"), default_id])
+                                self.default_properties.append(["mainmenu", label_id, "widgetName",
+                                                                elem.attrib.get("label"), default_id])
                             if "type" in elem.attrib:
-                                self.defaultProperties.append(["mainmenu", label_id, "widgetType",
-                                                               elem.attrib.get("type"), default_id])
+                                self.default_properties.append(["mainmenu", label_id, "widgetType",
+                                                                elem.attrib.get("type"), default_id])
                             if "path" in elem.attrib:
-                                self.defaultProperties.append(["mainmenu", label_id, "widgetPath",
-                                                               elem.attrib.get("path"), default_id])
+                                self.default_properties.append(["mainmenu", label_id, "widgetPath",
+                                                                elem.attrib.get("path"), default_id])
                             if "target" in elem.attrib:
-                                self.defaultProperties.append(["mainmenu", label_id, "widgetTarget",
-                                                               elem.attrib.get("target"),
-                                                               default_id])
+                                self.default_properties.append(["mainmenu", label_id, "widgetTarget",
+                                                                elem.attrib.get("target"),
+                                                                default_id])
                     else:
-                        self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                       elem_search[0].split(":")[0], elem.text,
-                                                       default_id])
+                        self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                        elem_search[0].split(":")[0], elem.text,
+                                                        default_id])
 
                         if elem_search[0] == "background":
                             # Get and set the background name
                             background_name = self._get_background_name(elem.text)
                             if background_name is not None:
-                                self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                               "backgroundName", background_name,
-                                                               default_id])
+                                self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                                "backgroundName", background_name,
+                                                                default_id])
 
                         if elem_search[0] == "widget":
                             # Get and set widget type and name
                             widget_details = self._get_widget_name_and_type(elem.text)
                             if widget_details is not None:
-                                self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                               "widgetName", widget_details["name"],
-                                                               default_id])
+                                self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                                "widgetName", widget_details["name"],
+                                                                default_id])
                                 if "type" in widget_details:
-                                    self.defaultProperties.append([elem.attrib.get("group"),
-                                                                   label_id, "widgetType",
-                                                                   widget_details["type"],
-                                                                   default_id])
+                                    self.default_properties.append([elem.attrib.get("group"),
+                                                                    label_id, "widgetType",
+                                                                    widget_details["type"],
+                                                                    default_id])
                                 if "path" in widget_details:
-                                    self.defaultProperties.append([elem.attrib.get("group"),
-                                                                   label_id, "widgetPath",
-                                                                   widget_details["path"],
-                                                                   default_id])
+                                    self.default_properties.append([elem.attrib.get("group"),
+                                                                    label_id, "widgetPath",
+                                                                    widget_details["path"],
+                                                                    default_id])
                                 if "target" in widget_details:
-                                    self.defaultProperties.append([elem.attrib.get("group"),
-                                                                   label_id, "widgetTarget",
-                                                                   widget_details["target"],
-                                                                   default_id])
+                                    self.default_properties.append([elem.attrib.get("group"),
+                                                                    label_id, "widgetTarget",
+                                                                    widget_details["target"],
+                                                                    default_id])
 
                         if elem_search[0] == "widget:node":
                             # Set all widget properties from the default
                             if "label" in elem.attrib:
-                                self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                               "widgetName",
-                                                               elem.attrib.get("label"), default_id])
+                                self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                                "widgetName",
+                                                                elem.attrib.get("label"), default_id])
                             if "type" in elem.attrib:
-                                self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                               "widgetType",
-                                                               elem.attrib.get("type"), default_id])
+                                self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                                "widgetType",
+                                                                elem.attrib.get("type"), default_id])
                             if "path" in elem.attrib:
-                                self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                               "widgetPath",
-                                                               elem.attrib.get("path"), default_id])
+                                self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                                "widgetPath",
+                                                                elem.attrib.get("path"), default_id])
                             if "target" in elem.attrib:
-                                self.defaultProperties.append([elem.attrib.get("group"), label_id,
-                                                               "widgetTarget",
-                                                               elem.attrib.get("target"),
-                                                               default_id])
+                                self.default_properties.append([elem.attrib.get("group"), label_id,
+                                                                "widgetTarget",
+                                                                elem.attrib.get("target"),
+                                                                default_id])
 
         # Load icons out of mainmenu.DATA.xml
         path = self.data_xml_filename(SKIN_SHORTCUTS_PATH, "mainmenu")
@@ -747,16 +747,16 @@ class DataFunctions:
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()
                 action = node.find("action.text")
                 label_id = self.get_label_id(label, action, get_default_id=True)
-                self.defaultProperties.append(["mainmenu", label_id, "icon", node.find("icon").text])
+                self.default_properties.append(["mainmenu", label_id, "icon", node.find("icon").text])
 
-        return_val = [self.currentProperties, self.defaultProperties]
+        return_val = [self.current_properties, self.default_properties]
         return return_val
 
     def get_custom_property_fallbacks(self, group):
-        if group in self.propertyInformation["fallbacks"]:
+        if group in self.property_information["fallbacks"]:
             # We've already loaded everything, return it all
-            return self.propertyInformation["fallbackProperties"][group], \
-                   self.propertyInformation["fallbacks"][group]
+            return self.property_information["fallbackProperties"][group], \
+                   self.property_information["fallbacks"][group]
 
         # Get skin overrides
         tree = self.get_overrides_skin()
@@ -789,18 +789,18 @@ class DataFunctions:
                 # Save details
                 fallbacks[property_name].append((value, attrib_name, attrib_value))
         # Save all the results for this group
-        self.propertyInformation["fallbackProperties"][group] = fallback_properties
-        self.propertyInformation["fallbacks"][group] = fallbacks
+        self.property_information["fallbackProperties"][group] = fallback_properties
+        self.property_information["fallbacks"][group] = fallbacks
 
         return \
-            self.propertyInformation["fallbackProperties"][group], \
-            self.propertyInformation["fallbacks"][group]
+            self.property_information["fallbackProperties"][group], \
+            self.property_information["fallbacks"][group]
 
     def get_property_requires(self):
-        if self.propertyInformation["requires"] is not None:
+        if self.property_information["requires"] is not None:
             # We've already loaded requires and templateOnly properties, return eveything
-            return self.propertyInformation["otherProperties"], \
-                   self.propertyInformation["requires"], self.propertyInformation["templateOnly"]
+            return self.property_information["otherProperties"], \
+                   self.property_information["requires"], self.property_information["templateOnly"]
 
         # Get skin overrides
         tree = self.get_overrides_skin()
@@ -810,9 +810,9 @@ class DataFunctions:
         template_only = []
         for elem in tree.findall("propertySettings"):
             property_name = elem.attrib.get("property")
-            if property_name not in self.propertyInformation["otherProperties"]:
+            if property_name not in self.property_information["otherProperties"]:
                 # Save the property name in the order in which we processed it
-                self.propertyInformation["otherProperties"].append(property_name)
+                self.property_information["otherProperties"].append(property_name)
             if "requires" in elem.attrib:
                 # This property requires another to be present
                 requires[property_name] = elem.attrib.get("requires")
@@ -821,17 +821,17 @@ class DataFunctions:
                 # written to the main menu
                 template_only.append(property_name)
         # Save all the results
-        self.propertyInformation["requires"] = requires
-        self.propertyInformation["templateOnly"] = template_only
+        self.property_information["requires"] = requires
+        self.property_information["templateOnly"] = template_only
 
         return \
-            self.propertyInformation["otherProperties"], \
-            self.propertyInformation["requires"], \
-            self.propertyInformation["templateOnly"]
+            self.property_information["otherProperties"], \
+            self.property_information["requires"], \
+            self.property_information["templateOnly"]
 
     def _get_widget_name_and_type(self, widget_id):
-        if widget_id in self.widgetNameAndType:
-            return self.widgetNameAndType[widget_id]
+        if widget_id in self.widget_name_and_type:
+            return self.widget_name_and_type[widget_id]
 
         tree = self.get_overrides_skin()
         for elem in tree.findall("widget"):
@@ -845,24 +845,24 @@ class DataFunctions:
                     widget_info["path"] = elem.attrib.get("path")
                 if "target" in elem.attrib:
                     widget_info["target"] = elem.attrib.get("target")
-                self.widgetNameAndType[widget_id] = widget_info
+                self.widget_name_and_type[widget_id] = widget_info
                 return widget_info
 
-        self.widgetNameAndType[widget_id] = None
+        self.widget_name_and_type[widget_id] = None
         return None
 
     def _get_background_name(self, background_id):
-        if background_id in self.backgroundName:
-            return self.backgroundName[background_id]
+        if background_id in self.background_name:
+            return self.background_name[background_id]
 
         tree = self.get_overrides_skin()
         for elem in tree.findall("background"):
             if elem.text == background_id:
                 return_string = elem.attrib.get("label")
-                self.backgroundName[background_id] = return_string
+                self.background_name[background_id] = return_string
                 return return_string
 
-        self.backgroundName[background_id] = None
+        self.background_name[background_id] = None
         return None
 
     def reset_backgroundandwidgets(self):

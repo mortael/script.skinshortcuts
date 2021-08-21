@@ -932,7 +932,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Add any default properties
         for group in copy_defaults:
-            for default_property in self.data_func.defaultProperties:
+            for default_property in self.data_func.default_properties:
                 # [ groupname, itemLabelID, property, value ]
                 if default_property[0] == group:
                     save_data.append(
