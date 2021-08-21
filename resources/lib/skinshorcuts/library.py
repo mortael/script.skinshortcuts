@@ -6,6 +6,7 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
+import ast
 import os
 import xml.etree.ElementTree as ETree
 from traceback import print_exc
@@ -1829,7 +1830,7 @@ class LibraryFunctions:
                 # some special code for smart shortcuts in script.skin.helper.service
                 elif item.get("title", None) == "smartshortcut":
 
-                    smart_shortcuts_data = eval(item.get("mpaa"))
+                    smart_shortcuts_data = ast.literal_eval(item.get("mpaa"))
                     thumb = smart_shortcuts_data["background"]
 
                     listitem = self.create([item["file"], alt_label, "", {

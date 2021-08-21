@@ -8,6 +8,7 @@
 
 # noinspection PyCompatibility
 import _thread as thread
+import ast
 import calendar
 import random
 import xml.etree.ElementTree as ETree
@@ -434,14 +435,14 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Process current properties
         current_properties = listitem.getProperty("skinshortcuts-allproperties")
         if current_properties != "":
-            current_properties = eval(current_properties)
+            current_properties = ast.literal_eval(current_properties)
         else:
             current_properties = {}
 
         # Process all custom properties
         custom_properties = listitem.getProperty("additionalListItemProperties")
         if custom_properties != "":
-            custom_properties = eval(custom_properties)
+            custom_properties = ast.literal_eval(custom_properties)
             for custom_property in custom_properties:
                 if custom_property[1].startswith("$") and not custom_property[1].startswith("$SKIN"):
                     # Translate some listItem properties if needed so
@@ -740,7 +741,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                     # Additional properties
                     if listitem.getProperty("additionalListItemProperties"):
-                        additional_properties = eval(
+                        additional_properties = ast.literal_eval(
                             listitem.getProperty("additionalListItemProperties")
                         )
                         if icon != "":
@@ -2118,7 +2119,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                              selected_shortcut.getProperty("path"))
 
                 if selected_shortcut.getProperty("smartShortcutProperties"):
-                    for listitemProperty in eval(
+                    for listitemProperty in ast.literal_eval(
                             selected_shortcut.getProperty("smartShortcutProperties")
                     ):
                         self._add_additionalproperty(listitem_copy, listitemProperty[0],
@@ -2541,7 +2542,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Add an item to the additional properties of a user items
         properties = []
         if listitem.getProperty("additionalListItemProperties"):
-            properties = eval(listitem.getProperty("additionalListItemProperties"))
+            properties = ast.literal_eval(listitem.getProperty("additionalListItemProperties"))
 
         found_property = False
         for idx, prop in enumerate(properties):
@@ -2569,7 +2570,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Remove an item from the additional properties of a user item
         properties = []
         if listitem.getProperty("additionalListItemProperties"):
-            properties = eval(listitem.getProperty("additionalListItemProperties"))
+            properties = ast.literal_eval(listitem.getProperty("additionalListItemProperties"))
 
         for prop in properties:
             if prop[0] == property_name or "%s-NUM" % (prop[0]) == "%s-NUM" % property_name:

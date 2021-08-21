@@ -6,6 +6,7 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
+import ast
 import os
 import re
 import xml.etree.ElementTree as ETree
@@ -833,7 +834,7 @@ class XMLFunctions:
             self.main_properties = {}
 
         # Additional properties
-        properties = eval(item.find("additional-properties").text)
+        properties = ast.literal_eval(item.find("additional-properties").text)
         if len(properties) != 0:
             for prop in properties:
                 if prop[0] == "node.visible":
