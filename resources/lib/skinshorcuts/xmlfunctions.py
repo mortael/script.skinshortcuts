@@ -1044,19 +1044,19 @@ class XMLFunctions:
 
         # If this isn't the main menu, and we're cloning widgets or backgrounds...
         if group_name != "mainmenu":
-            if "clonewidgets" in options and len(self.main_widget.keys()) != 0:
+            if "clonewidgets" in options and len(list(self.main_widget.keys())) != 0:
                 for key in list(self.main_widget.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.main_widget[key]
                     all_props[key] = additionalproperty
-            if "clonebackgrounds" in options and len(self.main_background.keys()) != 0:
+            if "clonebackgrounds" in options and len(list(self.main_background.keys())) != 0:
                 for key in list(self.main_background.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.main_background[key])[1]
                     all_props[key] = additionalproperty
-            if "cloneproperties" in options and len(self.main_properties.keys()) != 0:
+            if "cloneproperties" in options and len(list(self.main_properties.keys())) != 0:
                 for key in list(self.main_properties.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
