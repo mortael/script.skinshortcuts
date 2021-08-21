@@ -91,10 +91,10 @@ class LibraryFunctions:
             "widgets": [False, "widgets"]
         }
 
-        self.widgetPlaylistsList = []
+        self.widget_playlists_list = []
 
         # Empty dictionary for different shortcut types
-        self.dictionaryGroupings = {
+        self.dictionary_groupings = {
             "common": None,
             "commands": None,
             "video": None,
@@ -127,23 +127,23 @@ class LibraryFunctions:
             "widgets-classic": []
         }
         self.folders = {}
-        self.foldersCount = 0
+        self.folders_count = 0
 
         # Widget providers, for auto-installing
-        self.widgetProviders = [
+        self.widget_providers = [
             ["service.library.data.provider", None, "Library Data Provider"],
             ["script.extendedinfo", None, "ExtendedInfo Script"],
             ["service.smartish.widgets",
              "Skin.HasSetting(enable.smartish.widgets)",
              "Smart(ish) Widgets"]
         ]
-        self.allowWidgetInstall = False
-        self.skinhelperWidgetInstall = True
+        self.allow_widget_install = False
+        self.skinhelper_widget_install = True
 
-        self.useDefaultThumbAsIcon = None
+        self.use_default_thumb_as_icon = None
 
-        self.installWidget = False
-        self.loadedFavourites = False
+        self.install_widget = False
+        self.loaded_favourites = False
         self.fav_list = None
 
     def load_library(self, library):
@@ -271,9 +271,9 @@ class LibraryFunctions:
                         continue
                 if "installWidget" in node.attrib and \
                         node.attrib.get("installWidget").lower() == "true":
-                    self.installWidget = True
+                    self.install_widget = True
                 else:
-                    self.installWidget = False
+                    self.install_widget = False
                 if count == group:
                     # We found it :)
                     return node.attrib.get("label"), self.build_node_listing(node, True)
@@ -284,7 +284,7 @@ class LibraryFunctions:
             # Heirachical groupings
             if group == "":
                 # We're going to get the root nodes
-                self.installWidget = False
+                self.install_widget = False
                 window_title = LANGUAGE(32048)
                 if grouping == "widget":
                     window_title = LANGUAGE(32044)
@@ -317,9 +317,9 @@ class LibraryFunctions:
                     continue
             if "installWidget" in subnode.attrib and \
                     subnode.attrib.get("installWidget").lower() == "true":
-                self.installWidget = True
+                self.install_widget = True
             else:
-                self.installWidget = False
+                self.install_widget = False
 
             if count == number:
                 label = self.data_func.local(subnode.attrib.get("label"))[2]
@@ -393,11 +393,11 @@ class LibraryFunctions:
                 "icon": "DefaultFolder.png"
             }])]
 
-        elif self.dictionaryGroupings[content] is None:
+        elif self.dictionary_groupings[content] is None:
             # The data hasn't been loaded yet
             items = self.load_grouping(content)
         else:
-            items = self.dictionaryGroupings[content]
+            items = self.dictionary_groupings[content]
 
         if items is not None:
             items = self.check_for_folder(items)
@@ -439,10 +439,10 @@ class LibraryFunctions:
         return_items = []
         for item in items:
             if isinstance(item, list):
-                self.foldersCount += 1
-                self.folders[str(self.foldersCount)] = item[1]
+                self.folders_count += 1
+                self.folders[str(self.folders_count)] = item[1]
                 new_item = item[0]
-                new_item.setProperty("folder", str(self.foldersCount))
+                new_item.setProperty("folder", str(self.folders_count))
                 return_items.append(new_item)
             else:
                 return_items.append(item)
@@ -489,7 +489,7 @@ class LibraryFunctions:
 
         # The data has now been loaded, return it
         dialog.close()
-        return self.dictionaryGroupings[content]
+        return self.dictionary_groupings[content]
 
     def flat_groupings_count(self):
         # Return how many nodes there are in the the flat grouping
@@ -594,7 +594,7 @@ class LibraryFunctions:
                     else:
                         content.append(listitem)
 
-        self.dictionaryGroupings[original_group] = content
+        self.dictionary_groupings[original_group] = content
 
     # ================================
     # === BUILD AVAILABLE SHORTCUT ===
@@ -668,20 +668,20 @@ class LibraryFunctions:
             thumbnail = None
 
         # Check if the option to use the thumb as the icon is enabled
-        if self.useDefaultThumbAsIcon is None:
+        if self.use_default_thumb_as_icon is None:
             # Retrieve the choice from the overrides.xml
             tree = self.data_func.get_overrides_skin()
             node = tree.getroot().find("useDefaultThumbAsIcon")
             if node is None:
-                self.useDefaultThumbAsIcon = False
+                self.use_default_thumb_as_icon = False
             else:
                 if node.text.lower() == "true":
-                    self.useDefaultThumbAsIcon = True
+                    self.use_default_thumb_as_icon = True
                 else:
-                    self.useDefaultThumbAsIcon = False
+                    self.use_default_thumb_as_icon = False
 
         used_default_thumb_as_icon = False
-        if self.useDefaultThumbAsIcon is True and thumbnail is not None:
+        if self.use_default_thumb_as_icon is True and thumbnail is not None:
             icon = thumbnail
             thumbnail = None
             used_default_thumb_as_icon = True
@@ -1345,7 +1345,7 @@ class LibraryFunctions:
                                 else:
                                     audiolist.append(listitem)
                                 # Save it for the widgets list
-                                self.widgetPlaylistsList.append(
+                                self.widget_playlists_list.append(
                                     [playlist, "(" + LANGUAGE(int(path[1])) + ") " + name, name]
                                 )
 
@@ -1435,7 +1435,7 @@ class LibraryFunctions:
         else:
             # No favourites file found
             self.add_to_dictionary("favourite", [])
-            self.loadedFavourites = True
+            self.loaded_favourites = True
             return True
 
         for count, favourite in enumerate(listing):
@@ -1674,7 +1674,7 @@ class LibraryFunctions:
                 widget_name = self.data_func.local(elem.attrib.get('name'))[2]
 
             # Save widget for button 309
-            self.dictionaryGroupings["widgets-classic"].append(
+            self.dictionary_groupings["widgets-classic"].append(
                 [elem.text,
                  self.data_func.local(elem.attrib.get('label'))[2],
                  widget_type, widget_path, widget_icon, widget_target]
@@ -2043,7 +2043,7 @@ class LibraryFunctions:
         provider_label = []
 
         # Get widget providers available for install
-        for widget_provider in self.widgetProviders:
+        for widget_provider in self.widget_providers:
             if widget_provider[1] is None or xbmc.getCondVisibility(widget_provider[1]):
                 if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widget_provider[0])):
                     provider_list.append(widget_provider[0])
@@ -2067,7 +2067,7 @@ class LibraryFunctions:
         provider_label = []
 
         # Get widget providers available for install
-        for widget_provider in self.widgetProviders:
+        for widget_provider in self.widget_providers:
             if widget_provider[1] is None or xbmc.getCondVisibility(widget_provider[1]):
                 if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widget_provider[0])):
                     provider_list.append(widget_provider[0])
@@ -2094,7 +2094,7 @@ class LibraryFunctions:
 
         # Check whether we're in skin.helper.service's widgets
         if location is not None and ("script.skin.helper.service" not in location or
-                                     self.skinhelperWidgetInstall is False):
+                                     self.skinhelper_widget_install is False):
             return False
 
         # OR check whether node has enabled widget browsing
@@ -2102,7 +2102,7 @@ class LibraryFunctions:
             return False
 
         # Check whether the user has the various widget providers installed
-        for widget_provider in self.widgetProviders:
+        for widget_provider in self.widget_providers:
             if widget_provider[1] is None or xbmc.getCondVisibility(widget_provider[1]):
                 if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widget_provider[0])):
                     # The user doesn't have this widget provider installed
@@ -2459,7 +2459,7 @@ class LibraryFunctions:
             available_shortcuts.insert(0, self.create(["::BACK::", "..", "", {}]))
 
         # Show select dialog
-        _ = self._allow_install_widget_provider(None, is_widget, self.allowWidgetInstall)
+        _ = self._allow_install_widget_provider(None, is_widget, self.allow_widget_install)
         w = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts, windowtitle=window_title)
         w.doModal()
         number = w.result

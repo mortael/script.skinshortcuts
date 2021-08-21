@@ -1644,7 +1644,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             widget_label = [LANGUAGE(32053)]
             widget_name = [""]
             widget_type = [None]
-            for key in self.lib_func.dictionaryGroupings["widgets-classic"]:
+            for key in self.lib_func.dictionary_groupings["widgets-classic"]:
                 widget.append(key[0])
                 widget_name.append("")
                 widget_type.append(key[2])
@@ -1660,7 +1660,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self.lib_func.load_library("playlists")
 
                 # Add them
-                for playlist in self.lib_func.widgetPlaylistsList:
+                for playlist in self.lib_func.widget_playlists_list:
                     widget.append("::PLAYLIST::" + playlist[0])
                     widget_label.append(playlist[1])
                     widget_name.append(playlist[2])
@@ -1872,7 +1872,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # Generate list of backgrounds for the dialog
             for key in self.backgrounds:
                 if "::PLAYLIST::" in key[1]:
-                    for playlist in self.lib_func.widgetPlaylistsList:
+                    for playlist in self.lib_func.widget_playlists_list:
                         background.append([key[0], playlist[0], playlist[1]])
                         background_label.append(key[1].replace("::PLAYLIST::", playlist[1]))
                         background_pretty.append(
@@ -2634,7 +2634,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         else:
             # find any classic widgets
             default_widget = self.find_default("widget", label_id, default_id)
-            for key in self.lib_func.dictionaryGroupings["widgets-classic"]:
+            for key in self.lib_func.dictionary_groupings["widgets-classic"]:
                 if key[0] == default_widget:
                     result["widget"] = key[0]
                     result["name"] = key[1]
