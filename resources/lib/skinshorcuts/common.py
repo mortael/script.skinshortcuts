@@ -18,7 +18,7 @@ def log(txt):
         if isinstance(txt, bytes):
             txt = txt.decode('utf-8')
 
-        message = '%s: %s' % (ADDON_ID, txt)
+        message = '%s -- %s' % (ADDON_ID, txt)
         xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 
