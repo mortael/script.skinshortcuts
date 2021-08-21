@@ -27,7 +27,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         self.result = -1
         self.list = None
 
-    def onInit(self):
+    def onInit(self):  # pylint: disable=invalid-name
         try:
             self.list = self.getControl(6)
             self.getControl(3).setVisible(False)
@@ -55,15 +55,15 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
 
         self.setFocus(self.list)
 
-    def onAction(self, action):
+    def onAction(self, action):  # pylint: disable=invalid-name
         if action.getId() in (9, 10, 92, 216, 247, 257, 275, 61467, 61448,):
             self.result = -1
             self.close()
 
-    def onClick(self, control_id):
+    def onClick(self, control_id):  # pylint: disable=invalid-name
         if control_id == 5:
             self.result = -2
-        elif control_id == 6 or control_id == 3:
+        elif control_id in (3, 6):
             num = self.list.getSelectedPosition()
             self.result = num
         else:
@@ -71,7 +71,7 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
 
         self.close()
 
-    def onFocus(self, control_id):
+    def onFocus(self, control_id):  # pylint: disable=invalid-name
         pass
 
 

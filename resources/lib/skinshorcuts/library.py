@@ -156,9 +156,9 @@ class LibraryFunctions:
         # Handle whether the shortcuts are already loaded/loading
         if self.loaded[library][0] is True:
             return True
-        elif self.loaded[library][0] == "Loading":
+        if self.loaded[library][0] == "Loading":
             # The list is currently being populated, wait and then return it
-            for i in range(0, 50):
+            for _ in range(0, 50):
                 if xbmc.Monitor().waitForAbort(0.1) or self.loaded[library][0] is True:
                     return True
         else:
@@ -274,23 +274,22 @@ class LibraryFunctions:
 
             return ["Error", []]
 
-        else:
-            # Hierarchical groupings
-            if group == "":
-                # We're going to get the root nodes
-                self.install_widget = False
-                window_title = LANGUAGE(32048)
-                if grouping == "widget":
-                    window_title = LANGUAGE(32044)
-                return [window_title, self.build_node_listing(nodes, False)]
-            else:
-                groups = group.split(",")
+        # Hierarchical groupings
+        if group == "":
+            # We're going to get the root nodes
+            self.install_widget = False
+            window_title = LANGUAGE(32048)
+            if grouping == "widget":
+                window_title = LANGUAGE(32044)
+            return [window_title, self.build_node_listing(nodes, False)]
 
-                nodes = ["", nodes]
-                for group_num in groups:
-                    nodes = self.get_node(nodes[1], int(group_num))
+        groups = group.split(",")
 
-                return [nodes[0], self.build_node_listing(nodes[1], False)]
+        nodes = ["", nodes]
+        for group_num in groups:
+            nodes = self.get_node(nodes[1], int(group_num))
+
+        return [nodes[0], self.build_node_listing(nodes[1], False)]
 
     def get_node(self, tree, number):
         count = 0
@@ -318,6 +317,8 @@ class LibraryFunctions:
             if count == number:
                 label = self.data_func.local(subnode.attrib.get("label"))[2]
                 return [label, subnode]
+
+        return []
 
     def build_node_listing(self, nodes, flat):
         return_list = []
@@ -453,26 +454,23 @@ class LibraryFunctions:
             self.load_library("common")
         if content == "commands":
             self.load_library("more")
-        if content == "movie" or content == "tvshow" or content == "musicvideo" or \
-                content == "customvideonode" or content == "movie-flat" or \
-                content == "tvshow-flat" or content == "musicvideo-flat" or \
-                content == "customvideonode-flat":
+        if content in ("movie", "tvshow", "musicvideo", "customvideonode", "movie-flat",
+                       "tvshow-flat", "musicvideo-flat", "customvideonode-flat"):
             # These have been deprecated
             return []
         if content == "video":
             self.load_library("videolibrary")
-        if content == "videosources" or content == "musicsources" or content == "picturesources":
+        if content in ("videosources", "musicsources", "picturesources"):
             self.load_library("librarysources")
         if content == "music":
             self.load_library("musiclibrary")
-        if content == "pvr" or content == "pvr-tv" or content == "pvr-radio":
+        if content in ("pvr", "pvr-tv", "pvr-radio"):
             self.load_library("pvrlibrary")
         if content == "radio":
             self.load_library("radiolibrary")
-        if content == "playlist-video" or content == "playlist-audio":
+        if content in ("playlist-video", "playlist-audio"):
             self.load_library("playlists")
-        if content == "addon-program" or content == "addon-video" or \
-                content == "addon-audio" or content == "addon-image":
+        if content in ("addon-program", "addon-video", "addon-audio", "addon-image"):
             self.load_library("addons")
         if content == "favourite":
             self.load_library("favourites")
@@ -794,7 +792,7 @@ class LibraryFunctions:
             prefix = "library://music"
             action = "||AUDIO||"
         else:
-            return
+            return None
 
         rootdir = os.path.join(PROFILE_PATH, "library", library)
         if node_type == "custom":
@@ -846,6 +844,7 @@ class LibraryFunctions:
             items.append(item)
 
         self.add_to_dictionary(library, items)
+        return True
 
     # ============================
     # === LOAD OTHER LIBRARIES ===
@@ -1290,13 +1289,11 @@ class LibraryFunctions:
 
                             if line.tag == "smartplaylist":
                                 media_type = line.attrib['type']
-                                if media_type == "movies" or media_type == "tvshows" or \
-                                        media_type == "seasons" or media_type == "episodes" or \
-                                        media_type == "musicvideos" or media_type == "sets":
+                                if media_type in ('movies', 'tvshows', 'seasons', 'episodes',
+                                                  'musicvideos', 'sets'):
                                     media_library = "Videos"
                                     media_content = "video"
-                                elif media_type == "albums" or media_type == "artists" or \
-                                        media_type == "songs":
+                                elif media_type in ('albums', 'artists', 'songs'):
                                     media_library = "Music"
                                     media_content = "music"
 
@@ -1422,11 +1419,11 @@ class LibraryFunctions:
             self.loaded_favourites = True
             return True
 
-        for count, favourite in enumerate(listing):
+        for favourite in listing:
             name = favourite.attributes['name'].nodeValue
             path = favourite.childNodes[0].nodeValue
             if ('RunScript' not in path) and ('StartAndroidActivity' not in path) and \
-                    not (path.endswith(',return)')):
+                    not path.endswith(',return)'):
                 path = path.rstrip(')')
                 path = path + ',return)'
 
@@ -1444,6 +1441,8 @@ class LibraryFunctions:
         log(" - " + str(len(listitems)) + " favourites found")
 
         self.add_to_dictionary("favourite", listitems)
+        self.loaded_favourites = True
+        return True
 
     def addons(self):
         executable_items = {}
@@ -1604,11 +1603,12 @@ class LibraryFunctions:
                 artist = item["artist"][0]
             else:
                 artist = item["artist"]
+
             if item["type"] == "artist" or artist == item["title"]:
                 return "artists"
-            elif item["type"] == "album" or item["album"] == item["title"]:
+            if item["type"] == "album" or item["album"] == item["title"]:
                 return "albums"
-            elif (item["type"] == "song" and "play_album" not in item["file"]) or \
+            if (item["type"] == "song" and "play_album" not in item["file"]) or \
                     (item["artist"] and item["album"]):
                 return "songs"
         else:
@@ -1617,14 +1617,14 @@ class LibraryFunctions:
                 # this is a tvshow, episode or season...
                 if item["type"] == "season" or (item["season"] > -1 and item["episode"] == -1):
                     return "seasons"
-                elif item["type"] == "episode" or item["season"] > -1 and item["episode"] > -1:
+                if item["type"] == "episode" or item["season"] > -1 and item["episode"] > -1:
                     return "episodes"
-                else:
-                    return "tvshows"
-            elif item["artist"]:
+
+                return "tvshows"
+            if item["artist"]:
                 # this is a musicvideo
                 return "musicvideos"
-            elif item["type"] == "movie" or item["imdbnumber"] or item["mpaa"] or \
+            if item["type"] == "movie" or item["imdbnumber"] or item["mpaa"] or \
                     item["trailer"] or item["studio"]:
                 return "movies"
 
@@ -1849,7 +1849,7 @@ class LibraryFunctions:
                             if addon_type is not None:
                                 addon_type = content_type
                             else:
-                                if addon_type != content_type and addon_type != "mixed":
+                                if addon_type not in (content_type, 'mixed'):
                                     addon_type = "mixed"
 
         # Close progress dialog
@@ -1857,12 +1857,12 @@ class LibraryFunctions:
 
         # Show select dialog
         get_more = self._allow_install_widget_provider(location, is_widget)
-        w = ShowDialog(
+        show_dialog = ShowDialog(
             "DialogSelect.xml", CWD, listing=listings, window_title=dialog_label, more=get_more
         )
-        w.doModal()
-        selected_item = w.result
-        del w
+        show_dialog.doModal()
+        selected_item = show_dialog.result
+        del show_dialog
 
         if selected_item == -2:
             # Get more button
@@ -1870,7 +1870,7 @@ class LibraryFunctions:
             return self._explorer_install_widget_provider(history, label, thumbnail,
                                                           item_type, is_widget)
 
-        elif selected_item != -1:
+        if selected_item != -1:
             selected_action = listings[selected_item].getProperty("path")
             if selected_action == "::UP::":
                 # User wants to go out of explorer, back to select_shortcut
@@ -1982,7 +1982,7 @@ class LibraryFunctions:
 
                 return listitem
 
-            elif selected_action == "::BACK::":
+            if selected_action == "::BACK::":
                 # User is going up the heirarchy, remove current level and re-call this function
                 history.pop()
                 label.pop()
@@ -1990,7 +1990,7 @@ class LibraryFunctions:
                 return self.explorer(history, history[len(history) - 1], label, thumbnail,
                                      item_type, is_widget=is_widget)
 
-            elif selected_action.startswith("ActivateWindow(") or \
+            if selected_action.startswith("ActivateWindow(") or \
                     selected_action.startswith("$INFO"):
                 # The user wants to create a shortcut to a specific shortcut listed
                 listitem = listings[selected_item]
@@ -2003,13 +2003,14 @@ class LibraryFunctions:
 
                 return listitem
 
-            else:
-                # User has chosen a sub-level to display, add details and re-call this function
-                history.append(selected_action)
-                label.append(listings[selected_item].getLabel())
-                thumbnail.append(listings[selected_item].getProperty("thumbnail"))
-                return self.explorer(history, selected_action, label, thumbnail, item_type,
-                                     is_widget=is_widget)
+            # User has chosen a sub-level to display, add details and re-call this function
+            history.append(selected_action)
+            label.append(listings[selected_item].getLabel())
+            thumbnail.append(listings[selected_item].getProperty("thumbnail"))
+            return self.explorer(history, selected_action, label, thumbnail, item_type,
+                                 is_widget=is_widget)
+
+        return None
 
     # ================================
     # === INSTALL WIDGET PROVIDERS ===
@@ -2136,14 +2137,14 @@ class LibraryFunctions:
             )
             if user_choice == -1:
                 return None
-            elif user_choice == 0:
+            if user_choice == 0:
                 # Escape any backslashes (Windows fix)
                 new_action = selected_shortcut.getProperty("Path")
                 new_action = new_action.replace("\\", "\\\\")
                 selected_shortcut.setProperty("Path", new_action)
                 selected_shortcut.setProperty("displayPath", new_action)
                 return selected_shortcut
-            elif user_choice == 1:
+            if user_choice == 1:
                 media_type = "movies"
                 negative = False
             elif user_choice == 2:
@@ -2177,14 +2178,14 @@ class LibraryFunctions:
             )
             if user_choice == -1:
                 return None
-            elif user_choice == 0:
+            if user_choice == 0:
                 # Escape any backslashes (Windows fix)
                 new_action = selected_shortcut.getProperty("Path")
                 new_action = new_action.replace("\\", "\\\\")
                 selected_shortcut.setProperty("Path", new_action)
                 selected_shortcut.setProperty("displayPath", new_action)
                 return selected_shortcut
-            elif user_choice == 1:
+            if user_choice == 1:
                 media_type = "songs"
                 window_id = "10502"
                 negative = False
@@ -2226,31 +2227,31 @@ class LibraryFunctions:
             )
             if user_choice == -1:
                 return None
-            elif user_choice == 0:
+            if user_choice == 0:
                 # Escape any backslashes (Windows fix)
                 new_action = selected_shortcut.getProperty("Path")
                 new_action = new_action.replace("\\", "\\\\")
                 selected_shortcut.setProperty("Path", new_action)
                 selected_shortcut.setProperty("displayPath", new_action)
                 return selected_shortcut
-            else:
-                new_action = ""
-                if user_choice == 1:
-                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                                 ",notrandom)"
-                elif user_choice == 2:
-                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                                 ",random)"
-                elif user_choice == 3:
-                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                                 ",recursive,notrandom)"
-                elif user_choice == 4:
-                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                                 ",recursive,random)"
 
-                selected_shortcut.setProperty("path", new_action)
-                selected_shortcut.setProperty("displayPath", new_action)
-                return selected_shortcut
+            new_action = ""
+            if user_choice == 1:
+                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                             ",notrandom)"
+            elif user_choice == 2:
+                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                             ",random)"
+            elif user_choice == 3:
+                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                             ",recursive,notrandom)"
+            elif user_choice == 4:
+                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                             ",recursive,random)"
+
+            selected_shortcut.setProperty("path", new_action)
+            selected_shortcut.setProperty("displayPath", new_action)
+            return selected_shortcut
 
         # We're going to display it in the library
         filename = self._build_playlist(selected_shortcut.getProperty("location"), media_type,
@@ -2315,7 +2316,6 @@ class LibraryFunctions:
     def delete_playlist(target):
         # This function will check if the target links to an auto-generated playlist and,
         # if so, delete it
-        target = target
         if target.startswith("ActivateWindow("):
             try:
                 elements = target.split(",")
@@ -2432,11 +2432,11 @@ class LibraryFunctions:
 
         # Show select dialog
         _ = self._allow_install_widget_provider(None, is_widget, self.allow_widget_install)
-        w = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts,
-                       windowtitle=window_title)
-        w.doModal()
-        number = w.result
-        del w
+        show_dialog = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts,
+                                 windowtitle=window_title)
+        show_dialog.doModal()
+        number = show_dialog.result
+        del show_dialog
 
         if number == -2:
             # Get more button
@@ -2465,7 +2465,7 @@ class LibraryFunctions:
                     group = group + "," + path.replace("||NODE||", "")
                 return self.select_shortcut(group=group, grouping=grouping, custom=custom,
                                             show_none=show_none, current_action=current_action)
-            elif path.startswith("||BROWSE||"):
+            if path.startswith("||BROWSE||"):
                 selected_shortcut = self.explorer(
                     ["plugin://" + path.replace("||BROWSE||", "")],
                     "plugin://" + path.replace("||BROWSE||", ""),
@@ -2622,8 +2622,8 @@ class LibraryFunctions:
                                             grouping=grouping, current_action=current_action)
 
             return selected_shortcut
-        else:
-            return None
+
+        return None
 
     # ==============================
     # === WIDGET RELOAD FUNCTION ===

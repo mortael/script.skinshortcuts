@@ -181,7 +181,7 @@ class Main:
                 # The user cancelled
                 return
 
-            elif selected_shortcut.getProperty("Path") and \
+            if selected_shortcut.getProperty("Path") and \
                     selected_shortcut.getProperty("custom") == "true":
                 # The user updated the path - so we just set that property
                 xbmc.executebuiltin(
@@ -266,6 +266,7 @@ class Main:
                 log("Not launched from a list item")
             self._reset_all_shortcuts()
 
+    # pylint: disable=invalid-name
     def _parse_argv(self):
         params = {}
         try:
@@ -354,11 +355,11 @@ class Main:
             return
 
         HOME_WINDOW.setProperty("skinshortcuts-loading", str(calendar.timegm(gmtime())))
-        from . import gui
-        ui = gui.GUI("script-skinshortcuts.xml", CWD, "default", group=group,
-                     defaultGroup=default_group, nolabels=nolabels, groupname=groupname)
-        ui.doModal()
-        del ui
+        from . import gui  # pylint: disable=import-outside-toplevel
+        dialog = gui.GUI("script-skinshortcuts.xml", CWD, "default", group=group,
+                         default_group=default_group, nolabels=nolabels, groupname=groupname)
+        dialog.doModal()
+        del dialog
 
         # Update home window property (used to automatically refresh type=settings)
         HOME_WINDOW.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))

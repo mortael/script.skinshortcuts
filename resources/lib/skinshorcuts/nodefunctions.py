@@ -159,10 +159,7 @@ class NodeFunctions:
             root = tree.getroot()
 
             group = root.find("group")
-            if group is None:
-                return False
-            else:
-                return True
+            return group is not None
         except:
             return False
 
@@ -233,13 +230,13 @@ class NodeFunctions:
         if not node_file and not node_parent:
             return ""
 
-        for path in (node_file, node_parent):
-            if path is None:
+        for xml_file in (node_file, node_parent):
+            if xml_file is None:
                 continue
             # Open the file
             try:
                 # Load the xml file
-                tree = ETree.parse(path)
+                tree = ETree.parse(xml_file)
                 root = tree.getroot()
 
                 if "visible" in root.attrib:
@@ -397,12 +394,12 @@ class NodeFunctions:
         dialog.close()
 
         # Show a select dialog so the user can pick where in the menu to add the item
-        w = ShowDialog(
+        show_dialog = ShowDialog(
             "DialogSelect.xml", CWD, listing=all_menu_items, window_title=LANGUAGE(32114)
         )
-        w.doModal()
-        selected_menu = w.result
-        del w
+        show_dialog.doModal()
+        selected_menu = show_dialog.result
+        del show_dialog
 
         if selected_menu == -1 or selected_menu is None:
             # User cancelled
@@ -419,7 +416,7 @@ class NodeFunctions:
 
             if selected_action == -1 or selected_action is None:
                 # User cancelled
-                return True
+                return
 
             action = paths[selected_action]
 

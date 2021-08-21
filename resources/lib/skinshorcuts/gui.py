@@ -22,6 +22,7 @@ from . import datafunctions
 from . import library
 from .common import log
 from .common import toggle_debug_logging
+from .common_utils import ShowDialog
 from .constants import ADDON
 from .constants import CWD
 from .constants import DATA_PATH
@@ -109,7 +110,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         log('Management module loaded')
 
-    def onInit(self):
+    def onInit(self):  # pylint: disable=invalid-name
         if self.group == '':
             self._close()
         else:
@@ -491,6 +492,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         other_properties, requires, _ = self.data_func.get_property_requires()
 
         # Remove any properties whose requirements haven't been met
+        # pylint: disable=unsubscriptable-object
         for key in other_properties:
             if key in list(all_props.keys()) and key in list(requires.keys()) and \
                     requires[key] not in list(all_props.keys()):
@@ -753,7 +755,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Now make any labelID changes
             copy_default_properties = []
-            while not len(label_id_changes) == 0:
+            while len(label_id_changes) != 0:
                 # Get the first labelID change, and check that we're not changing
                 # anything from that
                 label_id_from = label_id_changes[0][0]
@@ -771,9 +773,9 @@ class GUI(xbmcgui.WindowXMLDialog):
                 # - if so, we're going to move our items elsewhere,
                 # and move 'em to the correct place later
                 # (This ensures we don't overwrite anything incorrectly)
-                if not len(label_id_changes) == 1:
-                    for x in range(1, len(label_id_changes)):
-                        if label_id_changes[x][0] == label_id_to:
+                if len(label_id_changes) != 1:
+                    for idx in range(1, len(label_id_changes)):
+                        if label_id_changes[idx][0] == label_id_to:
                             temp_location = str(random.randrange(0, 9999999999999999))
                             label_id_changes[0][1] = temp_location
                             label_id_changes.append([temp_location, label_id_to, default_id_from])
@@ -838,7 +840,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                             log("Creating empty file - %s" % target)
                             break
 
-                        elif xbmcvfs.exists(path[0]):
+                        if xbmcvfs.exists(path[0]):
                             # The XML file exists
                             if path[1] == "Move":
                                 if path[0] != target:
@@ -874,8 +876,8 @@ class GUI(xbmcgui.WindowXMLDialog):
             HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
 
     def has_save_with_property(self, listitem):
-        for propertyName in self.save_with_property:
-            if listitem.getProperty(propertyName) != "":
+        for property_name in self.save_with_property:
+            if listitem.getProperty(property_name) != "":
                 return True
         return False
 
@@ -914,11 +916,11 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Add all the properties we've been passed
         for prop in properties:
             # prop[0] = labelID
-            for toSave in prop[1]:
-                # toSave[0] = property name
-                # toSave[1] = property value
+            for to_save in prop[1]:
+                # to_save[0] = property name
+                # to_save[1] = property value
 
-                save_data.append([self.group, prop[0], toSave[0], toSave[1]])
+                save_data.append([self.group, prop[0], to_save[0], to_save[1]])
 
         # Add any default properties
         for group in copy_defaults:
@@ -981,7 +983,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Do we enable 'Get More...' button when browsing Skin Helper widgets
         elem = tree.find("defaultwidgetsGetMore")
         if elem is not None and elem.text.lower() == "false":
-            self.lib_func.skinhelperWidgetInstall = False
+            self.lib_func.skinhelper_widget_install = False
 
         # Are there any controls we don't close the window on 'back' for?
         for elem in tree.findall("onback"):
@@ -993,9 +995,9 @@ class GUI(xbmcgui.WindowXMLDialog):
 
     def _load_overrides_context(self):
         # Load context menu settings from overrides
-        for overrideType in ["skin", "script"]:
+        for override_type in ["skin", "script"]:
             # Load overrides
-            if overrideType == "skin":
+            if override_type == "skin":
                 tree = self.data_func.get_overrides_skin()
             else:
                 tree = self.data_func.get_overrides_script()
@@ -1103,7 +1105,7 @@ class GUI(xbmcgui.WindowXMLDialog):
     # === GUI INTERACTIONS ===
     # ========================
 
-    def onClick(self, control_id):
+    def onClick(self, control_id):  # pylint: disable=invalid-name
         if control_id == 102:
             # Move to previous type of shortcuts
             self.shortcutgroup = self.shortcutgroup - 1
@@ -1502,7 +1504,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 # User cancelled
                 return
 
-            elif response == 0:
+            if response == 0:
                 # We're going to restore a particular shortcut
                 restore_pretty = []
                 restore_items = []
@@ -1537,11 +1539,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                     return
 
                 # Let the user select a shortcut to restore
-                w = library.ShowDialog("DialogSelect.xml", CWD, listing=restore_pretty,
-                                       windowtitle=LANGUAGE(32103))
-                w.doModal()
-                restore_shortcut = w.result
-                del w
+                dialog = ShowDialog("DialogSelect.xml", CWD, listing=restore_pretty,
+                                    window_title=LANGUAGE(32103))
+                dialog.doModal()
+                restore_shortcut = dialog.result
+                del dialog
 
                 if restore_shortcut == -1:
                     # User cancelled
@@ -1556,14 +1558,14 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self.change_made = True
                 self._display_listitems()
 
-            elif response == 1:
+            if response == 1:
                 # We're going to reset all the shortcuts
                 self.change_made = True
 
                 # Delete any auto-generated source playlists
-                for x in range(0, self.getControl(211).size()):
+                for idx in range(0, self.getControl(211).size()):
                     self.lib_func.delete_playlist(
-                        self.getControl(211).getListItem(x).getProperty("path")
+                        self.getControl(211).getListItem(idx).getProperty("path")
                     )
 
                 self.getControl(211).reset()
@@ -1574,43 +1576,42 @@ class GUI(xbmcgui.WindowXMLDialog):
                 # previously saved user shortcuts
                 self.load_shortcuts(False)
 
+            # We're going to offer to import menus from another compatible skin
+            skin_list, shared_files = self.data_func.get_shared_skin_list()
+
+            if len(skin_list) == 0:
+                xbmcgui.Dialog().ok(LANGUAGE(32110), LANGUAGE(32109))
+                return
+
+            # Let the user select a shortcut to restore
+            import_menu = xbmcgui.Dialog().select(LANGUAGE(32110), skin_list)
+
+            if import_menu == -1:
+                # User cancelled
+                return
+
+            # Delete any auto-generated source playlists
+            for idx in range(0, self.getControl(211).size()):
+                self.lib_func.delete_playlist(
+                    self.getControl(211).getListItem(idx).getProperty("path")
+                )
+
+            if import_menu == 0 and not len(shared_files) == 0:
+                # User has chosen to import the shared menu
+                self.data_func.import_skin_menu(shared_files)
             else:
-                # We're going to offer to import menus from another compatible skin
-                skin_list, shared_files = self.data_func.get_shared_skin_list()
+                # User has chosen to import from a particular skin
+                self.data_func.import_skin_menu(
+                    self.data_func.get_files_for_skin(skin_list[import_menu]),
+                    skin_list[import_menu]
+                )
 
-                if len(skin_list) == 0:
-                    xbmcgui.Dialog().ok(LANGUAGE(32110), LANGUAGE(32109))
-                    return
+            self.getControl(211).reset()
 
-                # Let the user select a shortcut to restore
-                import_menu = xbmcgui.Dialog().select(LANGUAGE(32110), skin_list)
+            self.all_list_items = []
 
-                if import_menu == -1:
-                    # User cancelled
-                    return
-
-                # Delete any auto-generated source playlists
-                for x in range(0, self.getControl(211).size()):
-                    self.lib_func.delete_playlist(
-                        self.getControl(211).getListItem(x).getProperty("path")
-                    )
-
-                if import_menu == 0 and not len(shared_files) == 0:
-                    # User has chosen to import the shared menu
-                    self.data_func.import_skin_menu(shared_files)
-                else:
-                    # User has chosen to import from a particular skin
-                    self.data_func.import_skin_menu(
-                        self.data_func.get_files_for_skin(skin_list[import_menu]),
-                        skin_list[import_menu]
-                    )
-
-                self.getControl(211).reset()
-
-                self.all_list_items = []
-
-                # Call the load shortcuts function
-                self.load_shortcuts(True)
+            # Call the load shortcuts function
+            self.load_shortcuts(True)
 
         elif control_id == 309:
             # Choose widget
@@ -1669,7 +1670,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             if selected_widget == -1:
                 # User cancelled
                 return
-            elif selected_widget == 0:
+            if selected_widget == 0:
                 # User selected no widget
                 self._remove_additionalproperty(listitem, "widget" + widget_id)
                 self._remove_additionalproperty(listitem, "widgetName" + widget_id)
@@ -1911,11 +1912,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                         background_pretty.append(self.lib_func.create(["", label, "", {}]))
 
             if pretty_dialog:
-                w = library.ShowDialog("DialogSelect.xml", CWD, listing=background_pretty,
-                                       windowtitle=LANGUAGE(32045))
-                w.doModal()
-                selected_background = w.result
-                del w
+                dialog = ShowDialog("DialogSelect.xml", CWD, listing=background_pretty,
+                                    window_title=LANGUAGE(32045))
+                dialog.doModal()
+                selected_background = dialog.result
+                del dialog
             else:
                 # Show the dialog
                 selected_background = xbmcgui.Dialog().select(LANGUAGE(32045), background_label)
@@ -1923,7 +1924,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             if selected_background == -1:
                 # User cancelled
                 return
-            elif selected_background == 0:
+            if selected_background == 0:
                 # User selected no background
                 self._remove_additionalproperty(listitem, "background")
                 self._remove_additionalproperty(listitem, "backgroundName")
@@ -1932,9 +1933,9 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self.change_made = True
                 return
 
-            elif self.background_browse and (selected_background == 1 or
-                                             (self.background_browse == "true" and
-                                              selected_background == 2)):
+            if self.background_browse and (selected_background == 1 or
+                                           (self.background_browse == "true" and
+                                            selected_background == 2)):
                 # User has chosen to browse for an image/folder
                 imagedialog = xbmcgui.Dialog()
                 if selected_background == 1 and self.background_browse != "multi":  # Single image
@@ -2022,17 +2023,17 @@ class GUI(xbmcgui.WindowXMLDialog):
                 }]))
 
             # Show the dialog
-            w = library.ShowDialog("DialogSelect.xml", CWD, listing=thumbnail_label,
-                                   windowtitle="Select thumbnail")
-            w.doModal()
-            selected_thumbnail = w.result
-            del w
+            dialog = ShowDialog("DialogSelect.xml", CWD, listing=thumbnail_label,
+                                window_title="Select thumbnail")
+            dialog.doModal()
+            selected_thumbnail = dialog.result
+            del dialog
 
             if selected_thumbnail == -1:
                 # User cancelled
                 return
 
-            elif self.thumbnail_none and selected_thumbnail == 0:
+            if self.thumbnail_none and selected_thumbnail == 0:
                 # User has chosen 'None'
                 listitem.setArt({
                     'thumb': None
@@ -2118,11 +2119,11 @@ class GUI(xbmcgui.WindowXMLDialog):
                                              selected_shortcut.getProperty("path"))
 
                 if selected_shortcut.getProperty("smartShortcutProperties"):
-                    for listitemProperty in ast.literal_eval(
+                    for listitem_property in ast.literal_eval(
                             selected_shortcut.getProperty("smartShortcutProperties")
                     ):
-                        self._add_additionalproperty(listitem_copy, listitemProperty[0],
-                                                     listitemProperty[1])
+                        self._add_additionalproperty(listitem_copy, listitem_property[0],
+                                                     listitem_property[1])
 
                 # set default background for this item (if any)
                 default_background = self.find_default_background(
@@ -2166,8 +2167,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             else:
                 return
 
-        elif control_id == 405 or control_id == 406 or control_id == 407 or control_id == 408 or \
-                control_id == 409 or control_id == 410:
+        elif control_id in (405, 406, 407, 408, 409, 410):
             # Launch management dialog for submenu
             if HOME_WINDOW.getProperty("skinshortcuts-loading") and \
                     int(calendar.timegm(gmtime())) - \
@@ -2240,11 +2240,11 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Execute the script
             self.current_window.setProperty("additionalDialog", "True")
-            ui = GUI("script-skinshortcuts.xml", CWD, "default", group=launch_group,
-                     default_group=launch_default_group, nolabels=self.nolabels,
-                     groupname=group_name)
-            ui.doModal()
-            del ui
+            dialog = GUI("script-skinshortcuts.xml", CWD, "default", group=launch_group,
+                         default_group=launch_default_group, nolabels=self.nolabels,
+                         groupname=group_name)
+            dialog.doModal()
+            del dialog
             self.current_window.clearProperty("additionalDialog")
 
         if control_id in self.custom_toggle_buttons:
@@ -2391,18 +2391,18 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # Show the dialog
                 if pretty_dialog:
-                    w = library.ShowDialog("DialogSelect.xml", CWD, listing=property_pretty,
-                                           windowtitle=dialog_title)
-                    w.doModal()
-                    selected_property = w.result
-                    del w
+                    dialog = ShowDialog("DialogSelect.xml", CWD, listing=property_pretty,
+                                        window_title=dialog_title)
+                    dialog.doModal()
+                    selected_property = dialog.result
+                    del dialog
                 else:
                     selected_property = xbmcgui.Dialog().select(dialog_title, property_label)
 
                 if selected_property == -1:
                     # User cancelled
                     return
-                elif selected_property == 0 and show_none:
+                if selected_property == 0 and show_none:
                     # User selected no property
                     self.change_made = True
                     self._remove_additionalproperty(listitem, property_name)
@@ -2605,14 +2605,15 @@ class GUI(xbmcgui.WindowXMLDialog):
 
     def find_default_background(self, label_id, default_id):
         # This function finds the default background, including properties
+        result = {}
         count = 0
         while self.backgrounds == "LOADING" and count < 20:
             if xbmc.Monitor().waitForAbort(0.1):
-                return
+                return result
             count = count + 1
         if self.backgrounds == "LOADING":
             self.backgrounds = []
-        result = {}
+
         default_background = self.find_default("background", label_id, default_id)
         if default_background:
             for key in self.backgrounds:
@@ -2673,12 +2674,12 @@ class GUI(xbmcgui.WindowXMLDialog):
                             if backgroundorwidget == "widgetdefaultnode":
                                 # if it's a widgetdefaultnode, return the whole element
                                 return elem
-                            else:
-                                return elem.text
-                        else:
-                            continue
-                    else:
-                        return elem.text
+
+                            return elem.text
+
+                        continue
+
+                    return elem.text
 
         return None
 
@@ -2694,7 +2695,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             listitem.setLabel2(LANGUAGE(32024))
             listitem.setProperty("shortcutType", "32024")
 
-    def onAction(self, action):
+    def onAction(self, action):  # pylint: disable=invalid-name
         current_focus = self.getFocusId()
         if action.getId() in ACTION_CANCEL_DIALOG:
             # Close action

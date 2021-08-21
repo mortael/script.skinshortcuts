@@ -200,8 +200,6 @@ class XMLFunctions:
             if not xbmcvfs.exists(path):
                 log("Includes file does not exist")
                 return True
-            else:
-                pass
 
         hashes = read_hashes()
         if not hashes:
@@ -462,8 +460,7 @@ class XMLFunctions:
                     submenu_default_id = item.find("defaultID").text
 
                     # Remove any template-only properties
-                    other_properties, requires, template_only = \
-                        self.data_func.get_property_requires()
+                    other_properties, _, template_only = self.data_func.get_property_requires()
                     for key in other_properties:
                         if key in list(all_props.keys()) and key in template_only:
                             # This key is template-only
@@ -613,8 +610,8 @@ class XMLFunctions:
                         template_submenu_items.append(temple_object.copy_tree(menuitem))
 
                         # Remove any template-only properties
-                        other_properties, requires, template_only = \
-                            self.data_func.get_property_requires()
+                        other_properties, _, template_only = self.data_func.get_property_requires()
+                        # pylint: disable=unsupported-membership-test
                         for key in other_properties:
                             if key in list(all_props.keys()) and key in template_only:
                                 # This key is template-only
@@ -914,10 +911,11 @@ class XMLFunctions:
                         break
 
         # Get property requirements
-        other_properties, requires, template_only = self.data_func.get_property_requires()
+        other_properties, requires, _ = self.data_func.get_property_requires()
 
         # Remove any properties whose requirements haven't been met
         for key in other_properties:
+            # pylint: disable=unsubscriptable-object
             if key in list(all_props.keys()) and key in list(requires.keys()) and \
                     requires[key] not in list(all_props.keys()):
                 # This properties requirements aren't met

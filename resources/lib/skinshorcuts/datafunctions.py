@@ -107,10 +107,10 @@ class DataFunctions:
             # We can now use this one
             self.label_id_list.append(label_id + "--" + str(count))
             return label_id + "--" + str(count)
-        else:
-            # We can use this one
-            self.label_id_list.append(label_id)
-            return label_id
+
+        # We can use this one
+        self.label_id_list.append(label_id)
+        return label_id
 
     @staticmethod
     def _get_addon_label_id(action):
@@ -198,7 +198,8 @@ class DataFunctions:
 
                 log(" - Loaded file")
                 return tree
-            elif tree is not None:
+
+            if tree is not None:
                 log(" - Loaded file " + path)
                 log(" - Returning unprocessed shortcuts")
                 return tree
@@ -507,7 +508,7 @@ class DataFunctions:
     def _get_icon_overrides(self, tree, icon, group, label_id, set_to_default=True):
         # This function will get any icon overrides based on label_id or group
         if icon is None:
-            return
+            return None
 
         # If the icon is a VAR or an INFO, we aren't going to override
         if icon.startswith("$"):
@@ -634,7 +635,7 @@ class DataFunctions:
                     # Widget or background
                     if "group" not in elem.attrib:
                         self.default_properties.append(["mainmenu", label_id,
-                                                        elem_search[0].split(":")[0],
+                                                        elem_search[0].split(":", maxsplit=1)[0],
                                                         elem.text, default_id])
 
                         if elem_search[0] == "background":
@@ -692,8 +693,8 @@ class DataFunctions:
                                                                 default_id])
                     else:
                         self.default_properties.append([elem.attrib.get("group"), label_id,
-                                                        elem_search[0].split(":")[0], elem.text,
-                                                        default_id])
+                                                        elem_search[0].split(":", maxsplit=1)[0],
+                                                        elem.text, default_id])
 
                         if elem_search[0] == "background":
                             # Get and set the background name
@@ -941,7 +942,7 @@ class DataFunctions:
             return self.node_func.get_visibility(path[1])
 
         # Audio node visibility - Isengard and earlier
-        elif action.startswith("activatewindow(musiclibrary,musicdb://") or \
+        if action.startswith("activatewindow(musiclibrary,musicdb://") or \
                 action.startswith("activatewindow(10502,musicdb://") or \
                 action.startswith("activatewindow(musiclibrary,library://music/") or \
                 action.startswith("activatewindow(10502,library://music/"):
@@ -953,7 +954,7 @@ class DataFunctions:
         # Audio node visibility - Additional checks for Jarvis and later
         # (Note when cleaning up in the future, some of the Isengard checks -
         # those with window 10502 - are still valid...)
-        elif action.startswith("activatewindow(music,musicdb://") or \
+        if action.startswith("activatewindow(music,musicdb://") or \
                 action.startswith("activatewindow(music,library://music/"):
             path = action.split(",")
             if path[1].endswith(")"):
@@ -961,61 +962,61 @@ class DataFunctions:
             return self.node_func.get_visibility(path[1])
 
         # Power menu visibilities
-        elif action == "quit()" or action == "quit":
+        if action in ("quit()", "quit"):
             return "System.ShowExitButton"
-        elif action == "powerdown()" or action == "powerdown":
+        if action in ("powerdown()", "powerdown"):
             return "System.CanPowerDown"
-        elif action == "alarmclock(shutdowntimer,shutdown())":
+        if action == "alarmclock(shutdowntimer,shutdown())":
             return "!System.HasAlarm(shutdowntimer) + [System.CanPowerDown | System.CanSuspend " \
                    "| System.CanHibernate]"
-        elif action == "cancelalarm(shutdowntimer)":
+        if action == "cancelalarm(shutdowntimer)":
             return "System.HasAlarm(shutdowntimer)"
-        elif action == "suspend()" or action == "suspend":
+        if action in ("suspend()", "suspend"):
             return "System.CanSuspend"
-        elif action == "hibernate()" or action == "hibernate":
+        if action in ("hibernate()", "hibernate"):
             return "System.CanHibernate"
-        elif action == "reset()" or action == "reset":
+        if action in ("reset()", "reset"):
             return "System.CanReboot"
-        elif action == "system.logoff":
+        if action == "system.logoff":
             return "[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + " \
                    "System.Loggedon"
-        elif action == "mastermode":
+        if action == "mastermode":
             return "System.HasLocks"
-        elif action == "inhibitidleshutdown(true)":
+        if action == "inhibitidleshutdown(true)":
             return "System.HasShutdown +!System.IsInhibit"
-        elif action == "inhibitidleshutdown(false)":
+        if action == "inhibitidleshutdown(false)":
             return "System.HasShutdown + System.IsInhibit"
-        elif action == "restartapp":
+        if action == "restartapp":
             return "[System.Platform.Windows | System.Platform.Linux] +! " \
                    "System.Platform.Linux.RaspberryPi"
 
         # General visibilities
-        elif action == "activatewindow(weather)":
+        if action == "activatewindow(weather)":
             return "!String.IsEmpty(Weather.Plugin)"
-        elif action.startswith("activatewindowandfocus(mypvr") or action.startswith("playpvr") and \
+        if action.startswith("activatewindowandfocus(mypvr") or action.startswith("playpvr") and \
                 not ADDON.getSettingBool("donthidepvr"):
             return "PVR.HasTVChannels"
-        elif action.startswith("activatewindow(tv") and not ADDON.getSettingBool("donthidepvr"):
+        if action.startswith("activatewindow(tv") and not ADDON.getSettingBool("donthidepvr"):
             return "System.HasPVRAddon"
-        elif action.startswith("activatewindow(radio") and \
+        if action.startswith("activatewindow(radio") and \
                 not ADDON.getSettingBool("donthidepvr"):
             return "System.HasPVRAddon"
-        elif action.startswith("activatewindow(videos,movie"):
+        if action.startswith("activatewindow(videos,movie"):
             return "Library.HasContent(Movies)"
-        elif action.startswith("activatewindow(videos,recentlyaddedmovies"):
+        if action.startswith("activatewindow(videos,recentlyaddedmovies"):
             return "Library.HasContent(Movies)"
-        elif action.startswith("activatewindow(videos,tvshow") or \
+        if action.startswith("activatewindow(videos,tvshow") or \
                 action.startswith("activatewindow(videos,tvshow"):
             return "Library.HasContent(TVShows)"
-        elif action.startswith("activatewindow(videos,recentlyaddedepisodes"):
+        if action.startswith("activatewindow(videos,recentlyaddedepisodes"):
             return "Library.HasContent(TVShows)"
-        elif action.startswith("activatewindow(videos,musicvideo"):
+        if action.startswith("activatewindow(videos,musicvideo"):
             return "Library.HasContent(MusicVideos)"
-        elif action.startswith("activatewindow(videos,recentlyaddedmusicvideos"):
+        if action.startswith("activatewindow(videos,recentlyaddedmusicvideos"):
             return "Library.HasContent(MusicVideos)"
-        elif action == "xbmc.playdvd()" or action == "playdvd":
+        if action in ("xbmc.playdvd()", "playdvd"):
             return "System.HasMediaDVD"
-        elif action.startswith("activatewindow(eventlog"):
+        if action.startswith("activatewindow(eventlog"):
             return "system.getbool(eventlog.enabled)"
 
         return ""
@@ -1061,7 +1062,7 @@ class DataFunctions:
                 if elem.text == "All":
                     # This shortcut matches all newer versions
                     return True
-                elif int(elem.text) >= int(KODI_VERSION):
+                if int(elem.text) >= int(KODI_VERSION):
                     return True
 
                 # The version didn't match
@@ -1084,6 +1085,7 @@ class DataFunctions:
             current_properties = all_properties[0]
 
         # Loop through the current properties, looking for the current item
+        # pylint: disable=unsubscriptable-object
         for current_property in current_properties:
             # current_property[0] = Group name
             # current_property[1] = labelID
@@ -1113,8 +1115,8 @@ class DataFunctions:
                     # This matches :) Check if we're also overriding the type
                     if "type" in elem.attrib:
                         return [elem.text, elem.attrib.get("type")]
-                    else:
-                        return [elem.text]
+
+                    return [elem.text]
 
         return None
 
@@ -1231,8 +1233,8 @@ class DataFunctions:
                 elem.text = i + "\t"
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
-            for elem in elem:
-                self.indent(elem, level + 1)
+            for _elem in elem:
+                self.indent(_elem, level + 1)
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
         else:
@@ -1291,14 +1293,13 @@ class DataFunctions:
                 return_string = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
                 return [return_string, lasttranslation, lasttranslation, data]
 
-            elif 32000 <= int(data) < 33000:
+            if 32000 <= int(data) < 33000:
                 # A number from the script
                 return [data, "$ADDON[script.skinshortcuts " + data + "]",
                         LANGUAGE(int(data)), data]
 
-            else:
-                # A number from XBMC itself (probably)
-                return [data, "$LOCALIZE[" + data + "]", xbmc.getLocalizedString(int(data)), data]
+            # A number from XBMC itself (probably)
+            return [data, "$LOCALIZE[" + data + "]", xbmc.getLocalizedString(int(data)), data]
 
         # This isn't anything we can localize, just return it (in triplicate ;))
         return [data, data, data, data]
@@ -1407,22 +1408,22 @@ class DataFunctions:
             if len(list_property) == 1:
                 # 'elementWeWant'
                 return list_property[0]
-            elif len(list_property) == 2 and list_property[1].lower().replace(" ", "") == "return":
+            if len(list_property) == 2 and list_property[1].lower().replace(" ", "") == "return":
                 # 'elementWeWant' 'return'
                 return list_property[0]
-            elif len(list_property) == 2:
+            if len(list_property) == 2:
                 # 'windowToActivate' 'elementWeWant'
                 return list_property[1]
-            elif len(list_property) == 3:
+            if len(list_property) == 3:
                 # 'windowToActivate' 'elementWeWant' 'return'
                 return list_property[1]
-            else:
-                # Situation we haven't anticipated - log the issue and return original onclick
-                log("Unable to get 'list' property for shortcut %s" % onclick)
-                return onclick
-        else:
-            # Not an 'ActivateWindow' - return the onclick
+
+            # Situation we haven't anticipated - log the issue and return original onclick
+            log("Unable to get 'list' property for shortcut %s" % onclick)
             return onclick
+
+        # Not an 'ActivateWindow' - return the onclick
+        return onclick
 
     @staticmethod
     def upgrade_action(action):
@@ -1439,15 +1440,15 @@ class DataFunctions:
         if action.lower().startswith("activatewindow(musiclibrary"):
             if "," in action:
                 return "ActivateWindow(Music," + action.split(",", 1)[1]
-            else:
-                return "ActivateWindow(Music)"
+
+            return "ActivateWindow(Music)"
 
         # Isengard + later video windows
         if action.lower().startswith("activatewindow(videolibrary"):
             if "," in action:
                 return "ActivateWindow(Videos," + action.split(",", 1)[1]
-            else:
-                return "ActivateWindow(Videos)"
+
+            return "ActivateWindow(Videos)"
 
         # No matching upgrade
         return action
@@ -1470,8 +1471,8 @@ class DataFunctions:
 
         if len(split_action) == 2:
             return "ActivateWindow(%s,%s)" % (window, split_action[1])
-        else:
-            return "ActivateWindow(%s,%s,return)" % (window, split_action[1])
+
+        return "ActivateWindow(%s,%s,return)" % (window, split_action[1])
 
     @staticmethod
     def data_xml_filename(path, group):

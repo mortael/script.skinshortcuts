@@ -389,8 +389,8 @@ class Template:
                 if elem.attrib.get("name") == name:
                     # This is the one we want :)
                     return self.copy_tree(elem)
-                else:
-                    continue
+
+                continue
             # Save this, in case we don't find a better match
             return_elem = elem
 
@@ -555,8 +555,8 @@ class Template:
         if "tag" not in condition.attrib:
             # Tag attrib is required
             return False
-        else:
-            tag = condition.attrib.get("tag")
+
+        tag = condition.attrib.get("tag")
 
         attrib = None
         if "attribute" in condition.attrib:
@@ -959,19 +959,19 @@ class Template:
             ret.append(self.copy_tree(child))
         return ret
 
-    def compare_tree(self, e1, e2):
-        if e1 is None and e2 is None:
+    def compare_tree(self, element_1, element_2):
+        if element_1 is None and element_2 is None:
             return True
-        if e1 is None or e2 is None:
+        if element_1 is None or element_2 is None:
             return False
-        if e1.tag != e2.tag:
+        if element_1.tag != element_2.tag:
             return False
-        if e1.text != e2.text:
+        if element_1.text != element_2.text:
             return False
-        if e1.tail != e2.tail:
+        if element_1.tail != element_2.tail:
             return False
-        if e1.attrib != e2.attrib:
+        if element_1.attrib != element_2.attrib:
             return False
-        if len(e1) != len(e2):
+        if len(element_1) != len(element_2):
             return False
-        return all(self.compare_tree(c1, c2) for c1, c2 in zip(e1, e2))
+        return all(self.compare_tree(c1, c2) for c1, c2 in zip(element_1, element_2))
