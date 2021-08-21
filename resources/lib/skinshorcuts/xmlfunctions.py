@@ -35,18 +35,18 @@ class XMLFunctions:
     def __init__(self):
         self.data_func = datafunctions.DataFunctions()
 
-        self.MAINWIDGET = {}
-        self.MAINBACKGROUND = {}
-        self.MAINPROPERTIES = {}
-        self.hasSettings = False
-        self.widgetCount = 1
+        self.main_widget = {}
+        self.main_background = {}
+        self.main_properties = {}
+        self.has_settings = False
+        self.widget_count = 1
 
-        self.loadedPropertyPatterns = False
-        self.propertyPatterns = None
+        self.loaded_property_patterns = False
+        self.property_patterns = None
 
-        self.skinDir = SKIN_PATH
+        self.skin_dir = SKIN_PATH
 
-        self.checkForShortcuts = []
+        self.check_for_shortcuts = []
 
     def build_menu(self, mainmenu_id, groups, num_levels, build_mode, options, minitems,
                    system_debug=False, script_debug=False):
@@ -322,7 +322,7 @@ class XMLFunctions:
 
         # Clear any skin settings for backgrounds and widgets
         self.data_func.reset_backgroundandwidgets()
-        self.widgetCount = 1
+        self.widget_count = 1
 
         # Create a new tree and includes for the various groups
         tree = ETree.ElementTree(ETree.Element("includes"))
@@ -334,15 +334,15 @@ class XMLFunctions:
         temple_object.progress = progress
 
         # Get any shortcuts we're checking for
-        self.checkForShortcuts = []
+        self.check_for_shortcuts = []
         overridestree = self.data_func.get_overrides_skin()
         check_for_shortcuts_overrides = overridestree.getroot().findall("checkforshortcut")
         for check_for_shortcut_override in check_for_shortcuts_overrides:
             if "property" in check_for_shortcut_override.attrib:
                 # Add this to the list of shortcuts we'll check for
-                self.checkForShortcuts.append((check_for_shortcut_override.text.lower(),
-                                               check_for_shortcut_override.attrib.get("property"),
-                                               "False"))
+                self.check_for_shortcuts.append((check_for_shortcut_override.text.lower(),
+                                                 check_for_shortcut_override.attrib.get("property"),
+                                                 "False"))
 
         mainmenu_tree = ETree.SubElement(root, "include")
         mainmenu_tree.set("name", "skinshortcuts-mainmenu")
@@ -374,13 +374,13 @@ class XMLFunctions:
             profile_count += 1
 
             # Reset whether we have settings
-            self.hasSettings = False
+            self.has_settings = False
 
             # Reset any checkForShortcuts to say we haven't found them
             new_check_for_shortcuts = []
-            for check_for_shortcut in self.checkForShortcuts:
+            for check_for_shortcut in self.check_for_shortcuts:
                 new_check_for_shortcuts.append((check_for_shortcut[0], check_for_shortcut[1], "False"))
-            self.checkForShortcuts = new_check_for_shortcuts
+            self.check_for_shortcuts = new_check_for_shortcuts
 
             # Clear any previous labelID's
             self.data_func.clear_label_id()
@@ -676,7 +676,7 @@ class XMLFunctions:
 
                     count += 1
 
-            if self.hasSettings is False:
+            if self.has_settings is False:
                 # Check if the overrides asks for a forced settings...
                 overridestree = self.data_func.get_overrides_skin()
                 force_settings = overridestree.getroot().find("forcesettings")
@@ -695,9 +695,9 @@ class XMLFunctions:
                         ETree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
                         ETree.SubElement(newelement, "visible").text = profile[1]
 
-            if len(self.checkForShortcuts) != 0:
+            if len(self.check_for_shortcuts) != 0:
                 # Add a value to the variable for all checkForShortcuts
-                for check_for_shortcut in self.checkForShortcuts:
+                for check_for_shortcut in self.check_for_shortcuts:
                     if profile[1] is not None and xbmc.getCondVisibility(profile[1]):
                         # Current profile - set the skin bool
                         if check_for_shortcut[2] == "True":
@@ -748,7 +748,7 @@ class XMLFunctions:
                 resolutions = extensionpoint.findall("res")
                 for resolution in resolutions:
                     path = xbmcvfs.translatePath(
-                        os.path.join(self.skinDir, resolution.attrib.get("folder"),
+                        os.path.join(self.skin_dir, resolution.attrib.get("folder"),
                                      "script-skinshortcuts-includes.xml")
                     )
                     tree.write(path, encoding="UTF-8")  # writing includes
@@ -828,9 +828,9 @@ class XMLFunctions:
 
         # Clear cloned options if main menu
         if group_name == "mainmenu":
-            self.MAINWIDGET = {}
-            self.MAINBACKGROUND = {}
-            self.MAINPROPERTIES = {}
+            self.main_widget = {}
+            self.main_background = {}
+            self.main_properties = {}
 
         # Additional properties
         properties = eval(item.find("additional-properties").text)
@@ -851,8 +851,8 @@ class XMLFunctions:
                         # And if it's the main menu, list it
                         if group_name == "mainmenu":
                             xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-" +
-                                                str(self.widgetCount) + "," + prop[1] + ")")
-                            self.widgetCount += 1
+                                                str(self.widget_count) + "," + prop[1] + ")")
+                            self.widget_count += 1
                     elif prop[0] == "background":
                         xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" +
                                             prop[1] + ")")
@@ -864,14 +864,14 @@ class XMLFunctions:
                             widget_properties = ["widget", "widgetName", "widgetType",
                                                  "widgetTarget", "widgetPath", "widgetPlaylist"]
                             if prop[0] in widget_properties:
-                                self.MAINWIDGET[prop[0]] = prop[1]
+                                self.main_widget[prop[0]] = prop[1]
                         if "clonebackgrounds" in options:
                             background_properties = ["background", "backgroundName",
                                                      "backgroundPlaylist", "backgroundPlaylistName"]
                             if prop[0] in background_properties:
-                                self.MAINBACKGROUND[prop[0]] = prop[1]
+                                self.main_background[prop[0]] = prop[1]
                         if "cloneproperties" in options:
-                            self.MAINPROPERTIES[prop[0]] = prop[1]
+                            self.main_properties[prop[0]] = prop[1]
 
                     # For backwards compatibility, save widgetPlaylist as widgetPath too
                     if prop[0] == "widgetPlaylist":
@@ -986,22 +986,22 @@ class XMLFunctions:
                 all_props["list"] = list_element
 
             if onclick.text == "ActivateWindow(Settings)":
-                self.hasSettings = True
+                self.has_settings = True
 
             if "condition" in onclick.attrib:
                 onclickelement.set("condition", onclick.attrib.get("condition"))
 
-            if len(self.checkForShortcuts) != 0:
+            if len(self.check_for_shortcuts) != 0:
                 # Check if we've been asked to watch for this shortcut
                 new_check_for_shortcuts = []
-                for check_for_shortcut in self.checkForShortcuts:
+                for check_for_shortcut in self.check_for_shortcuts:
                     if onclick.text.lower() == check_for_shortcut[0]:
                         # They match, change the value to True
                         new_check_for_shortcuts.append((check_for_shortcut[0],
                                                         check_for_shortcut[1], "True"))
                     else:
                         new_check_for_shortcuts.append(check_for_shortcut)
-                self.checkForShortcuts = new_check_for_shortcuts
+                self.check_for_shortcuts = new_check_for_shortcuts
 
         # Visibility
         if visibility_condition is not None:
@@ -1035,23 +1035,23 @@ class XMLFunctions:
 
         # If this isn't the main menu, and we're cloning widgets or backgrounds...
         if group_name != "mainmenu":
-            if "clonewidgets" in options and len(self.MAINWIDGET) != 0:
-                for key in self.MAINWIDGET:
+            if "clonewidgets" in options and len(self.main_widget) != 0:
+                for key in self.main_widget:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
-                    additionalproperty.text = self.MAINWIDGET[key]
+                    additionalproperty.text = self.main_widget[key]
                     all_props[key] = additionalproperty
-            if "clonebackgrounds" in options and len(self.MAINBACKGROUND) != 0:
-                for key in self.MAINBACKGROUND:
+            if "clonebackgrounds" in options and len(self.main_background) != 0:
+                for key in self.main_background:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
-                    additionalproperty.text = self.data_func.local(self.MAINBACKGROUND[key])[1]
+                    additionalproperty.text = self.data_func.local(self.main_background[key])[1]
                     all_props[key] = additionalproperty
-            if "cloneproperties" in options and len(self.MAINPROPERTIES) != 0:
-                for key in self.MAINPROPERTIES:
+            if "cloneproperties" in options and len(self.main_properties) != 0:
+                for key in self.main_properties:
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
-                    additionalproperty.text = self.data_func.local(self.MAINPROPERTIES[key])[1]
+                    additionalproperty.text = self.data_func.local(self.main_properties[key])[1]
                     all_props[key] = additionalproperty
 
         property_patterns = self.get_property_patterns(label_id.text, group_name)
@@ -1073,12 +1073,12 @@ class XMLFunctions:
 
     def get_property_patterns(self, label_id, group):
         property_patterns = {}
-        if not self.loadedPropertyPatterns:
+        if not self.loaded_property_patterns:
             overrides = self.data_func.get_overrides_skin()
-            self.propertyPatterns = overrides.getroot().findall("propertypattern")
-            self.loadedPropertyPatterns = True
+            self.property_patterns = overrides.getroot().findall("propertypattern")
+            self.loaded_property_patterns = True
 
-        for property_pattern_element in self.propertyPatterns:
+        for property_pattern_element in self.property_patterns:
             property_name = property_pattern_element.get("property")
             property_group = property_pattern_element.get("group")
 
