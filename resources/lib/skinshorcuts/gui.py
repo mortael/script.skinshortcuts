@@ -1447,14 +1447,14 @@ class GUI(xbmcgui.WindowXMLDialog):
             if self.currentWindow.getProperty("custom-grouping"):
                 selectedShortcut = self.lib_func.select_shortcut(
                     custom=True,
-                    currentAction=listitem.getProperty("path"),
+                    current_action=listitem.getProperty("path"),
                     grouping=self.currentWindow.getProperty("custom-grouping")
                 )
                 self.currentWindow.clearProperty("custom-grouping")
             else:
                 selectedShortcut = self.lib_func.select_shortcut(
                     custom=True,
-                    currentAction=listitem.getProperty("path")
+                    current_action=listitem.getProperty("path")
                 )
 
             if not selectedShortcut:
@@ -1740,13 +1740,13 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Let user choose widget
             if listitem.getProperty("widgetPath") == "":
-                selectedShortcut = self.lib_func.select_shortcut(grouping="widget", showNone=True)
+                selectedShortcut = self.lib_func.select_shortcut(grouping="widget", show_none=True)
             else:
                 selectedShortcut = self.lib_func.select_shortcut(
                     grouping="widget",
-                    showNone=True,
+                    show_none=True,
                     custom=True,
-                    currentAction=listitem.getProperty("widgetPath")
+                    current_action=listitem.getProperty("widgetPath")
                 )
 
             if selectedShortcut is None:

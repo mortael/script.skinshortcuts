@@ -100,11 +100,11 @@ class Main:
             if self.GROUPING is not None:
                 selected_shortcut = self.lib_func.select_shortcut(
                     "", grouping=self.GROUPING,
-                    custom=self.CUSTOM, showNone=self.NONE
+                    custom=self.CUSTOM, show_none=self.NONE
                 )
             else:
                 selected_shortcut = self.lib_func.select_shortcut("", custom=self.CUSTOM,
-                                                                  showNone=self.NONE)
+                                                                  show_none=self.NONE)
 
             # Now set the skin strings
             if selected_shortcut is not None and selected_shortcut.getProperty("Path"):
@@ -165,16 +165,16 @@ class Main:
             if self.GROUPING:
                 if self.GROUPING.lower() == "default":
                     selected_shortcut = self.lib_func.select_shortcut("", custom=show_custom,
-                                                                      showNone=self.NONE)
+                                                                      show_none=self.NONE)
                 else:
                     selected_shortcut = self.lib_func.select_shortcut(
                         "", grouping=self.GROUPING,
-                        custom=show_custom, showNone=self.NONE
+                        custom=show_custom, show_none=self.NONE
                     )
             else:
                 selected_shortcut = self.lib_func.select_shortcut(
                     "", grouping="widget",
-                    custom=show_custom, showNone=self.NONE
+                    custom=show_custom, show_none=self.NONE
                 )
 
             # Now set the skin strings

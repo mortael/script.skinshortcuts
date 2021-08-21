@@ -32,7 +32,7 @@ from .constants import LANGUAGE
 from .constants import PROFILE_PATH
 
 
-def kodiwalk(path, stringForce=False):
+def kodiwalk(path, string_force=False):
     json_payload = {
         "jsonrpc": "2.0",
         "method": "Files.GetDirectory",
@@ -50,12 +50,12 @@ def kodiwalk(path, stringForce=False):
             if 'file' in item and 'filetype' in item and 'label' in item:
                 if item['filetype'] == 'directory' and \
                         not item['file'].endswith(('.xsp', '.m3u', '.xml/', '.xml')):
-                    if stringForce and item['file'].startswith(stringForce):
-                        files = files + kodiwalk(xbmcvfs.translatePath(item['file']), stringForce)
+                    if string_force and item['file'].startswith(string_force):
+                        files = files + kodiwalk(xbmcvfs.translatePath(item['file']), string_force)
                     else:
-                        files = files + kodiwalk(item['file'], stringForce)
+                        files = files + kodiwalk(item['file'], string_force)
                 else:
-                    if stringForce and item['file'].startswith(stringForce):
+                    if string_force and item['file'].startswith(string_force):
                         files.append({
                             'path': xbmcvfs.translatePath(item['file']),
                             'label': item['label']
@@ -285,16 +285,16 @@ class LibraryFunctions:
             if group == "":
                 # We're going to get the root nodes
                 self.installWidget = False
-                windowTitle = LANGUAGE(32048)
+                window_title = LANGUAGE(32048)
                 if grouping == "widget":
-                    windowTitle = LANGUAGE(32044)
-                return [windowTitle, self.build_node_listing(nodes, False)]
+                    window_title = LANGUAGE(32044)
+                return [window_title, self.build_node_listing(nodes, False)]
             else:
                 groups = group.split(",")
 
                 nodes = ["", nodes]
-                for groupNum in groups:
-                    nodes = self.get_node(nodes[1], int(groupNum))
+                for group_num in groups:
+                    nodes = self.get_node(nodes[1], int(group_num))
 
                 return [nodes[0], self.build_node_listing(nodes[1], False)]
 
@@ -326,7 +326,7 @@ class LibraryFunctions:
                 return [label, subnode]
 
     def build_node_listing(self, nodes, flat):
-        returnList = []
+        return_list = []
         count = 0
         for node in nodes:
             if "condition" in node.attrib:
@@ -341,9 +341,9 @@ class LibraryFunctions:
                     continue
             count += 1
             if node.tag == "content":
-                returnList = returnList + self.retrieve_content(node.text)
+                return_list = return_list + self.retrieve_content(node.text)
             if node.tag == "shortcut":
-                shortcutItem = self.create(
+                shortcut_item = self.create(
                     [node.text,
                      node.attrib.get("label"),
                      node.attrib.get("type"),
@@ -353,35 +353,35 @@ class LibraryFunctions:
                 )
                 if "widget" in node.attrib:
                     # This is a widget shortcut, so add the relevant widget information
-                    shortcutItem.setProperty("widget", node.attrib.get("widget"))
+                    shortcut_item.setProperty("widget", node.attrib.get("widget"))
                     if "widgetName" in node.attrib:
-                        shortcutItem.setProperty("widgetName", node.attrib.get("widgetName"))
+                        shortcut_item.setProperty("widgetName", node.attrib.get("widgetName"))
                     else:
-                        shortcutItem.setProperty("widgetName", node.attrib.get("label"))
-                    shortcutItem.setProperty("widgetPath", node.text)
+                        shortcut_item.setProperty("widgetName", node.attrib.get("label"))
+                    shortcut_item.setProperty("widgetPath", node.text)
                     if "widgetType" in node.attrib:
-                        shortcutItem.setProperty("widgetType", node.attrib.get("widgetType"))
+                        shortcut_item.setProperty("widgetType", node.attrib.get("widgetType"))
                     else:
-                        shortcutItem.setProperty("widgetType", "")
+                        shortcut_item.setProperty("widgetType", "")
                     if "widgetTarget" in node.attrib:
-                        shortcutItem.setProperty("widgetTarget", node.attrib.get("widgetTarget"))
+                        shortcut_item.setProperty("widgetTarget", node.attrib.get("widgetTarget"))
                     else:
-                        shortcutItem.setProperty("widgetTarget", "")
-                returnList.append(shortcutItem)
-                # returnList.append( self.create( [node.text, node.attrib.get( "label" ),
+                        shortcut_item.setProperty("widgetTarget", "")
+                return_list.append(shortcut_item)
+                # return_list.append( self.create( [node.text, node.attrib.get( "label" ),
                 # node.attrib.get( "type" ), {"icon": node.attrib.get( "icon" )}] ) )
             if node.tag == "node" and flat is False:
-                returnList.append(self.create(
+                return_list.append(self.create(
                     ["||NODE||" + str(count), node.attrib.get("label"), "", {
                         "icon": "DefaultFolder.png"
                     }]))
 
         # Override icons
         tree = self.data_func.get_overrides_skin()
-        for idx, item in enumerate(returnList):
-            returnList[idx] = self._get_icon_overrides(tree, item, None)
+        for idx, item in enumerate(return_list):
+            return_list[idx] = self._get_icon_overrides(tree, item, None)
 
-        return returnList
+        return return_list
 
     def retrieve_content(self, content):
         if content == "upnp-video":
@@ -421,9 +421,9 @@ class LibraryFunctions:
                     listitem.setProperty("widgetName", listitem.getLabel())
                     listitem.setProperty("widgetPath", path)
 
-                    widgetType = self.node_func.get_media_type(path)
-                    if widgetType != "unknown":
-                        listitem.setProperty("widgetType", widgetType)
+                    widget_type = self.node_func.get_media_type(path)
+                    if widget_type != "unknown":
+                        listitem.setProperty("widgetType", widget_type)
 
         # Check for any icon overrides for these items
         tree = self.data_func.get_overrides_skin()
@@ -436,18 +436,18 @@ class LibraryFunctions:
     def check_for_folder(self, items):
         # This function will check for any folders in the listings that are being returned
         # and, if found, move their sub-items into a property
-        returnItems = []
+        return_items = []
         for item in items:
             if isinstance(item, list):
                 self.foldersCount += 1
                 self.folders[str(self.foldersCount)] = item[1]
-                newItem = item[0]
-                newItem.setProperty("folder", str(self.foldersCount))
-                returnItems.append(newItem)
+                new_item = item[0]
+                new_item.setProperty("folder", str(self.foldersCount))
+                return_items.append(new_item)
             else:
-                returnItems.append(item)
+                return_items.append(item)
 
-        return returnItems
+        return return_items
 
     def load_grouping(self, content):
         # Display a busy dialog
@@ -517,7 +517,7 @@ class LibraryFunctions:
         tree = self.data_func.get_overrides_skin()
 
         # Search for skin-provided shortcuts for this group
-        originalGroup = group
+        original_group = group
         if group.endswith("-flat"):
             group = group.replace("-flat", "")
 
@@ -594,60 +594,60 @@ class LibraryFunctions:
                     else:
                         content.append(listitem)
 
-        self.dictionaryGroupings[originalGroup] = content
+        self.dictionaryGroupings[original_group] = content
 
     # ================================
     # === BUILD AVAILABLE SHORTCUT ===
     # ================================
 
-    def create(self, item, allowOverrideLabel=True):
+    def create(self, item, allow_override_label=True):
         # Retrieve label
-        localLabel = self.data_func.local(item[1])[0]
+        local_label = self.data_func.local(item[1])[0]
 
         # Create localised label2
-        displayLabel2 = self.data_func.local(item[2])[2]
-        shortcutType = self.data_func.local(item[2])[0]
+        display_label_2 = self.data_func.local(item[2])[2]
+        shortcut_type = self.data_func.local(item[2])[0]
 
-        if allowOverrideLabel:
+        if allow_override_label:
             # Check for a replaced label
-            replacementLabel = self.data_func.check_shortcut_label_override(item[0])
-            if replacementLabel is not None:
+            replacement_label = self.data_func.check_shortcut_label_override(item[0])
+            if replacement_label is not None:
 
-                localLabel = self.data_func.local(replacementLabel[0])[0]
+                local_label = self.data_func.local(replacement_label[0])[0]
 
-                if len(replacementLabel) == 2:
+                if len(replacement_label) == 2:
                     # We're also overriding the type
-                    displayLabel2 = self.data_func.local(replacementLabel[1])[2]
-                    shortcutType = self.data_func.local(replacementLabel[1])[0]
+                    display_label_2 = self.data_func.local(replacement_label[1])[2]
+                    shortcut_type = self.data_func.local(replacement_label[1])[0]
 
         # Try localising it
-        displayLabel = self.data_func.local(localLabel)[2]
+        display_label = self.data_func.local(local_label)[2]
 
-        if displayLabel.startswith("$NUMBER["):
-            displayLabel = displayLabel[8:-1]
+        if display_label.startswith("$NUMBER["):
+            display_label = display_label[8:-1]
 
         # Create localised label2
-        displayLabel2 = self.data_func.local(displayLabel2)[2]
-        shortcutType = self.data_func.local(shortcutType)[0]
+        display_label_2 = self.data_func.local(display_label_2)[2]
+        shortcut_type = self.data_func.local(shortcut_type)[0]
 
-        # If either displayLabel starts with a $, ask Kodi to parse it for us
-        if displayLabel.startswith("$"):
-            displayLabel = xbmc.getInfoLabel(displayLabel)
-        if displayLabel2.startswith("$"):
-            displayLabel2 = xbmc.getInfoLabel(displayLabel2)
+        # If either display_label starts with a $, ask Kodi to parse it for us
+        if display_label.startswith("$"):
+            display_label = xbmc.getInfoLabel(display_label)
+        if display_label_2.startswith("$"):
+            display_label_2 = xbmc.getInfoLabel(display_label_2)
 
-        # If this launches our explorer, append a notation to the displayLabel
+        # If this launches our explorer, append a notation to the display_label
         localized_only = False
         if item[0].startswith("||"):
-            displayLabel = displayLabel + "  >"
+            display_label = display_label + "  >"
             # We'll also mark that we don't want to use a non-localised labelID, as this
             # causes issues with some folders picking up overridden icons incorrectly
             localized_only = True
 
         # Get the items labelID
         self.data_func.clear_label_id()
-        labelID = self.data_func.get_label_id(
-            self.data_func.create_nice_name(self.data_func.local(localLabel)[0],
+        label_id = self.data_func.get_label_id(
+            self.data_func.create_nice_name(self.data_func.local(local_label)[0],
                                             localized_only=localized_only),
             item[0],
             localized_only=localized_only
@@ -680,54 +680,54 @@ class LibraryFunctions:
                 else:
                     self.useDefaultThumbAsIcon = False
 
-        usedDefaultThumbAsIcon = False
+        used_default_thumb_as_icon = False
         if self.useDefaultThumbAsIcon is True and thumbnail is not None:
             icon = thumbnail
             thumbnail = None
-            usedDefaultThumbAsIcon = True
+            used_default_thumb_as_icon = True
 
         # If the icon starts with a $, ask Kodi to parse it for us
-        displayIcon = icon
-        iconIsVar = False
+        display_icon = icon
+        icon_is_var = False
         if icon.startswith("$"):
-            displayIcon = xbmc.getInfoLabel(icon)
-            iconIsVar = True
+            display_icon = xbmc.getInfoLabel(icon)
+            icon_is_var = True
 
         # special treatment for image resource addons
         if icon.startswith("resource://"):
-            iconIsVar = True
+            icon_is_var = True
 
         # If the skin doesn't have the icon, replace it with DefaultShortcut.png
-        if (not displayIcon or not xbmc.skinHasImage(displayIcon)) and not iconIsVar:
-            if not usedDefaultThumbAsIcon:
-                displayIcon = "DefaultShortcut.png"
+        if (not display_icon or not xbmc.skinHasImage(display_icon)) and not icon_is_var:
+            if not used_default_thumb_as_icon:
+                display_icon = "DefaultShortcut.png"
 
         # Build listitem
         if thumbnail is not None:
-            listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
+            listitem = xbmcgui.ListItem(label=display_label, label2=display_label_2)
             listitem.setArt({
-                'icon': displayIcon,
+                'icon': display_icon,
                 'thumb': thumbnail
             })
             listitem.setProperty("thumbnail", thumbnail)
         else:
-            listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
+            listitem = xbmcgui.ListItem(label=display_label, label2=display_label_2)
             listitem.setArt({
                 'icon': ''
             })
         listitem.setProperty("path", item[0])
-        listitem.setProperty("localizedString", localLabel)
-        listitem.setProperty("shortcutType", shortcutType)
-        listitem.setProperty("icon", displayIcon)
-        listitem.setProperty("tempLabelID", labelID)
-        listitem.setProperty("defaultLabel", labelID)
+        listitem.setProperty("localizedString", local_label)
+        listitem.setProperty("shortcutType", shortcut_type)
+        listitem.setProperty("icon", display_icon)
+        listitem.setProperty("tempLabelID", label_id)
+        listitem.setProperty("defaultLabel", label_id)
 
-        if displayIcon != icon:
+        if display_icon != icon:
             listitem.setProperty("untranslatedIcon", icon)
 
         return listitem
 
-    def _get_icon_overrides(self, tree, item, content, setToDefault=True):
+    def _get_icon_overrides(self, tree, item, content, set_to_default=True):
         if tree is None:
             return item
 
@@ -751,10 +751,10 @@ class LibraryFunctions:
                         newicon = elem.text
 
         # If the icon doesn't exist, set icon to default
-        setDefault = False
-        if not xbmc.skinHasImage(newicon) and setToDefault is True:
+        set_default = False
+        if not xbmc.skinHasImage(newicon) and set_to_default is True:
             oldicon = item.getProperty("icon")
-            setDefault = True
+            set_default = True
 
         if oldicon is not None:
             # we found an icon override
@@ -763,7 +763,7 @@ class LibraryFunctions:
                 'icon': 'newicon'
             })
 
-        if setDefault is True:
+        if set_default is True:
             item = self._get_icon_overrides(tree, item, content, False)
 
         return item
@@ -792,11 +792,11 @@ class LibraryFunctions:
     def _parse_library_nodes(self, library, node_type):
         # items = {"video":[], "movies":[], "tvshows":[], "musicvideos":[], "custom":{}}
         if library == "video":
-            windowID = "Videos"
+            window_id = "Videos"
             prefix = "library://video"
             action = "||VIDEO||"
         elif library == "music":
-            windowID = "music"
+            window_id = "music"
             prefix = "library://music"
             action = "||AUDIO||"
         else:
@@ -841,7 +841,7 @@ class LibraryFunctions:
                 )
             else:
                 item = self.create(
-                    ["ActivateWindow(%s,%s,return)" % (windowID, nodes[key][2]),
+                    ["ActivateWindow(%s,%s,return)" % (window_id, nodes[key][2]),
                      nodes[key][0], nodes[key][3], {
                          "icon": nodes[key][1]
                      }]
@@ -1290,57 +1290,57 @@ class LibraryFunctions:
                     playlist = file['path']
                     label = file['label']
                     playlistfile = xbmcvfs.translatePath(playlist)
-                    mediaLibrary = path[2]
+                    media_library = path[2]
 
                     if playlist.endswith('.xsp'):
                         contents_data = read_file(playlistfile)
                         xmldata = ETree.fromstring(contents_data)
-                        mediaType = "unknown"
+                        media_type = "unknown"
                         try:
                             iterator = xmldata.iter()
                         except:
                             # noinspection PyDeprecation
                             iterator = xmldata.getiterator()
                         for line in iterator:
-                            mediaContent = ""
+                            media_content = ""
 
                             if line.tag == "smartplaylist":
-                                mediaType = line.attrib['type']
-                                if mediaType == "movies" or mediaType == "tvshows" or \
-                                        mediaType == "seasons" or mediaType == "episodes" or \
-                                        mediaType == "musicvideos" or mediaType == "sets":
-                                    mediaLibrary = "Videos"
-                                    mediaContent = "video"
-                                elif mediaType == "albums" or mediaType == "artists" or \
-                                        mediaType == "songs":
-                                    mediaLibrary = "Music"
-                                    mediaContent = "music"
+                                media_type = line.attrib['type']
+                                if media_type == "movies" or media_type == "tvshows" or \
+                                        media_type == "seasons" or media_type == "episodes" or \
+                                        media_type == "musicvideos" or media_type == "sets":
+                                    media_library = "Videos"
+                                    media_content = "video"
+                                elif media_type == "albums" or media_type == "artists" or \
+                                        media_type == "songs":
+                                    media_library = "Music"
+                                    media_content = "music"
 
-                            if line.tag == "name" and mediaLibrary is not None:
+                            if line.tag == "name" and media_library is not None:
                                 name = line.text
                                 if not name:
                                     name = label
                                 # Create a list item
                                 listitem = self.create(
-                                    ["::PLAYLIST>%s::" % mediaLibrary, name, path[1], {
+                                    ["::PLAYLIST>%s::" % media_library, name, path[1], {
                                         "icon": "DefaultPlaylist.png"
                                     }]
                                 )
                                 listitem.setProperty("action-play", "PlayMedia(" + playlist + ")")
                                 listitem.setProperty("action-show",
-                                                     "ActivateWindow(" + mediaLibrary + "," +
+                                                     "ActivateWindow(" + media_library + "," +
                                                      playlist + ",return)")
                                 listitem.setProperty("action-party",
                                                      "PlayerControl(PartyMode(%s))" % playlist)
 
                                 # Add widget information
                                 listitem.setProperty("widget", "Playlist")
-                                listitem.setProperty("widgetType", mediaType)
-                                listitem.setProperty("widgetTarget", mediaContent)
+                                listitem.setProperty("widgetType", media_type)
+                                listitem.setProperty("widgetTarget", media_content)
                                 listitem.setProperty("widgetName", name)
                                 listitem.setProperty("widgetPath", playlist)
 
-                                if mediaLibrary == "Videos":
+                                if media_library == "Videos":
                                     videolist.append(listitem)
                                 else:
                                     audiolist.append(listitem)
@@ -1390,7 +1390,7 @@ class LibraryFunctions:
     def script_playlists():
         # Lazy loading of random source playlists auto-generated by the script
         # (loaded lazily as these can be created/deleted after gui has loaded)
-        returnPlaylists = []
+        return_playlists = []
         try:
             log('Loading script generated playlists...')
             path = "special://profile/addon_data/" + ADDON_ID + "/"
@@ -1412,7 +1412,7 @@ class LibraryFunctions:
                             name = line.text
                             # Save it for the widgets list
                             # TO-DO - Localize display name
-                            returnPlaylists.append([playlist, "(Source) " + name, name])
+                            return_playlists.append([playlist, "(Source) " + name, name])
 
                             count += 1
                             break
@@ -1423,7 +1423,7 @@ class LibraryFunctions:
             log("Failed to load script generated playlists")
             print_exc()
 
-        return returnPlaylists
+        return return_playlists
 
     def favourites(self):
         listitems = []
@@ -1462,35 +1462,35 @@ class LibraryFunctions:
         self.add_to_dictionary("favourite", listitems)
 
     def addons(self):
-        executableItems = {}
-        executablePluginItems = {}
-        videoItems = {}
-        audioItems = {}
-        imageItems = {}
+        executable_items = {}
+        executable_plugin_items = {}
+        video_items = {}
+        audio_items = {}
+        image_items = {}
 
         contenttypes = [
-            ("executable", executableItems),
-            ("video", videoItems),
-            ("audio", audioItems),
-            ("image", imageItems)
+            ("executable", executable_items),
+            ("video", video_items),
+            ("audio", audio_items),
+            ("image", image_items)
         ]
         for contenttype, listitems in contenttypes:
             # listitems = {}
-            shortcutType = ""
+            shortcut_type = ""
             if contenttype == "executable":
                 _ = LANGUAGE(32009)
-                shortcutType = "::SCRIPT::32009"
+                shortcut_type = "::SCRIPT::32009"
             elif contenttype == "video":
                 _ = LANGUAGE(32010)
-                shortcutType = "::SCRIPT::32010"
+                shortcut_type = "::SCRIPT::32010"
             elif contenttype == "audio":
                 _ = LANGUAGE(32011)
-                shortcutType = "::SCRIPT::32011"
+                shortcut_type = "::SCRIPT::32011"
             elif contenttype == "image":
                 _ = LANGUAGE(32012)
-                shortcutType = "::SCRIPT::32012"
+                shortcut_type = "::SCRIPT::32012"
 
-            if not shortcutType:
+            if not shortcut_type:
                 continue
 
             json_payload = {
@@ -1513,7 +1513,7 @@ class LibraryFunctions:
                             thumb = item['thumbnail']
                         else:
                             thumb = None
-                        listitem = self.create([path, item['name'], shortcutType, {
+                        listitem = self.create([path, item['name'], shortcut_type, {
                             "icon": "DefaultAddon.png",
                             "thumb": "thumb"
                         }])
@@ -1529,7 +1529,7 @@ class LibraryFunctions:
 
                             # If its executable, save it to our program plugin widget list
                             if contenttype == "executable":
-                                executablePluginItems[item["name"]] = listitem
+                                executable_plugin_items[item["name"]] = listitem
 
                         elif contenttype == "executable":
                             # Check if it's a program that can be run as an exectuble
@@ -1537,28 +1537,28 @@ class LibraryFunctions:
                             for content in provides:
                                 # For each content that it provides, add it
                                 # to the add-ons for that type
-                                contentData = {
-                                    "video": ["::SCRIPT::32010", videoItems],
-                                    "audio": ["::SCRIPT::32011", audioItems],
-                                    "image": ["::SCRIPT::32012", imageItems],
-                                    "executable": ["::SCRIPT::32009", executableItems]
+                                content_data = {
+                                    "video": ["::SCRIPT::32010", video_items],
+                                    "audio": ["::SCRIPT::32011", audio_items],
+                                    "image": ["::SCRIPT::32012", image_items],
+                                    "executable": ["::SCRIPT::32009", executable_items]
                                 }
-                                if content in contentData:
+                                if content in content_data:
                                     # Add it as a plugin in the relevant category
-                                    otherItem = self.create(
-                                        [path, item['name'] + "  >", contentData[content][0], {
+                                    other_item = self.create(
+                                        [path, item['name'] + "  >", content_data[content][0], {
                                             "icon": "DefaultAddon.png",
                                             "thumb": thumb
                                         }]
                                     )
-                                    otherItem.setProperty("path", "||BROWSE||" + item['addonid'])
-                                    otherItem.setProperty("action",
-                                                          "RunAddOn(" + item['addonid'] + ")")
-                                    contentData[content][1][item["name"]] = otherItem
+                                    other_item.setProperty("path", "||BROWSE||" + item['addonid'])
+                                    other_item.setProperty("action",
+                                                           "RunAddOn(" + item['addonid'] + ")")
+                                    content_data[content][1][item["name"]] = other_item
                                     # If it's executable, add it to our
                                     # seperate program plugins for widgets
                                     if content == "executable":
-                                        executablePluginItems[item["name"]] = otherItem
+                                        executable_plugin_items[item["name"]] = other_item
 
                         # Save the listitem
                         listitems[item["name"]] = listitem
@@ -1566,9 +1566,9 @@ class LibraryFunctions:
             if contenttype == "executable":
                 self.add_to_dictionary("addon-program", self._sort_dictionary(listitems))
                 self.add_to_dictionary("addon-program-plugin",
-                                       self._sort_dictionary(executablePluginItems))
+                                       self._sort_dictionary(executable_plugin_items))
                 log(" - %s programs found (of which %s are plugins)" %
-                    (str(len(listitems)), str(len(executablePluginItems))))
+                    (str(len(listitems)), str(len(executable_plugin_items))))
             elif contenttype == "video":
                 self.add_to_dictionary("addon-video", self._sort_dictionary(listitems))
                 log(" - " + str(len(listitems)) + " video add-ons found")
@@ -1654,50 +1654,50 @@ class LibraryFunctions:
         tree = self.data_func.get_overrides_skin()
         elems = tree.getroot().findall("widget")
         for elem in elems:
-            widgetType = None
-            widgetPath = None
-            widgetTarget = None
-            widgetIcon = ""
-            widgetName = None
+            widget_type = None
+            widget_path = None
+            widget_target = None
+            widget_icon = ""
+            widget_name = None
             if "type" in elem.attrib:
-                widgetType = elem.attrib.get("type")
+                widget_type = elem.attrib.get("type")
             if "condition" in elem.attrib:
                 if not xbmc.getCondVisibility(elem.attrib.get("condition")):
                     continue
             if "path" in elem.attrib:
-                widgetPath = elem.attrib.get("path")
+                widget_path = elem.attrib.get("path")
             if "target" in elem.attrib:
-                widgetTarget = elem.attrib.get("target")
+                widget_target = elem.attrib.get("target")
             if "icon" in elem.attrib:
-                widgetIcon = elem.attrib.get("icon")
+                widget_icon = elem.attrib.get("icon")
             if "name" in elem.attrib:
-                widgetName = self.data_func.local(elem.attrib.get('name'))[2]
+                widget_name = self.data_func.local(elem.attrib.get('name'))[2]
 
             # Save widget for button 309
             self.dictionaryGroupings["widgets-classic"].append(
                 [elem.text,
                  self.data_func.local(elem.attrib.get('label'))[2],
-                 widgetType, widgetPath, widgetIcon, widgetTarget]
+                 widget_type, widget_path, widget_icon, widget_target]
             )
 
             # Save widgets for button 312
             listitem = self.create(
                 [elem.text, self.data_func.local(elem.attrib.get('label'))[2], "::SCRIPT::32099", {
-                    "icon": widgetIcon
+                    "icon": widget_icon
                 }]
             )
             listitem.setProperty("widget", elem.text)
-            if widgetName is not None:
-                listitem.setProperty("widgetName", widgetName)
+            if widget_name is not None:
+                listitem.setProperty("widgetName", widget_name)
             else:
                 listitem.setProperty("widgetName",
                                      self.data_func.local(elem.attrib.get('label'))[2])
-            if widgetType is not None:
-                listitem.setProperty("widgetType", widgetType)
-            if widgetPath is not None:
-                listitem.setProperty("widgetPath", widgetPath)
-            if widgetTarget is not None:
-                listitem.setProperty("widgetTarget", widgetTarget)
+            if widget_type is not None:
+                listitem.setProperty("widgetType", widget_type)
+            if widget_path is not None:
+                listitem.setProperty("widgetPath", widget_path)
+            if widget_target is not None:
+                listitem.setProperty("widgetTarget", widget_target)
             listitems.append(listitem)
 
         self.add_to_dictionary("widgets", listitems)
@@ -1713,14 +1713,14 @@ class LibraryFunctions:
     # === ADDON/SOURCE EXPLORER ===
     # =============================
 
-    def explorer(self, history, location, label, thumbnail, itemType, isWidget=False):
-        isLibrary = False
-        widgetType = None
-        addonType = None
+    def explorer(self, history, location, label, thumbnail, item_type, is_widget=False):
+        is_library = False
+        widget_type = None
+        addon_type = None
 
-        dialogLabel = label[0].replace("  >", "")
+        dialog_label = label[0].replace("  >", "")
         if len(label) != 1:
-            dialogLabel = label[0].replace("  >", "") + " - " + label[-1].replace("  >", "")
+            dialog_label = label[0].replace("  >", "") + " - " + label[-1].replace("  >", "")
 
         listings = []
 
@@ -1738,19 +1738,19 @@ class LibraryFunctions:
         # Default action - create shortcut (do not show when we're looking at
         # the special entries from skinhelper service)
         if "script.skin.helper.service" not in location:
-            createLabel = "32058"
-            if isWidget:
-                createLabel = "32100"
+            create_label = "32058"
+            if is_widget:
+                create_label = "32100"
             listings.append(
                 self._get_icon_overrides(tree,
-                                         self.create(["::CREATE::", createLabel, "", {}]), "")
+                                         self.create(["::CREATE::", create_label, "", {}]), "")
             )
 
-        log("Getting %s - %s" % (dialogLabel, location))
+        log("Getting %s - %s" % (dialog_label, location))
 
         # Show a waiting dialog, then get the listings for the directory
         dialog = xbmcgui.DialogProgress()
-        dialog.create(dialogLabel, LANGUAGE(32063))
+        dialog.create(dialog_label, LANGUAGE(32063))
 
         # we retrieve a whole bunch of properties, needed to guess the content type properly
         json_payload = {
@@ -1774,27 +1774,27 @@ class LibraryFunctions:
 
             for item in json_result:
                 # Handle numeric labels
-                altLabel = item["label"]
+                alt_label = item["label"]
                 if item["label"].isnumeric():
-                    altLabel = "$NUMBER[" + item["label"] + "]"
+                    alt_label = "$NUMBER[" + item["label"] + "]"
                 if location.startswith("library://"):
                     # Process this as a library node
-                    isLibrary = True
-                    if widgetType is None:
-                        widgetType = self.node_func.get_media_type(location)
+                    is_library = True
+                    if widget_type is None:
+                        widget_type = self.node_func.get_media_type(location)
 
-                    if itemType == "32014":
+                    if item_type == "32014":
                         # Video node
-                        windowID = "Videos"
-                        if widgetType == "unknown":
-                            widgetType = "video"
-                        widgetTarget = "videos"
+                        window_id = "Videos"
+                        if widget_type == "unknown":
+                            widget_type = "video"
+                        widget_target = "videos"
                     else:
                         # Audio node
-                        windowID = "Music"
-                        if widgetType == "unknown":
-                            widgetType = "audio"
-                        widgetTarget = "music"
+                        window_id = "Music"
+                        if widget_type == "unknown":
+                            widget_type = "audio"
+                        widget_target = "music"
 
                     if item["filetype"] == "directory":
                         thumb = None
@@ -1802,7 +1802,7 @@ class LibraryFunctions:
                             thumb = item["thumbnail"]
 
                         listitem = self.create(
-                            ["ActivateWindow(%s,%s,return)" % (windowID, item["file"]), altLabel,
+                            ["ActivateWindow(%s,%s,return)" % (window_id, item["file"]), alt_label,
                              "", {
                                  "icon": "DefaultFolder.png",
                                  "thumb": thumb
@@ -1817,11 +1817,11 @@ class LibraryFunctions:
                             }])
 
                         # Add widget properties
-                        widgetName = label[0].replace("  >", "") + " - " + item["label"]
+                        widget_name = label[0].replace("  >", "") + " - " + item["label"]
                         listitem.setProperty("widget", "Library")
-                        listitem.setProperty("widgetName", widgetName)
-                        listitem.setProperty("widgetType", widgetType)
-                        listitem.setProperty("widgetTarget", widgetTarget)
+                        listitem.setProperty("widgetName", widget_name)
+                        listitem.setProperty("widgetType", widget_type)
+                        listitem.setProperty("widgetTarget", widget_target)
                         listitem.setProperty("widgetPath", item["file"])
 
                         listings.append(self._get_icon_overrides(tree, listitem, ""))
@@ -1829,30 +1829,30 @@ class LibraryFunctions:
                 # some special code for smart shortcuts in script.skin.helper.service
                 elif item.get("title", None) == "smartshortcut":
 
-                    smartShortCutsData = eval(item.get("mpaa"))
-                    thumb = smartShortCutsData["background"]
+                    smart_shortcuts_data = eval(item.get("mpaa"))
+                    thumb = smart_shortcuts_data["background"]
 
-                    listitem = self.create([item["file"], altLabel, "", {
+                    listitem = self.create([item["file"], alt_label, "", {
                         "icon": item.get("icon"),
                         "thumb": thumb
                     }])
                     # add all passed properties to the gui to set default background, widget etc.
                     properties = []
-                    for key, value in list(smartShortCutsData.items()):
+                    for key, value in list(smart_shortcuts_data.items()):
                         properties.append([key, value])
                     listitem.setProperty("smartShortcutProperties", repr(properties))
                     listitem.setProperty("untranslatedIcon", thumb)
-                    listitem.setProperty("widget", smartShortCutsData.get("widget", "Addon"))
+                    listitem.setProperty("widget", smart_shortcuts_data.get("widget", "Addon"))
                     listitem.setProperty("widgetName", item["label"])
-                    listitem.setProperty("widgetType", smartShortCutsData["type"])
-                    if smartShortCutsData["type"] == "music" or \
-                            smartShortCutsData["type"] == "artists" or \
-                            smartShortCutsData["type"] == "albums" or \
-                            smartShortCutsData["type"] == "songs":
+                    listitem.setProperty("widgetType", smart_shortcuts_data["type"])
+                    if smart_shortcuts_data["type"] == "music" or \
+                            smart_shortcuts_data["type"] == "artists" or \
+                            smart_shortcuts_data["type"] == "albums" or \
+                            smart_shortcuts_data["type"] == "songs":
                         listitem.setProperty("widgetTarget", "music")
                     else:
                         listitem.setProperty("widgetTarget", "videos")
-                    listitem.setProperty("widgetPath", smartShortCutsData["list"])
+                    listitem.setProperty("widgetPath", smart_shortcuts_data["list"])
                     listings.append(self._get_icon_overrides(tree, listitem, ""))
 
                 else:
@@ -1867,107 +1867,107 @@ class LibraryFunctions:
                         }])
                         listings.append(self._get_icon_overrides(tree, listitem, ""))
                     else:
-                        contentType = self._detect_plugin_content(item)
-                        if contentType is not None:
-                            if addonType is not None:
-                                addonType = contentType
+                        content_type = self._detect_plugin_content(item)
+                        if content_type is not None:
+                            if addon_type is not None:
+                                addon_type = content_type
                             else:
-                                if addonType != contentType and addonType != "mixed":
-                                    addonType = "mixed"
+                                if addon_type != content_type and addon_type != "mixed":
+                                    addon_type = "mixed"
 
         # Close progress dialog
         dialog.close()
 
         # Show select dialog
-        getMore = self._allow_install_widget_provider(location, isWidget)
-        w = ShowDialog("DialogSelect.xml", CWD, listing=listings, windowtitle=dialogLabel,
-                       getmore=getMore)
+        get_more = self._allow_install_widget_provider(location, is_widget)
+        w = ShowDialog("DialogSelect.xml", CWD, listing=listings, windowtitle=dialog_label,
+                       getmore=get_more)
         w.doModal()
-        selectedItem = w.result
+        selected_item = w.result
         del w
 
-        if selectedItem == -2:
+        if selected_item == -2:
             # Get more button
             log("Selected get more button")
             return self._explorer_install_widget_provider(history, label, thumbnail,
-                                                          itemType, isWidget)
+                                                          item_type, is_widget)
 
-        elif selectedItem != -1:
-            selectedAction = listings[selectedItem].getProperty("path")
-            if selectedAction == "::UP::":
+        elif selected_item != -1:
+            selected_action = listings[selected_item].getProperty("path")
+            if selected_action == "::UP::":
                 # User wants to go out of explorer, back to select_shortcut
                 listitem = xbmcgui.ListItem(label="back")
                 listitem.setProperty("path", "::UP::")
 
                 return listitem
-            if selectedAction == "::CREATE::":
+            if selected_action == "::CREATE::":
                 # User has chosen the shortcut they want
 
                 # Localize strings
-                localItemType = self.data_func.local(itemType)[2]
+                local_item_type = self.data_func.local(item_type)[2]
 
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[len(label) - 1].replace("  >", ""),
-                                            label2=localItemType)
+                                            label2=local_item_type)
                 listitem.setArt({
                     'icon': "DefaultShortcut.png",
                     'thumb': thumbnail[len(thumbnail) - 1]
                 })
 
                 # Build the action
-                if itemType in ["32010", "32014", "32069"]:
+                if item_type in ["32010", "32014", "32069"]:
                     action = 'ActivateWindow(Videos,"' + location + '",return)'
                     listitem.setProperty("windowID", "Videos")
                     listitem.setProperty("widgetType", "videos")
 
                     # Add widget details
-                    if isLibrary:
+                    if is_library:
                         listitem.setProperty("widget", "Library")
-                        widgetType = self.node_func.get_media_type(location)
-                        if widgetType != "unknown":
-                            listitem.setProperty("widgetType", widgetType)
+                        widget_type = self.node_func.get_media_type(location)
+                        if widget_type != "unknown":
+                            listitem.setProperty("widgetType", widget_type)
                     else:
                         listitem.setProperty("widget", "Addon")
 
-                    if addonType is not None:
-                        listitem.setProperty("widgetType", addonType)
+                    if addon_type is not None:
+                        listitem.setProperty("widgetType", addon_type)
 
                     listitem.setProperty("widgetTarget", "videos")
-                    listitem.setProperty("widgetName", dialogLabel)
+                    listitem.setProperty("widgetName", dialog_label)
                     listitem.setProperty("widgetPath", location)
 
-                elif itemType in ["32011", "32019", "32073"]:
+                elif item_type in ["32011", "32019", "32073"]:
                     action = 'ActivateWindow(Music,"' + location + '",return)'
                     listitem.setProperty("windowID", "Music")
 
                     # Add widget details
                     listitem.setProperty("widgetType", "audio")
-                    if isLibrary:
+                    if is_library:
                         listitem.setProperty("widget", "Library")
-                        widgetType = self.node_func.get_media_type(location)
-                        if widgetType != "unknown":
-                            listitem.setProperty("widgetType", widgetType)
+                        widget_type = self.node_func.get_media_type(location)
+                        if widget_type != "unknown":
+                            listitem.setProperty("widgetType", widget_type)
                     else:
                         listitem.setProperty("widget", "Addon")
-                    if addonType is not None:
-                        listitem.setProperty("widgetType", addonType)
+                    if addon_type is not None:
+                        listitem.setProperty("widgetType", addon_type)
 
                     listitem.setProperty("widgetTarget", "music")
-                    listitem.setProperty("widgetName", dialogLabel)
+                    listitem.setProperty("widgetName", dialog_label)
                     listitem.setProperty("widgetPath", location)
 
-                elif itemType in ["32012", "32089"]:
+                elif item_type in ["32012", "32089"]:
                     action = 'ActivateWindow(Pictures,"' + location + '",return)'
-                    listitem.setProperty("windowID", "Pictures")
+                    listitem.setProperty("window_id", "Pictures")
 
                     # Add widget details
                     listitem.setProperty("widget", "Addon")
                     listitem.setProperty("widgetType", "picture")
                     listitem.setProperty("widgetTarget", "pictures")
-                    listitem.setProperty("widgetName", dialogLabel)
+                    listitem.setProperty("widgetName", dialog_label)
                     listitem.setProperty("widgetPath", location)
 
-                elif itemType == "32009":
+                elif item_type == "32009":
                     action = 'ActivateWindow(Programs,"' + location + '",return)'
                     listitem.setProperty("windowID", "Programs")
 
@@ -1975,10 +1975,10 @@ class LibraryFunctions:
                     listitem.setProperty("widget", "Addon")
                     listitem.setProperty("widgetType", "program")
                     listitem.setProperty("widgetTarget", "programs")
-                    listitem.setProperty("widgetName", dialogLabel)
+                    listitem.setProperty("widgetName", dialog_label)
                     listitem.setProperty("widgetPath", location)
 
-                elif itemType == "32123":
+                elif item_type == "32123":
                     action = 'ActivateWindow(Games,"' + location + '",return)'
                     listitem.setProperty("windowID", "Games")
 
@@ -1986,7 +1986,7 @@ class LibraryFunctions:
                     listitem.setProperty("widget", "Addon")
                     listitem.setProperty("widgetType", "game")
                     listitem.setProperty("widgetTarget", "games")
-                    listitem.setProperty("widgetName", dialogLabel)
+                    listitem.setProperty("widgetName", dialog_label)
                     listitem.setProperty("widgetPath", location)
 
                 else:
@@ -1994,7 +1994,7 @@ class LibraryFunctions:
 
                 listitem.setProperty("path", action)
                 listitem.setProperty("displayPath", action)
-                listitem.setProperty("shortcutType", itemType)
+                listitem.setProperty("shortcutType", item_type)
                 listitem.setProperty("icon", "DefaultShortcut.png")
                 if thumbnail[len(thumbnail) - 1] == "":
                     listitem.setProperty("thumbnail", thumbnail[0])
@@ -2004,92 +2004,92 @@ class LibraryFunctions:
 
                 return listitem
 
-            elif selectedAction == "::BACK::":
+            elif selected_action == "::BACK::":
                 # User is going up the heirarchy, remove current level and re-call this function
                 history.pop()
                 label.pop()
                 thumbnail.pop()
                 return self.explorer(history, history[len(history) - 1], label, thumbnail,
-                                     itemType, isWidget=isWidget)
+                                     item_type, is_widget=is_widget)
 
-            elif selectedAction.startswith("ActivateWindow(") or selectedAction.startswith("$INFO"):
+            elif selected_action.startswith("ActivateWindow(") or selected_action.startswith("$INFO"):
                 # The user wants to create a shortcut to a specific shortcut listed
-                listitem = listings[selectedItem]
+                listitem = listings[selected_item]
 
                 # Add widget details
-                if isLibrary:
-                    widgetType = self.node_func.get_media_type(listitem.getProperty("widgetPath"))
-                    if widgetType != "unknown":
-                        listitem.setProperty("widgetType", widgetType)
+                if is_library:
+                    widget_type = self.node_func.get_media_type(listitem.getProperty("widgetPath"))
+                    if widget_type != "unknown":
+                        listitem.setProperty("widgetType", widget_type)
 
                 return listitem
 
             else:
                 # User has chosen a sub-level to display, add details and re-call this function
-                history.append(selectedAction)
-                label.append(listings[selectedItem].getLabel())
-                thumbnail.append(listings[selectedItem].getProperty("thumbnail"))
-                return self.explorer(history, selectedAction, label, thumbnail, itemType,
-                                     isWidget=isWidget)
+                history.append(selected_action)
+                label.append(listings[selected_item].getLabel())
+                thumbnail.append(listings[selected_item].getProperty("thumbnail"))
+                return self.explorer(history, selected_action, label, thumbnail, item_type,
+                                     is_widget=is_widget)
 
     # ================================
     # === INSTALL WIDGET PROVIDERS ===
     # ================================
 
-    def _explorer_install_widget_provider(self, history, label, thumbnail, itemType, isWidget):
+    def _explorer_install_widget_provider(self, history, label, thumbnail, item_type, is_widget):
         # CALLED FROM EXPLORER FUNCTION
         # The user has clicked the 'Get More...' button to install additional widget providers
-        providerList = []
-        providerLabel = []
+        provider_list = []
+        provider_label = []
 
         # Get widget providers available for install
-        for widgetProvider in self.widgetProviders:
-            if widgetProvider[1] is None or xbmc.getCondVisibility(widgetProvider[1]):
-                if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widgetProvider[0])):
-                    providerList.append(widgetProvider[0])
-                    providerLabel.append(widgetProvider[2])
+        for widget_provider in self.widgetProviders:
+            if widget_provider[1] is None or xbmc.getCondVisibility(widget_provider[1]):
+                if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widget_provider[0])):
+                    provider_list.append(widget_provider[0])
+                    provider_label.append(widget_provider[2])
 
         # Ask user to select widget provider to install
-        selectedProvider = xbmcgui.Dialog().select(LANGUAGE(32106), providerLabel)
+        selected_provider = xbmcgui.Dialog().select(LANGUAGE(32106), provider_label)
 
-        if selectedProvider != -1:
+        if selected_provider != -1:
             # User has selected a widget provider for us to install
-            self._install_widget_provider(providerList[selectedProvider])
+            self._install_widget_provider(provider_list[selected_provider])
 
         # Return to where we were
-        return self.explorer(history, history[len(history) - 1], label, thumbnail, itemType,
-                             isWidget=isWidget)
+        return self.explorer(history, history[len(history) - 1], label, thumbnail, item_type,
+                             is_widget=is_widget)
 
-    def _select_install_widget_provider(self, group, grouping, custom, showNone, currentAction):
+    def _select_install_widget_provider(self, group, grouping, custom, show_none, current_action):
         # CALLED FROM SELECT FUNCTION
         # The user has clicked the 'Get More...' button to install additional widget providers
-        providerList = []
-        providerLabel = []
+        provider_list = []
+        provider_label = []
 
         # Get widget providers available for install
-        for widgetProvider in self.widgetProviders:
-            if widgetProvider[1] is None or xbmc.getCondVisibility(widgetProvider[1]):
-                if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widgetProvider[0])):
-                    providerList.append(widgetProvider[0])
-                    providerLabel.append(widgetProvider[2])
+        for widget_provider in self.widgetProviders:
+            if widget_provider[1] is None or xbmc.getCondVisibility(widget_provider[1]):
+                if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widget_provider[0])):
+                    provider_list.append(widget_provider[0])
+                    provider_label.append(widget_provider[2])
 
         # Ask user to select widget provider to install
-        selectedProvider = xbmcgui.Dialog().select(LANGUAGE(32106), providerLabel)
+        selected_provider = xbmcgui.Dialog().select(LANGUAGE(32106), provider_label)
 
-        if selectedProvider != -1:
+        if selected_provider != -1:
             # User has selected a widget provider for us to install
-            self._install_widget_provider(providerList[selectedProvider])
+            self._install_widget_provider(provider_list[selected_provider])
 
         # Return to where we were
         return self.select_shortcut(group=group, grouping=grouping, custom=custom,
-                                    showNone=showNone, currentAction=currentAction)
+                                    show_none=show_none, current_action=current_action)
 
-    def _allow_install_widget_provider(self, location, isWidget, nodeAllows=None):
+    def _allow_install_widget_provider(self, location, is_widget, node_allows=None):
         # This function checks whether the 'Get More...' button should be enabled to install
         # additional widget providers
 
         # Check we're browsing widgets
-        if not isWidget:
+        if not is_widget:
             return False
 
         # Check whether we're in skin.helper.service's widgets
@@ -2098,13 +2098,13 @@ class LibraryFunctions:
             return False
 
         # OR check whether node has enabled widget browsing
-        if nodeAllows is not None and nodeAllows is False:
+        if node_allows is not None and node_allows is False:
             return False
 
         # Check whether the user has the various widget providers installed
-        for widgetProvider in self.widgetProviders:
-            if widgetProvider[1] is None or xbmc.getCondVisibility(widgetProvider[1]):
-                if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widgetProvider[0])):
+        for widget_provider in self.widgetProviders:
+            if widget_provider[1] is None or xbmc.getCondVisibility(widget_provider[1]):
+                if not xbmc.getCondVisibility("System.HasAddon(%s)" % (widget_provider[0])):
                     # The user doesn't have this widget provider installed
                     return True
 
@@ -2132,18 +2132,18 @@ class LibraryFunctions:
     # === AUTO-PLAYLISTS ===
     # ======================
 
-    def sourcelink_choice(self, selectedShortcut):
+    def sourcelink_choice(self, selected_shortcut):
         # The user has selected a source. We're going to give them the choice of displaying it
         # in the files view, or view library content from the source
         dialog = xbmcgui.Dialog()
 
-        mediaType = None
+        media_type = None
         negative = None
-        windowID = selectedShortcut.getProperty("windowID")
+        window_id = selected_shortcut.getProperty("windowID")
         # Check if we're going to display this in the files view, or the library view
-        if windowID == "Videos":
+        if window_id == "Videos":
             # Video library
-            userChoice = dialog.select(
+            user_choice = dialog.select(
                 LANGUAGE(32078),
                 [
                     LANGUAGE(32079),  # Files view
@@ -2155,36 +2155,36 @@ class LibraryFunctions:
                     LANGUAGE(32083)  # Music Videos
                 ]
             )
-            if userChoice == -1:
+            if user_choice == -1:
                 return None
-            elif userChoice == 0:
+            elif user_choice == 0:
                 # Escape any backslashes (Windows fix)
-                newAction = selectedShortcut.getProperty("Path")
-                newAction = newAction.replace("\\", "\\\\")
-                selectedShortcut.setProperty("Path", newAction)
-                selectedShortcut.setProperty("displayPath", newAction)
-                return selectedShortcut
-            elif userChoice == 1:
-                mediaType = "movies"
+                new_action = selected_shortcut.getProperty("Path")
+                new_action = new_action.replace("\\", "\\\\")
+                selected_shortcut.setProperty("Path", new_action)
+                selected_shortcut.setProperty("displayPath", new_action)
+                return selected_shortcut
+            elif user_choice == 1:
+                media_type = "movies"
                 negative = False
-            elif userChoice == 2:
-                mediaType = "tvshows"
+            elif user_choice == 2:
+                media_type = "tvshows"
                 negative = False
-            elif userChoice == 3:
-                mediaType = "musicvideo"
+            elif user_choice == 3:
+                media_type = "musicvideo"
                 negative = False
-            elif userChoice == 4:
-                mediaType = "movies"
+            elif user_choice == 4:
+                media_type = "movies"
                 negative = True
-            elif userChoice == 5:
-                mediaType = "tvshows"
+            elif user_choice == 5:
+                media_type = "tvshows"
                 negative = True
-            elif userChoice == 6:
-                mediaType = "musicvideo"
+            elif user_choice == 6:
+                media_type = "musicvideo"
                 negative = True
-        elif windowID == "Music":
+        elif window_id == "Music":
             # Music library
-            userChoice = dialog.select(
+            user_choice = dialog.select(
                 LANGUAGE(32078),
                 [
                     LANGUAGE(32079),  # Files view
@@ -2196,42 +2196,42 @@ class LibraryFunctions:
                     LANGUAGE(32086)  # Mixed
                 ]
             )
-            if userChoice == -1:
+            if user_choice == -1:
                 return None
-            elif userChoice == 0:
+            elif user_choice == 0:
                 # Escape any backslashes (Windows fix)
-                newAction = selectedShortcut.getProperty("Path")
-                newAction = newAction.replace("\\", "\\\\")
-                selectedShortcut.setProperty("Path", newAction)
-                selectedShortcut.setProperty("displayPath", newAction)
-                return selectedShortcut
-            elif userChoice == 1:
-                mediaType = "songs"
-                windowID = "10502"
+                new_action = selected_shortcut.getProperty("Path")
+                new_action = new_action.replace("\\", "\\\\")
+                selected_shortcut.setProperty("Path", new_action)
+                selected_shortcut.setProperty("displayPath", new_action)
+                return selected_shortcut
+            elif user_choice == 1:
+                media_type = "songs"
+                window_id = "10502"
                 negative = False
-            elif userChoice == 2:
-                mediaType = "albums"
-                windowID = "10502"
+            elif user_choice == 2:
+                media_type = "albums"
+                window_id = "10502"
                 negative = False
-            elif userChoice == 3:
-                mediaType = "mixed"
-                windowID = "10502"
+            elif user_choice == 3:
+                media_type = "mixed"
+                window_id = "10502"
                 negative = False
-            elif userChoice == 4:
-                mediaType = "songs"
-                windowID = "10502"
+            elif user_choice == 4:
+                media_type = "songs"
+                window_id = "10502"
                 negative = True
-            elif userChoice == 5:
-                mediaType = "albums"
-                windowID = "10502"
+            elif user_choice == 5:
+                media_type = "albums"
+                window_id = "10502"
                 negative = True
-            elif userChoice == 6:
-                mediaType = "mixed"
-                windowID = "10502"
+            elif user_choice == 6:
+                media_type = "mixed"
+                window_id = "10502"
                 negative = True
         else:
             # Pictures
-            userChoice = dialog.select(
+            user_choice = dialog.select(
                 LANGUAGE(32078),
                 [
                     LANGUAGE(32079),  # Files view
@@ -2245,42 +2245,42 @@ class LibraryFunctions:
                      xbmc.getLocalizedString(590))  # Recursive slideshow (random)
                 ]
             )
-            if userChoice == -1:
+            if user_choice == -1:
                 return None
-            elif userChoice == 0:
+            elif user_choice == 0:
                 # Escape any backslashes (Windows fix)
-                newAction = selectedShortcut.getProperty("Path")
-                newAction = newAction.replace("\\", "\\\\")
-                selectedShortcut.setProperty("Path", newAction)
-                selectedShortcut.setProperty("displayPath", newAction)
-                return selectedShortcut
+                new_action = selected_shortcut.getProperty("Path")
+                new_action = new_action.replace("\\", "\\\\")
+                selected_shortcut.setProperty("Path", new_action)
+                selected_shortcut.setProperty("displayPath", new_action)
+                return selected_shortcut
             else:
-                newAction = ""
-                if userChoice == 1:
-                    newAction = "SlideShow(" + selectedShortcut.getProperty("location") + \
-                                ",notrandom)"
-                elif userChoice == 2:
-                    newAction = "SlideShow(" + selectedShortcut.getProperty("location") + \
-                                ",random)"
-                elif userChoice == 3:
-                    newAction = "SlideShow(" + selectedShortcut.getProperty("location") + \
-                                ",recursive,notrandom)"
-                elif userChoice == 4:
-                    newAction = "SlideShow(" + selectedShortcut.getProperty("location") + \
-                                ",recursive,random)"
+                new_action = ""
+                if user_choice == 1:
+                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                                 ",notrandom)"
+                elif user_choice == 2:
+                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                                 ",random)"
+                elif user_choice == 3:
+                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                                 ",recursive,notrandom)"
+                elif user_choice == 4:
+                    new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
+                                 ",recursive,random)"
 
-                selectedShortcut.setProperty("path", newAction)
-                selectedShortcut.setProperty("displayPath", newAction)
-                return selectedShortcut
+                selected_shortcut.setProperty("path", new_action)
+                selected_shortcut.setProperty("displayPath", new_action)
+                return selected_shortcut
 
         # We're going to display it in the library
-        filename = self._build_playlist(selectedShortcut.getProperty("location"), mediaType,
-                                        selectedShortcut.getLabel(), negative)
-        newAction = "ActivateWindow(" + windowID + "," + "special://profile/addon_data/" + \
-                    ADDON_ID + "/" + filename + ",return)"
-        selectedShortcut.setProperty("Path", newAction)
-        selectedShortcut.setProperty("displayPath", newAction)
-        return selectedShortcut
+        filename = self._build_playlist(selected_shortcut.getProperty("location"), media_type,
+                                        selected_shortcut.getLabel(), negative)
+        new_action = "ActivateWindow(" + window_id + "," + "special://profile/addon_data/" + \
+                     ADDON_ID + "/" + filename + ",return)"
+        selected_shortcut.setProperty("Path", new_action)
+        selected_shortcut.setProperty("displayPath", new_action)
+        return selected_shortcut
 
     def _build_playlist(self, target, mediatype, name, negative):
         # This function will build a playlist that displays the contents of a
@@ -2350,7 +2350,7 @@ class LibraryFunctions:
             except:
                 return
 
-    def rename_playlist(self, target, newLabel):
+    def rename_playlist(self, target, new_label):
         # This function changes the label tag of an auto-generated playlist
 
         # First we will check that this is a playlist
@@ -2372,7 +2372,7 @@ class LibraryFunctions:
             # Load the tree and change the name
             tree = ETree.parse(filename)
             name = tree.getroot().find("name")
-            name.text = newLabel
+            name.text = new_label
 
             # Write the tree
             self.data_func.indent(tree.getroot())
@@ -2381,7 +2381,7 @@ class LibraryFunctions:
             # Load the random tree and change the name
             tree = ETree.parse(filename.replace(".xsp", "-randomversion.xsp"))
             name = tree.getroot().find("name")
-            name.text = newLabel
+            name.text = new_label
 
             # Write the random tree
             self.data_func.indent(tree.getroot())
@@ -2431,36 +2431,36 @@ class LibraryFunctions:
     # === COMMON SELECT SHORTCUT METHOD ===
     # =====================================
 
-    def select_shortcut(self, group="", custom=False, availableShortcuts=None, windowTitle=None,
-                        showNone=False, currentAction="", grouping=None):
+    def select_shortcut(self, group="", custom=False, available_shortcuts=None, window_title=None,
+                        show_none=False, current_action="", grouping=None):
         # This function allows the user to select a shortcut
 
-        isWidget = False
+        is_widget = False
         if grouping == "widget":
-            isWidget = True
+            is_widget = True
 
-        if availableShortcuts is None:
+        if available_shortcuts is None:
             nodes = self.retrieve_group(group, flat=False, grouping=grouping)
-            availableShortcuts = nodes[1]
-            windowTitle = nodes[0]
+            available_shortcuts = nodes[1]
+            window_title = nodes[0]
         else:
-            availableShortcuts = self.check_for_folder(availableShortcuts)
+            available_shortcuts = self.check_for_folder(available_shortcuts)
 
-        if showNone is not False and group == "":
-            availableShortcuts.insert(0, self.create(["::NONE::", LANGUAGE(32053), "", {
+        if show_none is not False and group == "":
+            available_shortcuts.insert(0, self.create(["::NONE::", LANGUAGE(32053), "", {
                 "icon": "DefaultAddonNone.png"
             }]))
 
         if custom is not False and group == "":
-            availableShortcuts.append(self.create(["||CUSTOM||", LANGUAGE(32024), "", {}]))
+            available_shortcuts.append(self.create(["||CUSTOM||", LANGUAGE(32024), "", {}]))
 
         if group != "":
             # Add a link to go 'up'
-            availableShortcuts.insert(0, self.create(["::BACK::", "..", "", {}]))
+            available_shortcuts.insert(0, self.create(["::BACK::", "..", "", {}]))
 
         # Show select dialog
-        _ = self._allow_install_widget_provider(None, isWidget, self.allowWidgetInstall)
-        w = ShowDialog("DialogSelect.xml", CWD, listing=availableShortcuts, windowtitle=windowTitle)
+        _ = self._allow_install_widget_provider(None, is_widget, self.allowWidgetInstall)
+        w = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts, windowtitle=window_title)
         w.doModal()
         number = w.result
         del w
@@ -2468,107 +2468,107 @@ class LibraryFunctions:
         if number == -2:
             # Get more button
             log("Selected get more button")
-            return self._select_install_widget_provider(group, grouping, custom, showNone,
-                                                        currentAction)
+            return self._select_install_widget_provider(group, grouping, custom, show_none,
+                                                        current_action)
 
         if number != -1:
-            selectedShortcut = availableShortcuts[number]
-            path = selectedShortcut.getProperty("Path")
+            selected_shortcut = available_shortcuts[number]
+            path = selected_shortcut.getProperty("Path")
             if path.startswith("::BACK::"):
                 # Go back up
                 if "," in group:
                     # Remove last level from group
-                    newGroup = group.rsplit(",", 1)[0]
+                    new_group = group.rsplit(",", 1)[0]
                 else:
                     # We're only one level in, so we'll just clear the group
-                    newGroup = ""
+                    new_group = ""
                 # Recall this function
-                return self.select_shortcut(group=newGroup, grouping=grouping, custom=custom,
-                                            showNone=showNone, currentAction=currentAction)
+                return self.select_shortcut(group=new_group, grouping=grouping, custom=custom,
+                                            show_none=show_none, current_action=current_action)
             if path.startswith("||NODE||"):
                 if group == "":
                     group = path.replace("||NODE||", "")
                 else:
                     group = group + "," + path.replace("||NODE||", "")
                 return self.select_shortcut(group=group, grouping=grouping, custom=custom,
-                                            showNone=showNone, currentAction=currentAction)
+                                            show_none=show_none, current_action=current_action)
             elif path.startswith("||BROWSE||"):
-                selectedShortcut = self.explorer(
+                selected_shortcut = self.explorer(
                     ["plugin://" + path.replace("||BROWSE||", "")],
                     "plugin://" + path.replace("||BROWSE||", ""),
-                    [selectedShortcut.getLabel()],
-                    [selectedShortcut.getProperty("thumbnail")],
-                    selectedShortcut.getProperty("shortcutType"),
-                    isWidget=isWidget
+                    [selected_shortcut.getLabel()],
+                    [selected_shortcut.getProperty("thumbnail")],
+                    selected_shortcut.getProperty("shortcutType"),
+                    is_widget=is_widget
                 )
                 # Convert backslashes to double-backslashes (windows fix)
-                if selectedShortcut is not None:
-                    newAction = selectedShortcut.getProperty("Path")
-                    newAction = newAction.replace("\\", "\\\\")
-                    selectedShortcut.setProperty("Path", newAction)
-                    selectedShortcut.setProperty("displayPath", newAction)
+                if selected_shortcut is not None:
+                    new_action = selected_shortcut.getProperty("Path")
+                    new_action = new_action.replace("\\", "\\\\")
+                    selected_shortcut.setProperty("Path", new_action)
+                    selected_shortcut.setProperty("displayPath", new_action)
             elif path.startswith("||VIDEO||"):
                 # Video node
-                selectedShortcut = self.explorer(
+                selected_shortcut = self.explorer(
                     [path.replace("||VIDEO||", "")],
                     path.replace("||VIDEO||", ""),
-                    [selectedShortcut.getLabel()],
-                    [selectedShortcut.getProperty("thumbnail")],
+                    [selected_shortcut.getLabel()],
+                    [selected_shortcut.getProperty("thumbnail")],
                     "32014",
-                    isWidget=isWidget)
+                    is_widget=is_widget)
                 # Convert backslashes to double-backslashes (windows fix)
-                if selectedShortcut is not None:
-                    newAction = selectedShortcut.getProperty("Path")
-                    newAction = newAction.replace("\\", "\\\\")
-                    selectedShortcut.setProperty("Path", newAction)
-                    selectedShortcut.setProperty("displayPath", newAction)
+                if selected_shortcut is not None:
+                    new_action = selected_shortcut.getProperty("Path")
+                    new_action = new_action.replace("\\", "\\\\")
+                    selected_shortcut.setProperty("Path", new_action)
+                    selected_shortcut.setProperty("displayPath", new_action)
             elif path.startswith("||AUDIO||"):
                 # Audio node
-                selectedShortcut = self.explorer(
+                selected_shortcut = self.explorer(
                     [path.replace("||AUDIO||", "")],
                     path.replace("||AUDIO||", ""),
-                    [selectedShortcut.getLabel()],
-                    [selectedShortcut.getProperty("thumbnail")],
+                    [selected_shortcut.getLabel()],
+                    [selected_shortcut.getProperty("thumbnail")],
                     "32019",
-                    isWidget=isWidget
+                    is_widget=is_widget
                 )
                 # Convert backslashes to double-backslashes (windows fix)
-                if selectedShortcut is not None:
-                    newAction = selectedShortcut.getProperty("Path")
-                    newAction = newAction.replace("\\", "\\\\")
-                    selectedShortcut.setProperty("Path", newAction)
-                    selectedShortcut.setProperty("displayPath", newAction)
+                if selected_shortcut is not None:
+                    new_action = selected_shortcut.getProperty("Path")
+                    new_action = new_action.replace("\\", "\\\\")
+                    selected_shortcut.setProperty("Path", new_action)
+                    selected_shortcut.setProperty("displayPath", new_action)
             elif path == "||UPNP||":
-                selectedShortcut = self.explorer(
+                selected_shortcut = self.explorer(
                     ["upnp://"],
                     "upnp://",
-                    [selectedShortcut.getLabel()],
-                    [selectedShortcut.getProperty("thumbnail")],
-                    selectedShortcut.getProperty("shortcutType"),
-                    isWidget=isWidget
+                    [selected_shortcut.getLabel()],
+                    [selected_shortcut.getProperty("thumbnail")],
+                    selected_shortcut.getProperty("shortcutType"),
+                    is_widget=is_widget
                 )
             elif path.startswith("||SOURCE||"):
-                selectedShortcut = self.explorer(
+                selected_shortcut = self.explorer(
                     [path.replace("||SOURCE||", "")],
                     path.replace("||SOURCE||", ""),
-                    [selectedShortcut.getLabel()],
-                    [selectedShortcut.getProperty("thumbnail")],
-                    selectedShortcut.getProperty("shortcutType"),
-                    isWidget=isWidget)
-                if selectedShortcut is None or "upnp://" in selectedShortcut.getProperty("Path"):
-                    return selectedShortcut
-                if isWidget:
+                    [selected_shortcut.getLabel()],
+                    [selected_shortcut.getProperty("thumbnail")],
+                    selected_shortcut.getProperty("shortcutType"),
+                    is_widget=is_widget)
+                if selected_shortcut is None or "upnp://" in selected_shortcut.getProperty("Path"):
+                    return selected_shortcut
+                if is_widget:
                     # Set widget to 'source'
-                    selectedShortcut.setProperty("widget", "source")
+                    selected_shortcut.setProperty("widget", "source")
                 else:
                     # Find out what the user wants to do with the source
-                    selectedShortcut = self.sourcelink_choice(selectedShortcut)
+                    selected_shortcut = self.sourcelink_choice(selected_shortcut)
             elif path.startswith("::PLAYLIST"):
                 log("Selected playlist")
-                if isWidget:
+                if is_widget:
                     # Return actionShow as chosenPath
-                    selectedShortcut.setProperty("chosenPath",
-                                                 selectedShortcut.getProperty("action-show"))
+                    selected_shortcut.setProperty("chosenPath",
+                                                  selected_shortcut.getProperty("action-show"))
                 elif ">" not in path or "Videos" in path:
                     # Give the user the choice of playing or displaying the playlist
                     dialog = xbmcgui.Dialog()
@@ -2577,11 +2577,11 @@ class LibraryFunctions:
                     # False: Display
                     # True: Play
                     if not userchoice:
-                        selectedShortcut.setProperty("chosenPath",
-                                                     selectedShortcut.getProperty("action-show"))
+                        selected_shortcut.setProperty("chosenPath",
+                                                      selected_shortcut.getProperty("action-show"))
                     else:
-                        selectedShortcut.setProperty("chosenPath",
-                                                     selectedShortcut.getProperty("action-play"))
+                        selected_shortcut.setProperty("chosenPath",
+                                                      selected_shortcut.getProperty("action-play"))
                 elif ">" in path:
                     # Give the user the choice of playing, displaying or party more for the playlist
                     dialog = xbmcgui.Dialog()
@@ -2595,14 +2595,14 @@ class LibraryFunctions:
                     # 1 - Play
                     # 2 - Party mode
                     if not userchoice or userchoice == 0:
-                        selectedShortcut.setProperty("chosenPath",
-                                                     selectedShortcut.getProperty("action-show"))
+                        selected_shortcut.setProperty("chosenPath",
+                                                      selected_shortcut.getProperty("action-show"))
                     elif userchoice == 1:
-                        selectedShortcut.setProperty("chosenPath",
-                                                     selectedShortcut.getProperty("action-play"))
+                        selected_shortcut.setProperty("chosenPath",
+                                                      selected_shortcut.getProperty("action-play"))
                     else:
-                        selectedShortcut.setProperty("chosenPath",
-                                                     selectedShortcut.getProperty("action-party"))
+                        selected_shortcut.setProperty("chosenPath",
+                                                      selected_shortcut.getProperty("action-party"))
 
             elif path.startswith("::INSTALL::"):
                 # Try to automatically install an addon
@@ -2610,7 +2610,7 @@ class LibraryFunctions:
 
                 # Re-call this function
                 return self.select_shortcut(group=group, grouping=grouping, custom=custom,
-                                            showNone=showNone, currentAction=currentAction)
+                                            show_none=show_none, current_action=current_action)
 
             elif path.startswith("::ENABLE::"):
                 # Try to automatically enable an addon
@@ -2618,37 +2618,37 @@ class LibraryFunctions:
 
                 # Re-call this function
                 return self.select_shortcut(group=group, grouping=grouping, custom=custom,
-                                            showNone=showNone, currentAction=currentAction)
+                                            show_none=show_none, current_action=current_action)
 
             elif path == "||CUSTOM||":
                 # Let the user type a command
-                keyboard = xbmc.Keyboard(currentAction, LANGUAGE(32027), False)
+                keyboard = xbmc.Keyboard(current_action, LANGUAGE(32027), False)
                 keyboard.doModal()
 
                 if keyboard.isConfirmed():
                     action = keyboard.getText()
                     if action != "":
                         # Create a really simple listitem to return
-                        selectedShortcut = xbmcgui.ListItem('', LANGUAGE(32024))
-                        selectedShortcut.setProperty("Path", action)
-                        selectedShortcut.setProperty("custom", "true")
+                        selected_shortcut = xbmcgui.ListItem('', LANGUAGE(32024))
+                        selected_shortcut.setProperty("Path", action)
+                        selected_shortcut.setProperty("custom", "true")
                     else:
-                        selectedShortcut = None
+                        selected_shortcut = None
 
                 else:
-                    selectedShortcut = None
+                    selected_shortcut = None
 
             elif path == "::NONE::":
                 # Create a really simple listitem to return
-                selectedShortcut = xbmcgui.ListItem("::NONE::")
+                selected_shortcut = xbmcgui.ListItem("::NONE::")
 
             # Check that explorer hasn't sent us back here
-            if selectedShortcut is not None and selectedShortcut.getProperty("path") == "::UP::":
-                return self.select_shortcut(group=group, custom=custom, availableShortcuts=None,
-                                            windowTitle=windowTitle, showNone=showNone,
-                                            grouping=grouping, currentAction=currentAction)
+            if selected_shortcut is not None and selected_shortcut.getProperty("path") == "::UP::":
+                return self.select_shortcut(group=group, custom=custom, available_shortcuts=None,
+                                            window_title=window_title, show_none=show_none,
+                                            grouping=grouping, current_action=current_action)
 
-            return selectedShortcut
+            return selected_shortcut
         else:
             return None
 
@@ -2661,37 +2661,37 @@ class LibraryFunctions:
     # - to plugins to help display updated content
 
     @staticmethod
-    def add_widget_reload(widgetPath):
-        if "plugin://" not in widgetPath or "reload=" in widgetPath.lower() or \
-                "script.extendedinfo" in widgetPath.lower():
+    def add_widget_reload(widget_path):
+        if "plugin://" not in widget_path or "reload=" in widget_path.lower() or \
+                "script.extendedinfo" in widget_path.lower():
             # Not a plugin, or already has a reload parameter
             # Also return on Extended Info, as it doesn't like its parameters to be altered
-            return widgetPath
+            return widget_path
 
         # Depending whether it already has additional components or not, we may need to use
         # a ? or a & to extend the path with the new reload parameter
-        reloadSplitter = "?"
-        if "?" in widgetPath:
-            reloadSplitter = "&"
+        reload_splitter = "?"
+        if "?" in widget_path:
+            reload_splitter = "&"
 
         # We have seperate reload params for each content type
         # default: refresh at every library change/video playback (widgetreload) +
         # every 10 minutes (widgetreload2)
-        reloadParam = \
+        reload_param = \
             "$INFO[Window(Home).Property(widgetreload)]$INFO[Window(Home).Property(widgetreload2)]"
-        if "movie" in widgetPath:
-            reloadParam = "$INFO[Window(Home).Property(widgetreload-movies)]"
-        elif "episode" in widgetPath:
-            reloadParam = "$INFO[Window(Home).Property(widgetreload-episodes)]"
-        elif "tvshow" in widgetPath:
-            reloadParam = "$INFO[Window(Home).Property(widgetreload-episodes)]"
-        elif "musicvideo" in widgetPath:
-            reloadParam = "$INFO[Window(Home).Property(widgetreload-musicvideos)]"
-        elif "music" in widgetPath or "song" in widgetPath:
-            reloadParam = "$INFO[Window(Home).Property(widgetreload-music)]"
+        if "movie" in widget_path:
+            reload_param = "$INFO[Window(Home).Property(widgetreload-movies)]"
+        elif "episode" in widget_path:
+            reload_param = "$INFO[Window(Home).Property(widgetreload-episodes)]"
+        elif "tvshow" in widget_path:
+            reload_param = "$INFO[Window(Home).Property(widgetreload-episodes)]"
+        elif "musicvideo" in widget_path:
+            reload_param = "$INFO[Window(Home).Property(widgetreload-musicvideos)]"
+        elif "music" in widget_path or "song" in widget_path:
+            reload_param = "$INFO[Window(Home).Property(widgetreload-music)]"
 
         # And return it all
-        return "%s%sreload=%s" % (widgetPath, reloadSplitter, reloadParam)
+        return "%s%sreload=%s" % (widget_path, reload_splitter, reload_param)
 
 
 # ============================
@@ -2740,10 +2740,10 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
             self.result = -1
             self.close()
 
-    def onClick(self, controlID):
-        if controlID == 5:
+    def onClick(self, control_id):
+        if control_id == 5:
             self.result = -2
-        elif controlID == 6 or controlID == 3:
+        elif control_id == 6 or control_id == 3:
             num = self.fav_list.getSelectedPosition()
             self.result = num
         else:
@@ -2751,5 +2751,5 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
 
         self.close()
 
-    def onFocus(self, controlID):
+    def onFocus(self, control_id):
         pass
