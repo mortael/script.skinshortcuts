@@ -34,3 +34,16 @@ jobs:
         id: kodi-addon-checker-matrix
         run: |
           kodi-addon-checker ${{ github.event.repository.name }} --branch=matrix
+
+      - name: Pylint
+        id: pylint
+        run: |
+          cp -t ${HOME} .pylintrc
+          pylint resources/lib/
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: isort
+        id: isort
+        run: |
+          isort --force-single-line-imports . --diff
+        working-directory: ${{ github.event.repository.name }}
