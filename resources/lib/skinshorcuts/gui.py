@@ -610,7 +610,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             if script_debug:
                 ADDON.setSetting("enable_logging", "false")
 
-            if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader)"):
+            if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
                 # Offer to upload a debug log
                 ret = xbmcgui.Dialog().yesno(ADDON_NAME,
                                              LANGUAGE(32097), LANGUAGE(32093))
@@ -638,7 +638,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # We enabled one or more of the debug options, re-run this function
             self._save_shortcuts(system_debug, script_debug)
         else:
-            if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
+            if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
                 # Offer to upload a debug log
                 ret = xbmcgui.Dialog().yesno(ADDON_NAME,
                                              LANGUAGE(32097), LANGUAGE(32093))

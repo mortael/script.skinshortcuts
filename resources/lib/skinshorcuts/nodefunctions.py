@@ -354,11 +354,11 @@ class NodeFunctions:
         if window == 10002:
             labels.append("Slideshow")
             paths.append("SlideShow(%s,notrandom)" % path)
-            labels.append("Slideshow (random)")
+            labels.append("Slideshow(random)")
             paths.append("SlideShow(%s,random)" % path)
-            labels.append("Slideshow (recursive)")
+            labels.append("Slideshow(recursive)")
             paths.append("SlideShow(%s,recursive,notrandom)" % path)
-            labels.append("Slideshow (recursive, random)")
+            labels.append("Slideshow(recursive, random)")
             paths.append("SlideShow(%s,recursive,random)" % path)
         if path.endswith(".xsp"):
             labels.append("Play")
