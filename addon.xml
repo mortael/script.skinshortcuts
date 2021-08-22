@@ -11,12 +11,12 @@
 - restructured (no change to API)
 - added copyright and spdx license headers
 - housekeeping
-	- cleaned up whitespace
-	- unused variables
-	- unused imports
-	- renamed shadowed builtins
-	- applied PEP8
-	- linted with pylint, isort
+    - cleaned up whitespace
+    - unused variables
+    - unused imports
+    - renamed shadowed builtins
+    - applied PEP8
+    - linted with pylint, isort
     - updated/removed po file comments and metadata
 - moved shared/common constants to their own module
 - refactored json rpc requests and moved to a common module
