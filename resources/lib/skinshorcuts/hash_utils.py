@@ -24,10 +24,18 @@ def generate_file_hash(filename):
     if not os.path.isfile(filename):
         return None
 
+    md5 = hashlib.md5()
+    block_size = 128 * md5.block_size
     try:
-        md5 = hashlib.md5()
-        file_contents = read_file(filename, 'rb')
-        md5.update(file_contents)
+        # don't use read_file(), so we can read and update the hexdigest in digestable block sizes
+        # improvement for large files
+        with open(filename, 'rb') as file_handle:
+            while True:
+                buffer = file_handle.read(block_size)
+                if not buffer:
+                    break
+                md5.update(buffer)
+
         return md5.hexdigest()
     except:
         log(traceback.print_exc())
