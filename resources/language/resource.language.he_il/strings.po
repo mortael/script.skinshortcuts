@@ -16,7 +16,6 @@ msgctxt "Addon Description"
 msgid "Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)"
 msgstr ""
 
-
 msgctxt "#32000"
 msgid "Add"
 msgstr "הוסף"
@@ -172,8 +171,7 @@ msgstr "אפס את כל פריטי התפריט"
 
 msgctxt "#32038"
 msgid "Are you sure you want to reset all menu items back to default?"
-msgstr ""
-"האם אתה בטוח שברצונך לאפס את כל פריטי התפריט ולהחזירם למצב ברירת המחדל?"
+msgstr "האם אתה בטוח שברצונך לאפס את כל פריטי התפריט ולהחזירם למצב ברירת המחדל?"
 
 #. ::MENUNAME:: is used internally and should NOT be translated :)
 msgctxt "#32039"
@@ -240,9 +238,29 @@ msgctxt "#32054"
 msgid "Kodi Command"
 msgstr "פקודת קודי"
 
+msgctxt "#32055"
+msgid "Clean video library"
+msgstr "ניקוי ספרית וידאו"
+
+msgctxt "#32056"
+msgid "Clean audio library"
+msgstr "ניקוי ספרית מוזיקה"
+
 msgctxt "#32057"
 msgid "Kodi Commands"
 msgstr "פקודות קודי"
+
+msgctxt "#32058"
+msgid "Create menu item to here"
+msgstr "צור תפריט המקשר לכאן"
+
+msgctxt "#32059"
+msgid "Skin Playlist"
+msgstr "רשימות ניגון של המעטפת"
+
+msgctxt "#32060"
+msgid "What do you want to do with the playlist?"
+msgstr "מה ברצונך לבצע עם רשימת הניגון?"
 
 msgctxt "#32061"
 msgid "Display"
@@ -251,6 +269,18 @@ msgstr "תצוגה"
 msgctxt "#32062"
 msgid "Play"
 msgstr "ניגון"
+
+msgctxt "#32063"
+msgid "Getting directory listing..."
+msgstr "טוען פריטים..."
+
+msgctxt "#32064"
+msgid "No available items"
+msgstr "אין פריטים זמינים"
+
+msgctxt "#32065"
+msgid "There are no available items to choose from for the category that you choose."
+msgstr "אין פריטים זמינים לבחירה בקטגוריה שבחרת"
 
 msgctxt "#32066"
 msgid "Last TV channel"
@@ -272,6 +302,14 @@ msgctxt "#32070"
 msgid "UPnP"
 msgstr "UPnP"
 
+msgctxt "#32071"
+msgid "Customize Main Menu"
+msgstr "התאמת התפריט הראשי"
+
+msgctxt "#32072"
+msgid "Customize Submenu"
+msgstr "התאמת תת-תפריט"
+
 msgctxt "#32073"
 msgid "Music Source"
 msgstr "מקור מוזיקה"
@@ -292,70 +330,13 @@ msgctxt "#32077"
 msgid "Radio Channel"
 msgstr "ערוץ רדיו"
 
-msgctxt "#32079"
-msgid "Files view"
-msgstr "תצוגת קבצים"
-
-msgctxt "#32087"
-msgid "Radio"
-msgstr "רדיו"
-
-msgctxt "#32088"
-msgid "Channels"
-msgstr "ערוצים"
-
-msgctxt "#32089"
-msgid "Picture Source"
-msgstr "מקור תמונות"
-
-msgctxt "#32096"
-msgid "Browse..."
-msgstr "עיון..."
-
-msgctxt "#32055"
-msgid "Clean video library"
-msgstr "ניקוי ספרית וידאו"
-
-msgctxt "#32056"
-msgid "Clean audio library"
-msgstr "ניקוי ספרית מוזיקה"
-
-msgctxt "#32058"
-msgid "Create menu item to here"
-msgstr "צור תפריט המקשר לכאן"
-
-msgctxt "#32059"
-msgid "Skin Playlist"
-msgstr "רשימות ניגון של המעטפת"
-
-msgctxt "#32060"
-msgid "What do you want to do with the playlist?"
-msgstr "מה ברצונך לבצע עם רשימת הניגון?"
-
-msgctxt "#32063"
-msgid "Getting directory listing..."
-msgstr "טוען פריטים..."
-
-msgctxt "#32064"
-msgid "No available items"
-msgstr "אין פריטים זמינים"
-
-msgctxt "#32065"
-msgid ""
-"There are no available items to choose from for the category that you choose."
-msgstr "אין פריטים זמינים לבחירה בקטגוריה שבחרת"
-
-msgctxt "#32071"
-msgid "Customize Main Menu"
-msgstr "התאמת התפריט הראשי"
-
-msgctxt "#32072"
-msgid "Customize Submenu"
-msgstr "התאמת תת-תפריט"
-
 msgctxt "#32078"
 msgid "Display..."
 msgstr "הצגת..."
+
+msgctxt "#32079"
+msgid "Files view"
+msgstr "תצוגת קבצים"
 
 #. ::MENUNAME:: is used internally and should NOT be translated :)
 msgctxt "#32080"
@@ -386,6 +367,18 @@ msgctxt "#32086"
 msgid "Mixed content not in this source"
 msgstr "לא נמצאה מדיה מעורבת במקור זה"
 
+msgctxt "#32087"
+msgid "Radio"
+msgstr "רדיו"
+
+msgctxt "#32088"
+msgid "Channels"
+msgstr "ערוצים"
+
+msgctxt "#32089"
+msgid "Picture Source"
+msgstr "מקור תמונות"
+
 msgctxt "#32090"
 msgid "The item has been added to the menu"
 msgstr "הפריט התווסף לתפריט"
@@ -404,13 +397,15 @@ msgstr "להעלות יומן רישום לאיתור באגים?"
 
 msgctxt "#32094"
 msgid "Install Kodi Log Uploader add-on to easily provide a debug log."
-msgstr ""
-"התקן הרחבת קודי להעלאת יומן רישום כך שתוכל לראות בקלות יומן רישום לאיתור "
-"באגים."
+msgstr "התקן הרחבת קודי להעלאת יומן רישום כך שתוכל לראות בקלות יומן רישום לאיתור באגים."
 
 msgctxt "#32095"
 msgid "Choose default action for menu item"
 msgstr "בחר פעולת ברירת מחדל לתפריט"
+
+msgctxt "#32096"
+msgid "Browse..."
+msgstr "עיון..."
 
 msgctxt "#32097"
 msgid "Unable to save menu"
@@ -484,17 +479,12 @@ msgctxt "#32114"
 msgid "Where should menu item be created"
 msgstr "היכן ליצור את התפריט"
 
-#: /resources/lib/nodefunctions.py
 msgctxt "#32115"
 msgid "Unable to get directory listings[CR][CR]See log for details"
-msgstr ""
-"לא ניתן לקבל את רשימת התיקיות[CR][CR]בדוק את יומן האירועים לפרטים נוספים"
+msgstr "לא ניתן לקבל את רשימת התיקיות[CR][CR]בדוק את יומן האירועים לפרטים נוספים"
 
-#: /default.py
 msgctxt "#32116"
-msgid ""
-"The skin you are using does not support adding items directly to the main "
-"menu"
+msgid "The skin you are using does not support adding items directly to the main menu"
 msgstr "המעטפת שבחרת אינה מאפשרת הוספת פריטים לתפריט הראשי"
 
 msgctxt "#32117"
@@ -508,3 +498,19 @@ msgstr "קיצורי דרך חכמים"
 msgctxt "#32119"
 msgid "Default widgets"
 msgstr "ישומוני ברירת מחדל"
+
+msgctxt "#32120"
+msgid "Never hide PVR shortcuts"
+msgstr ""
+
+msgctxt "#32121"
+msgid "Share menu between compatible skins"
+msgstr ""
+
+msgctxt "#32122"
+msgid "Enable debug logging"
+msgstr ""
+
+msgctxt "#32123"
+msgid "Games"
+msgstr ""
