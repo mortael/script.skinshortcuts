@@ -59,6 +59,6 @@ The management dialog included with Skin Shortcuts isn't particularly well-desig
 
 ## Where to go from here
 
-You now have a basic but functional Skin Shortcuts implementation. Make sure you're familiar with the rest of the [Getting Started](./Getting%20Started.md) documentation, before you begin to explore the rest of the [documentation](../../../README.md).
+You now have a basic but functional Skin Shortcuts implementation. Make sure you're familiar with the rest of the [Getting Started](./Getting%20Started.md) documentation, before you begin to explore the rest of the [documentation](../../README.md).
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](../advanced/Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](../advanced/Advanced%20Usage.md)

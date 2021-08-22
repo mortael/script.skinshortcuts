@@ -50,4 +50,4 @@ Where possible, Skin Shortcuts sets the icon of available shortcuts to an approp
 
 Where there is no default icon, Skin Shortcuts sets it to a generic value so that the skinner can override the icon and provide a specific one for their skin. Please see the code for details - gui.py, the functions 'common', 'more' and 'settings'
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

@@ -166,4 +166,4 @@ Additionally, when customising the widget groupings, you can enable the button f
 
 `<node label="My widgets" installWidget="True">`
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
