@@ -5,11 +5,10 @@ msgstr ""
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2020-09-13 00:00+ZONE\n"
 "Last-Translator: roliverosc (2020)\n"
-"Language-Team: Spanish (https://www.transifex.com/teamxbmc/xbmc-addons/language/es/"
-"MIME-Version: 1.0\n"
+"Language-Team: Spanish (https://www.transifex.com/teamxbmc/xbmc-addons/language/es/MIME-Version: 1.0\n"
+"Language: es\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "Addon Description"
@@ -479,10 +478,46 @@ msgctxt "#32114"
 msgid "Where should menu item be created"
 msgstr "¿Dónde se debe crear el elemento de menú?"
 
+msgctxt "#32115"
+msgid "Unable to get directory listings[CR][CR]See log for details"
+msgstr ""
+
+msgctxt "#32116"
+msgid "The skin you are using does not support adding items directly to the main menu"
+msgstr ""
+
+msgctxt "#32117"
+msgid "Disable shortcut"
+msgstr ""
+
+msgctxt "#32118"
+msgid "Smart shortcuts"
+msgstr ""
+
+msgctxt "#32119"
+msgid "Default widgets"
+msgstr ""
+
+msgctxt "#32120"
+msgid "Never hide PVR shortcuts"
+msgstr ""
+
+msgctxt "#32121"
+msgid "Share menu between compatible skins"
+msgstr ""
+
+msgctxt "#32122"
+msgid "Enable debug logging"
+msgstr ""
+
+msgctxt "#32123"
+msgid "Games"
+msgstr ""
+
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"
 #~ msgstr "Acceso directo personalizado"
- 
+
 #~ msgctxt "#32028"
 #~ msgid "Reset shortcuts"
 #~ msgstr "Restablecer atajos"
@@ -497,10 +532,8 @@ msgstr "¿Dónde se debe crear el elemento de menú?"
 
 #~ msgctxt "#32038"
 #~ msgid "Are you sure you want to reset all shortcuts back to default?"
-#~ msgstr ""
-#~ "¿Esta seguro que desea restablecer todos los atajos a su valor por "
-#~ "defecto?"
- 
+#~ msgstr "¿Esta seguro que desea restablecer todos los atajos a su valor por defecto?"
+
 #~ msgctxt "#32048"
 #~ msgid "Choose shortcut"
 #~ msgstr "Elegir atajo"
