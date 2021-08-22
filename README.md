@@ -6,23 +6,14 @@
 ![Contributors](https://img.shields.io/github/contributors/mikesilvo164/script.skinshortcuts.svg)
 ![GitHub Latest Release](https://img.shields.io/github/v/release/mikesilvo164/script.skinshortcuts)
 
-
 **Python 3 compatible only NO Python 2 support. IS NOT BACKWARDS COMPATIBLE!!**
 
 script.skinshortcuts was written with the intention of making user customizable shortcuts on the home page easier for skinners.
 
-
 ## What's New for Skinners
 
-#### Version 1.1.0 - git version
+See the [latest release](https://github.com/mikesilvo164/script.skinshortcuts/releases/latest) for a complete list of changes
 
-- Kodi v19 support
-
-#### Version 1.0.17 - repo version
-
-- Some minor changes for Jarvis+
-- Basic support for Kodi Leia
- 
 ## With Thanks - Because their names don't deserve to be at the bottom :)
 
 - Huge thanks to Ronie, whose code for listing plugins is used in this script
