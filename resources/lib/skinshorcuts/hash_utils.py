@@ -30,8 +30,8 @@ def generate_file_hash(filename):
         md5.update(file_contents)
         return md5.hexdigest()
     except:
-        log("Unable to generate hash for %s" % filename)
         log(traceback.print_exc())
+        log("Unable to generate hash for %s" % filename)
         raise
 
 
@@ -60,5 +60,5 @@ def write_hashes(data):
     try:
         write_file(HASH_FILE, payload)
     except:
-        log('Failed to write hashes to %s' % HASH_FILE)
         log(traceback.print_exc())
+        log('Failed to write hashes to %s' % HASH_FILE)

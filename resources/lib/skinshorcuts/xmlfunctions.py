@@ -100,8 +100,8 @@ class XMLFunctions:
                           progress, options, minitems)
             complete = True
         except:
+            log(print_exc())
             log("Failed to write menu")
-            print_exc()
             complete = False
 
         # Mark that we're no longer running, clear the progress dialog

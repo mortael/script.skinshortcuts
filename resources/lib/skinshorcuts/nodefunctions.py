@@ -46,7 +46,7 @@ class NodeFunctions:
                 self.parse_view(os.path.join(path, file), nodes,
                                 orig_path="%s/%s" % (prefix, file))
         except:
-            print_exc()
+            log(print_exc())
             return False
 
         return nodes
@@ -121,7 +121,7 @@ class NodeFunctions:
                     # Add it as grouped
                     nodes[int(index)] = [label, icon, orig_path, "grouped", orig_index, media_type]
         except:
-            print_exc()
+            log(print_exc())
 
     @staticmethod
     def is_grouped(path):

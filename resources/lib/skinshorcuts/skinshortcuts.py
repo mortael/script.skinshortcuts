@@ -369,7 +369,7 @@ class Main:
         HOME_WINDOW.clearProperty("skinshortcutsBackgrounds")
 
     def _reset_all_shortcuts(self):
-        log("### Resetting all shortcuts")
+        log("Resetting all shortcuts")
         dialog = xbmcgui.Dialog()
 
         should_run = None
@@ -405,9 +405,9 @@ class Main:
                                     xbmcvfs.delete(file_path)
                                 except:
                                     log(print_exc())
-                                    log("### ERROR could not delete file %s" % file)
+                                    log("Could not delete file %s" % file)
                         else:
-                            log("Not deleting file %s" % [file])
+                            log("Not deleting file %s" % file)
 
             # Update home window property (used to automatically refresh type=settings)
             HOME_WINDOW.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))

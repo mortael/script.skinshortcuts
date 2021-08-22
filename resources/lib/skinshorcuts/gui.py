@@ -596,7 +596,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             self._save_shortcuts_function()
             return
         except:
-            print_exc()
+            log(print_exc())
             log("Failed to save shortcuts")
 
         # We failed to save the shortcuts

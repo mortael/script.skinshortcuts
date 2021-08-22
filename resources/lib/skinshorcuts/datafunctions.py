@@ -171,7 +171,7 @@ class DataFunctions:
             self.hashable.add(path)  # add paths to hashable items
 
         for path in paths:
-            log(" - Attempting to load file %s" % path)
+            log("Attempting to load file %s" % path)
             tree = None
 
             if xbmcvfs.exists(path):
@@ -194,16 +194,16 @@ class DataFunctions:
                         self._get_skin_required(tree)
                     self._process_shortcuts(tree, group, profile_dir)
 
-                log(" - Loaded file")
+                log("Loaded file")
                 return tree
 
             if tree is not None:
-                log(" - Loaded file " + path)
-                log(" - Returning unprocessed shortcuts")
+                log("Loaded file " + path)
+                log("Returning unprocessed shortcuts")
                 return tree
 
         # No file loaded
-        log(" - No shortcuts")
+        log("No shortcuts")
         return ETree.ElementTree(ETree.Element("shortcuts"))
 
     def _process_shortcuts(self, tree, group, profile_dir="special://profile",
@@ -600,8 +600,8 @@ class DataFunctions:
                     self.current_properties.append([list_property[0], list_property[1],
                                                     list_property[2], list_property[3]])
             except:
+                log(print_exc())
                 log("Failed to load current properties")
-                print_exc()
                 self.current_properties = [None]
         else:
             self.current_properties = [None]

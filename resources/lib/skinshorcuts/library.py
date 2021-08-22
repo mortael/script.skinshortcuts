@@ -193,8 +193,8 @@ class LibraryFunctions:
                 self.widgets()
 
         except:
+            log(print_exc())
             log("Failed to load %s" % (self.loaded[library][1]))
-            print_exc()
 
         # Mark library type as loaded
         self.loaded[library][0] = True
@@ -770,15 +770,15 @@ class LibraryFunctions:
                 log("Failed to load custom video nodes")
                 self._parse_library_nodes("video", "default")
         except:
+            log(print_exc())
             log("Failed to load custom video nodes")
-            print_exc()
             try:
                 # Try loading default nodes
                 self._parse_library_nodes("video", "default")
             except:
                 # Empty library
+                log(print_exc())
                 log("Failed to load default video nodes")
-                print_exc()
 
     def _parse_library_nodes(self, library, node_type):
         # items = {"video":[], "movies":[], "tvshows":[], "musicvideos":[], "custom":{}}
@@ -1162,15 +1162,15 @@ class LibraryFunctions:
                 log("Failed to load custom music nodes")
                 self._parse_library_nodes("music", "default")
         except:
+            log(print_exc())
             log("Failed to load custom music nodes")
-            print_exc()
             try:
                 # Try loading default nodes
                 self._parse_library_nodes("music", "default")
             except:
                 # Empty library
+                log(print_exc())
                 log("Failed to load default music nodes")
-                print_exc()
 
         # Do a JSON query for upnp sources (so that they'll show first time
         # the user asks to see them)
@@ -1358,8 +1358,8 @@ class LibraryFunctions:
 
                         count += 1
                 except:
+                    log(print_exc())
                     log("Failed to load playlist: %s" % file)
-                    print_exc()
 
             log(" - [" + path[0] + "] " + str(count) + " playlists found")
 
@@ -1400,8 +1400,8 @@ class LibraryFunctions:
             log(" - [" + path[0] + "] " + str(count) + " playlists found")
 
         except:
+            log(print_exc())
             log("Failed to load script generated playlists")
-            print_exc()
 
         return return_playlists
 
@@ -1576,7 +1576,7 @@ class LibraryFunctions:
                     return provides.text.split(" ")
 
         except:
-            print_exc()
+            log(print_exc())
         return []
 
     @staticmethod

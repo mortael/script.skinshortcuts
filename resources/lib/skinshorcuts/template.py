@@ -92,7 +92,7 @@ class Template:
             if menu_type == "mainmenu":
                 log("Main menu template found")
             else:
-                log(" - Submenu template found")
+                log("Submenu template found")
 
             # We need to check that the relevant includes existing
             # First, the overarching include
@@ -178,7 +178,7 @@ class Template:
                     int(self.current + ((float(self.percent) / float(len(items))) * progress_count))
                 )
         if num_templates != 0:
-            log(" - %d templates" % num_templates)
+            log("%d templates" % num_templates)
 
     def write_others(self):
         # This will write any 'other' elements we have into the includes file

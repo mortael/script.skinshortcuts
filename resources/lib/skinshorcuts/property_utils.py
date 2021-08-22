@@ -40,5 +40,5 @@ def write_properties(data):
     try:
         write_file(PROPERTIES_FILE, payload)
     except:
-        log('Failed to write properties to %s' % PROPERTIES_FILE)
         log(traceback.print_exc())
+        log('Failed to write properties to %s' % PROPERTIES_FILE)
