@@ -72,7 +72,7 @@ class XMLFunctions:
             for profile in profiles:
                 name = profile.find("name").text
                 _dir = profile.find("directory").text
-                log("Profile found: " + name + " (" + _dir + ")")
+                log("Profile found: %s (%s)" % (name, _dir))
 
                 # Localise the directory
                 if "://" in _dir:
@@ -126,12 +126,11 @@ class XMLFunctions:
                 # Offer to upload a debug log
                 if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
                     ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                                 LANGUAGE(32092) + "[CR]" + LANGUAGE(32093))
+                                                 "[CR]".join([LANGUAGE(32092), LANGUAGE(32093)]))
                     if ret:
                         xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
                 else:
-                    xbmcgui.Dialog().ok(ADDON_NAME,
-                                        LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
+                    xbmcgui.Dialog().ok(ADDON_NAME, "[CR]".join([LANGUAGE(32092), LANGUAGE(32094)]))
 
             else:
                 # Enable any debug logging needed
@@ -152,13 +151,15 @@ class XMLFunctions:
                 else:
                     # Offer to upload a debug log
                     if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
-                        ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                                     LANGUAGE(32092) + "[CR]" + LANGUAGE(32093))
+                        ret = xbmcgui.Dialog().yesno(
+                            ADDON_NAME, "[CR]".join([LANGUAGE(32092), LANGUAGE(32093)])
+                        )
+
                         if ret:
                             xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
                     else:
                         xbmcgui.Dialog().ok(ADDON_NAME,
-                                            LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
+                                            "[CR]".join([LANGUAGE(32092), LANGUAGE(32094)]))
 
     @staticmethod
     def shouldwerun(profilelist):
@@ -290,7 +291,7 @@ class XMLFunctions:
 
             else:
                 if xbmcvfs.exists(hashed_item):
-                    log("File now exists " + hashed_item)
+                    log("File now exists %s" % hashed_item)
                     return True
 
         # Set or clear the FullMenu skin bool
@@ -355,7 +356,7 @@ class XMLFunctions:
             if level == 0:
                 subtree.set("name", "skinshortcuts-submenu")
             else:
-                subtree.set("name", "skinshortcuts-submenu-" + str(level))
+                subtree.set("name", "skinshortcuts-submenu-%s" % str(level))
             if subtree not in submenu_trees:
                 submenu_trees.append(subtree)
 
@@ -492,7 +493,7 @@ class XMLFunctions:
                 for submenu_tree in submenu_trees:
                     submenu_visibility_name = submenu
                     if count == 1:
-                        submenu = submenu + "." + str(count)
+                        submenu = "%s.%s" % (submenu, str(count))
                     elif count != 0:
                         submenu = submenu[:-1] + str(count)
                         submenu_visibility_name = submenu[:-2]
@@ -510,14 +511,17 @@ class XMLFunctions:
                             justmenu_tree_b = ETree.SubElement(root, "include")
 
                             if count != 0:
-                                group_include = self.data_func.slugify(
-                                    submenu[:-2], convert_int=True
-                                ) + "-" + submenu[-1:]
+                                group_include = \
+                                    "%s-%s" % \
+                                    (self.data_func.slugify(submenu[:-2], convert_int=True),
+                                     submenu[-1:])
                             else:
                                 group_include = self.data_func.slugify(submenu, convert_int=True)
 
-                            justmenu_tree_a.set("name", "skinshortcuts-group-" + group_include)
-                            justmenu_tree_b.set("name", "skinshortcuts-group-alt-" + group_include)
+                            justmenu_tree_a.set("name",
+                                                "skinshortcuts-group-%s" % group_include)
+                            justmenu_tree_b.set("name",
+                                                "skinshortcuts-group-alt-%s" % group_include)
 
                             submenu_nodes[submenu] = [justmenu_tree_a, justmenu_tree_b]
 
@@ -566,6 +570,9 @@ class XMLFunctions:
                     # If we're building a single menu, update the onclicks of the main menu
                     if build_mode == "single" and not len(submenuitems) == 0 and \
                             not isinstance(item, str):
+                        setprop_str = "SetProperty(submenuVisibility,%s,10000)" % \
+                                      self.data_func.slugify(submenu_visibility_name,
+                                                             convert_int=True)
                         for onclickelement in mainmenu_item_b.findall("onclick"):
                             if "condition" in onclickelement.attrib:
                                 onclickelement.set(
@@ -577,10 +584,7 @@ class XMLFunctions:
                                      onclickelement.attrib.get("condition"))
                                 )
                                 newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
-                                newonclick.text = "SetProperty(submenuVisibility," + \
-                                                  self.data_func.slugify(submenu_visibility_name,
-                                                                         convert_int=True) + \
-                                                  ",10000)"
+                                newonclick.text = setprop_str
                                 newonclick.set("condition", onclickelement.attrib.get("condition"))
                             else:
                                 onclickelement.set(
@@ -590,10 +594,7 @@ class XMLFunctions:
                                                               convert_int=True))
                                 )
                                 newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
-                                newonclick.text = "SetProperty(submenuVisibility," + \
-                                                  self.data_func.slugify(submenu_visibility_name,
-                                                                         convert_int=True) + \
-                                                  ",10000)"
+                                newonclick.text = setprop_str
 
                     # Build the submenu items
                     template_submenu_items = ETree.Element("includes")
@@ -854,15 +855,14 @@ class XMLFunctions:
 
                     # If this is a widget or background, set a skin setting to say it's enabled
                     if prop[0] == "widget":
-                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-" + prop[1] + ")")
+                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-%s)" % prop[1])
                         # And if it's the main menu, list it
                         if group_name == "mainmenu":
-                            xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-" +
-                                                str(self.widget_count) + "," + prop[1] + ")")
+                            xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-%s,%s)" %
+                                                (str(self.widget_count), prop[1]))
                             self.widget_count += 1
                     elif prop[0] == "background":
-                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-" +
-                                            prop[1] + ")")
+                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-%s)" % prop[1])
 
                     # If this is the main menu, and we're cloning widgets,
                     # backgrounds or properties...
@@ -951,8 +951,9 @@ class XMLFunctions:
             # PVR Action
             if onclick.text.startswith("pvr-channel://"):
                 # PVR action
-                onclickelement.text = "RunScript(script.skinshortcuts,type=launchpvr&channel=" + \
-                                      onclick.text.replace("pvr-channel://", "") + ")"
+                onclickelement.text = \
+                    "RunScript(script.skinshortcuts,type=launchpvr&channel=%s)" % \
+                    onclick.text.replace("pvr-channel://", "")
             elif onclick.text.startswith("ActivateWindow(") and SKIN_PATH in onclick.text:
                 # Skin-relative links
                 try:
@@ -962,13 +963,13 @@ class XMLFunctions:
                     new_action = "special://skin"
                     for action_part in action_parts[1].split(os.sep):
                         if action_part != "":
-                            new_action = new_action + "/" + action_part
+                            new_action = "%s/%s" % (new_action, action_part)
                     if len(action_parts) == 2:
-                        onclickelement.text = "ActivateWindow(" + action_parts[0] + "," + \
-                                              new_action + ")"
+                        onclickelement.text = "ActivateWindow(%s,%s)" % \
+                                              (action_parts[0], new_action)
                     else:
-                        onclickelement.text = "ActivateWindow(" + action_parts[0] + "," + \
-                                              new_action + "," + action_parts[2] + ")"
+                        onclickelement.text = "ActivateWindow(%s,%s,%s)" % \
+                                              (action_parts[0], new_action, action_parts[2])
                 except:
                     pass
             else:
@@ -1017,7 +1018,7 @@ class XMLFunctions:
         if visibility_condition is not None:
             visibility_element = ETree.SubElement(newelement, "visible")
             if profile_visibility is not None:
-                visibility_element.text = profile_visibility + " + [" + visibility_condition + "]"
+                visibility_element.text = "%s + [%s]" % (profile_visibility, visibility_condition)
             else:
                 visibility_element.text = visibility_condition
             is_submenu_element = ETree.SubElement(newelement, "property")
@@ -1033,7 +1034,7 @@ class XMLFunctions:
             submenu_visibility_element = ETree.SubElement(newelement, "property")
             submenu_visibility_element.set("name", "submenuVisibility")
             if submenu_visibility.isdigit():
-                submenu_visibility_element.text = "$NUMBER[" + submenu_visibility + "]"
+                submenu_visibility_element.text = "$NUMBER[%s]" % submenu_visibility
             else:
                 submenu_visibility_element.text = self.data_func.slugify(submenu_visibility)
 

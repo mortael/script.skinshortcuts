@@ -366,7 +366,7 @@ class LibraryFunctions:
                 # node.attrib.get( "type" ), {"icon": node.attrib.get( "icon" )}] ) )
             if node.tag == "node" and flat is False:
                 return_list.append(self.create(
-                    ["||NODE||" + str(count), node.attrib.get("label"), "", {
+                    ["||NODE||%s" % str(count), node.attrib.get("label"), "", {
                         "icon": "DefaultFolder.png"
                     }]))
 
@@ -525,12 +525,12 @@ class LibraryFunctions:
                         action = elem.text
 
                         # if label.isdigit():
-                        #    label = "::LOCAL::" + label
+                        #    label = "::LOCAL::%s" % label
 
                         if item_type is None:
                             item_type = "32024"
                         # elif item_type.isdigit():
-                        #    item_type = "::LOCAL::" + item_type
+                        #    item_type = "::LOCAL::%s" % item_type
 
                         if icon is None:
                             icon = ""
@@ -558,12 +558,12 @@ class LibraryFunctions:
                     action = elem.text
 
                     # if label.isdigit():
-                    #    label = "::LOCAL::" + label
+                    #    label = "::LOCAL::%s" % label
 
                     if item_type is None:
                         item_type = "32024"
                     # elif item_type.isdigit():
-                    #    item_type = "::LOCAL::" + item_type
+                    #    item_type = "::LOCAL::%s" % item_type
 
                     if item_type is None or item_type == "":
                         item_type = "Skin Provided"
@@ -630,7 +630,7 @@ class LibraryFunctions:
         # If this launches our explorer, append a notation to the display_label
         localized_only = False
         if item[0].startswith("||"):
-            display_label = display_label + "  >"
+            display_label = "%s  >" % display_label
             # We'll also mark that we don't want to use a non-localised labelID, as this
             # causes issues with some folders picking up overridden icons incorrectly
             localized_only = True
@@ -1087,10 +1087,11 @@ class LibraryFunctions:
                 json_response['result']['channels'] is not None:
             for item in json_response['result']['channels']:
                 listitems.append(self.create(
-                    ["pvr-channel://" + str(item['channelid']), item['label'], "::SCRIPT::32076", {
-                        "icon": "DefaultTVShows.png",
-                        "thumb": item["thumbnail"]
-                    }]
+                    ["pvr-channel://%s" % str(item['channelid']), item['label'], "::SCRIPT::32076",
+                     {
+                         "icon": "DefaultTVShows.png",
+                         "thumb": item["thumbnail"]
+                     }]
                 ))
 
         self.add_to_dictionary("pvr-tv", listitems)
@@ -1114,13 +1115,14 @@ class LibraryFunctions:
                 json_response['result']['channels'] is not None:
             for item in json_response['result']['channels']:
                 listitems.append(self.create(
-                    ["pvr-channel://" + str(item['channelid']), item['label'], "::SCRIPT::32077", {
-                        "icon": "DefaultTVShows.png",
-                        "thumb": item["thumbnail"]
-                    }]
+                    ["pvr-channel://%s" % str(item['channelid']), item['label'], "::SCRIPT::32077",
+                     {
+                         "icon": "DefaultTVShows.png",
+                         "thumb": item["thumbnail"]
+                     }]
                 ))
 
-        log("Found " + str(len(listitems)) + " radio channels")
+        log("Found %s radio channels" % str(len(listitems)))
         self.add_to_dictionary("pvr-radio", listitems)
 
     def radiolibrary(self):
@@ -1196,13 +1198,13 @@ class LibraryFunctions:
                 json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
                 listitems.append(self.create(
-                    ["||SOURCE||" + item['file'], item['label'], "32069", {
+                    ["||SOURCE||%s" % item['file'], item['label'], "32069", {
                         "icon": "DefaultFolder.png"
                     }]
                 ))
         self.add_to_dictionary("videosources", listitems)
 
-        log(" - " + str(len(listitems)) + " video sources")
+        log("Found %s video sources" % str(len(listitems)))
 
         # Add audio sources
         listitems = []
@@ -1221,13 +1223,13 @@ class LibraryFunctions:
                 json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
                 listitems.append(self.create(
-                    ["||SOURCE||" + item['file'], item['label'], "32073", {
+                    ["||SOURCE||%s" % item['file'], item['label'], "32073", {
                         "icon": "DefaultFolder.png"
                     }]
                 ))
         self.add_to_dictionary("musicsources", listitems)
 
-        log(" - " + str(len(listitems)) + " audio sources")
+        log("Found %s audio sources" % str(len(listitems)))
 
         # Add picture sources
         listitems = []
@@ -1246,13 +1248,13 @@ class LibraryFunctions:
                 json_response['result']['sources'] is not None:
             for item in json_response['result']['sources']:
                 listitems.append(self.create(
-                    ["||SOURCE||" + item['file'], item['label'], "32089", {
+                    ["||SOURCE||%s" % item['file'], item['label'], "32089", {
                         "icon": "DefaultFolder.png"
                     }]
                 ))
         self.add_to_dictionary("picturesources", listitems)
 
-        log(" - " + str(len(listitems)) + " picture sources")
+        log("Found %s picture sources" % str(len(listitems)))
 
     def playlists(self):
         audiolist = []
@@ -1306,10 +1308,10 @@ class LibraryFunctions:
                                         "icon": "DefaultPlaylist.png"
                                     }]
                                 )
-                                listitem.setProperty("action-play", "PlayMedia(" + playlist + ")")
+                                listitem.setProperty("action-play", "PlayMedia(%s)" % playlist)
                                 listitem.setProperty("action-show",
-                                                     "ActivateWindow(" + media_library + "," +
-                                                     playlist + ",return)")
+                                                     "ActivateWindow(%s,%s,return)" %
+                                                     (media_library, playlist))
                                 listitem.setProperty("action-party",
                                                      "PlayerControl(PartyMode(%s))" % playlist)
 
@@ -1326,7 +1328,7 @@ class LibraryFunctions:
                                     audiolist.append(listitem)
                                 # Save it for the widgets list
                                 self.widget_playlists_list.append(
-                                    [playlist, "(" + LANGUAGE(int(path[1])) + ") " + name, name]
+                                    [playlist, "(%s) %s" % (LANGUAGE(int(path[1])), name), name]
                                 )
 
                                 count += 1
@@ -1337,7 +1339,7 @@ class LibraryFunctions:
                         listitem = self.create(["::PLAYLIST>%s::" % (path[2]), name, path[1], {
                             "icon": "DefaultPlaylist.png"
                         }])
-                        listitem.setProperty("action-play", "PlayMedia(" + playlist + ")")
+                        listitem.setProperty("action-play", "PlayMedia(%s)" % playlist)
                         listitem.setProperty("action-show", "ActivateWindow(%s,%s,return)" %
                                              (path[2], playlist))
                         listitem.setProperty("action-party", "PlayerControl(PartyMode(%s))" %
@@ -1361,7 +1363,7 @@ class LibraryFunctions:
                     log(print_exc())
                     log("Failed to load playlist: %s" % file)
 
-            log(" - [" + path[0] + "] " + str(count) + " playlists found")
+            log("[%s] %s playlists found" % (path[0], str(count)))
 
         self.add_to_dictionary("playlist-video", videolist)
         self.add_to_dictionary("playlist-audio", audiolist)
@@ -1373,7 +1375,7 @@ class LibraryFunctions:
         return_playlists = []
         try:
             log('Loading script generated playlists...')
-            path = "special://profile/addon_data/" + ADDON_ID + "/"
+            path = "special://profile/addon_data/%s/" % ADDON_ID
             count = 0
             for file in kodiwalk(path):
                 playlist = file['path']
@@ -1392,12 +1394,12 @@ class LibraryFunctions:
                             name = line.text
                             # Save it for the widgets list
                             # TO-DO - Localize display name
-                            return_playlists.append([playlist, "(Source) " + name, name])
+                            return_playlists.append([playlist, "(Source) %s" % name, name])
 
                             count += 1
                             break
 
-            log(" - [" + path[0] + "] " + str(count) + " playlists found")
+            log("[%s] %s playlists found" % (path[0], str(count)))
 
         except:
             log(print_exc())
@@ -1424,7 +1426,7 @@ class LibraryFunctions:
             if ('RunScript' not in path) and ('StartAndroidActivity' not in path) and \
                     not path.endswith(',return)'):
                 path = path.rstrip(')')
-                path = path + ',return)'
+                path = '%s,return)' % path
 
             try:
                 thumb = favourite.attributes['thumb'].nodeValue
@@ -1437,7 +1439,7 @@ class LibraryFunctions:
                 "thumb": thumb
             }]))
 
-        log(" - " + str(len(listitems)) + " favourites found")
+        log("%s favourites found" % str(len(listitems)))
 
         self.add_to_dictionary("favourite", listitems)
         self.loaded_favourites = True
@@ -1490,7 +1492,7 @@ class LibraryFunctions:
                     json_response['result']['addons'] is not None:
                 for item in json_response['result']['addons']:
                     if item['enabled'] is True:
-                        path = "RunAddOn(" + item['addonid'] + ")"
+                        path = "RunAddOn(%s)" % item['addonid']
                         if item['thumbnail'] != "":
                             thumb = item['thumbnail']
                         else:
@@ -1502,12 +1504,12 @@ class LibraryFunctions:
 
                         # If this is a plugin, mark that we can browse it
                         if item["type"] == "xbmc.python.pluginsource":
-                            path = "||BROWSE||" + item['addonid']
-                            action = "RunAddOn(" + item['addonid'] + ")"
+                            path = "||BROWSE||%s" % item['addonid']
+                            action = "RunAddOn(%s)" % item['addonid']
 
                             listitem.setProperty("path", path)
                             listitem.setProperty("action", action)
-                            listitem.setLabel(listitem.getLabel() + "  >")
+                            listitem.setLabel("%s  >" % listitem.getLabel())
 
                             # If its executable, save it to our program plugin widget list
                             if contenttype == "executable":
@@ -1528,14 +1530,14 @@ class LibraryFunctions:
                                 if content in content_data:
                                     # Add it as a plugin in the relevant category
                                     other_item = self.create(
-                                        [path, item['name'] + "  >", content_data[content][0], {
+                                        [path, "%s  >" % item['name'], content_data[content][0], {
                                             "icon": "DefaultAddon.png",
                                             "thumb": thumb
                                         }]
                                     )
-                                    other_item.setProperty("path", "||BROWSE||" + item['addonid'])
+                                    other_item.setProperty("path", "||BROWSE||%s" % item['addonid'])
                                     other_item.setProperty("action",
-                                                           "RunAddOn(" + item['addonid'] + ")")
+                                                           "RunAddOn(%s)" % item['addonid'])
                                     content_data[content][1][item["name"]] = other_item
                                     # If it's executable, add it to our
                                     # seperate program plugins for widgets
@@ -1549,17 +1551,17 @@ class LibraryFunctions:
                 self.add_to_dictionary("addon-program", self._sort_dictionary(listitems))
                 self.add_to_dictionary("addon-program-plugin",
                                        self._sort_dictionary(executable_plugin_items))
-                log(" - %s programs found (of which %s are plugins)" %
+                log("%s programs found (of which %s are plugins)" %
                     (str(len(listitems)), str(len(executable_plugin_items))))
             elif contenttype == "video":
                 self.add_to_dictionary("addon-video", self._sort_dictionary(listitems))
-                log(" - " + str(len(listitems)) + " video add-ons found")
+                log("%s video add-ons found" % str(len(listitems)))
             elif contenttype == "audio":
                 self.add_to_dictionary("addon-audio", self._sort_dictionary(listitems))
-                log(" - " + str(len(listitems)) + " audio add-ons found")
+                log("%s audio add-ons found" % str(len(listitems)))
             elif contenttype == "image":
                 self.add_to_dictionary("addon-image", self._sort_dictionary(listitems))
-                log(" - " + str(len(listitems)) + " image add-ons found")
+                log("%s image add-ons found" % str(len(listitems)))
 
     @staticmethod
     def _has_plugin_entry_point(path):
@@ -1703,7 +1705,7 @@ class LibraryFunctions:
 
         dialog_label = label[0].replace("  >", "")
         if len(label) != 1:
-            dialog_label = label[0].replace("  >", "") + " - " + label[-1].replace("  >", "")
+            dialog_label = "%s - %s" % (label[0].replace("  >", ""), label[-1].replace("  >", ""))
 
         listings = []
 
@@ -1752,7 +1754,7 @@ class LibraryFunctions:
                 # Handle numeric labels
                 alt_label = item["label"]
                 if item["label"].isnumeric():
-                    alt_label = "$NUMBER[" + item["label"] + "]"
+                    alt_label = "$NUMBER[%s]" % item["label"]
                 if location.startswith("library://"):
                     # Process this as a library node
                     is_library = True
@@ -1793,7 +1795,7 @@ class LibraryFunctions:
                             }])
 
                         # Add widget properties
-                        widget_name = label[0].replace("  >", "") + " - " + item["label"]
+                        widget_name = "%s - %s" % (label[0].replace("  >", ""), item["label"])
                         listitem.setProperty("widget", "Library")
                         listitem.setProperty("widgetName", widget_name)
                         listitem.setProperty("widgetType", widget_type)
@@ -1837,7 +1839,7 @@ class LibraryFunctions:
                         thumb = None
                         if item["thumbnail"] != "":
                             thumb = item["thumbnail"]
-                        listitem = self.create([item["file"], item["label"] + "  >", "", {
+                        listitem = self.create([item["file"], "%s  >" % item['label'], "", {
                             "icon": "DefaultFolder.png",
                             "thumb": thumb
                         }])
@@ -1893,7 +1895,7 @@ class LibraryFunctions:
 
                 # Build the action
                 if item_type in ["32010", "32014", "32069"]:
-                    action = 'ActivateWindow(Videos,"' + location + '",return)'
+                    action = 'ActivateWindow(Videos,"%s",return)' % location
                     listitem.setProperty("windowID", "Videos")
                     listitem.setProperty("widgetType", "videos")
 
@@ -1914,7 +1916,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetPath", location)
 
                 elif item_type in ["32011", "32019", "32073"]:
-                    action = 'ActivateWindow(Music,"' + location + '",return)'
+                    action = 'ActivateWindow(Music,"%s",return)' % location
                     listitem.setProperty("windowID", "Music")
 
                     # Add widget details
@@ -1934,7 +1936,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetPath", location)
 
                 elif item_type in ["32012", "32089"]:
-                    action = 'ActivateWindow(Pictures,"' + location + '",return)'
+                    action = 'ActivateWindow(Pictures,"%s",return)' % location
                     listitem.setProperty("window_id", "Pictures")
 
                     # Add widget details
@@ -1945,7 +1947,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetPath", location)
 
                 elif item_type == "32009":
-                    action = 'ActivateWindow(Programs,"' + location + '",return)'
+                    action = 'ActivateWindow(Programs,"%s",return)' % location
                     listitem.setProperty("windowID", "Programs")
 
                     # Add widget details
@@ -1956,7 +1958,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetPath", location)
 
                 elif item_type == "32123":
-                    action = 'ActivateWindow(Games,"' + location + '",return)'
+                    action = 'ActivateWindow(Games,"%s",return)' % location
                     listitem.setProperty("windowID", "Games")
 
                     # Add widget details
@@ -1967,7 +1969,7 @@ class LibraryFunctions:
                     listitem.setProperty("widgetPath", location)
 
                 else:
-                    action = "RunAddon(" + location + ")"
+                    action = "RunAddon(%s)" % location
 
                 listitem.setProperty("path", action)
                 listitem.setProperty("displayPath", action)
@@ -2236,17 +2238,15 @@ class LibraryFunctions:
 
             new_action = ""
             if user_choice == 1:
-                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                             ",notrandom)"
+                new_action = "SlideShow(%s,notrandom)" % selected_shortcut.getProperty("location")
             elif user_choice == 2:
-                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                             ",random)"
+                new_action = "SlideShow(%s,random)" % selected_shortcut.getProperty("location")
             elif user_choice == 3:
-                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                             ",recursive,notrandom)"
+                new_action = "SlideShow(%s,recursive,notrandom)" % \
+                             selected_shortcut.getProperty("location")
             elif user_choice == 4:
-                new_action = "SlideShow(" + selected_shortcut.getProperty("location") + \
-                             ",recursive,random)"
+                new_action = "SlideShow(%s,recursive,random)" % \
+                             selected_shortcut.getProperty("location")
 
             selected_shortcut.setProperty("path", new_action)
             selected_shortcut.setProperty("displayPath", new_action)
@@ -2255,8 +2255,8 @@ class LibraryFunctions:
         # We're going to display it in the library
         filename = self._build_playlist(selected_shortcut.getProperty("location"), media_type,
                                         selected_shortcut.getLabel(), negative)
-        new_action = "ActivateWindow(" + window_id + "," + "special://profile/addon_data/" + \
-                     ADDON_ID + "/" + filename + ",return)"
+        new_action = "ActivateWindow(%s,special://profile/addon_data/%s/%s,return)" % \
+                     (window_id, ADDON_ID, filename)
         selected_shortcut.setProperty("Path", new_action)
         selected_shortcut.setProperty("displayPath", new_action)
         return selected_shortcut
@@ -2296,20 +2296,20 @@ class LibraryFunctions:
                 ETree.SubElement(rule, "value").text = item
 
         _id = 1
-        while xbmcvfs.exists(os.path.join(DATA_PATH, str(_id) + ".xsp")):
+        while xbmcvfs.exists(os.path.join(DATA_PATH, "%s.xsp" % str(_id))):
             _id += 1
 
         # Write playlist we'll link to the menu item
         self.data_func.indent(tree.getroot())
-        tree.write(os.path.join(DATA_PATH, str(_id) + ".xsp"), encoding="utf-8")
+        tree.write(os.path.join(DATA_PATH, "%s.xsp" % str(_id)), encoding="utf-8")
 
         # Add a random property, and save this for use in playlists/backgrounds
         order = ETree.SubElement(root, "order")
         order.text = "random"
         self.data_func.indent(tree.getroot())
-        tree.write(os.path.join(DATA_PATH, str(_id) + "-randomversion.xsp"), encoding="utf-8")
+        tree.write(os.path.join(DATA_PATH, "%s-randomversion.xsp" % str(_id)), encoding="utf-8")
 
-        return str(_id) + ".xsp"
+        return "%s.xsp" % str(_id)
 
     @staticmethod
     def delete_playlist(target):
@@ -2461,13 +2461,14 @@ class LibraryFunctions:
                 if group == "":
                     group = path.replace("||NODE||", "")
                 else:
-                    group = group + "," + path.replace("||NODE||", "")
+                    group = "%s,%s" % (group, path.replace("||NODE||", ""))
                 return self.select_shortcut(group=group, grouping=grouping, custom=custom,
                                             show_none=show_none, current_action=current_action)
             if path.startswith("||BROWSE||"):
+                browse_path = "plugin://%s" % path.replace("||BROWSE||", "")
                 selected_shortcut = self.explorer(
-                    ["plugin://" + path.replace("||BROWSE||", "")],
-                    "plugin://" + path.replace("||BROWSE||", ""),
+                    [browse_path],
+                    browse_path,
                     [selected_shortcut.getLabel()],
                     [selected_shortcut.getProperty("thumbnail")],
                     selected_shortcut.getProperty("shortcutType"),

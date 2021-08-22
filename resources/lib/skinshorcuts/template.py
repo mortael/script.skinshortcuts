@@ -98,10 +98,10 @@ class Template:
             # First, the overarching include
             include_name = "skinshortcuts-template"
             if "include" in template.attrib:
-                include_name += "-%s" % (template.attrib.get("include"))
+                include_name += "-%s" % template.attrib.get("include")
 
             _ = self.get_include(self.includes, include_name, profile_visibility, profile)
-            include_tree = self.get_include(self.includes, include_name + "-%s" % profile,
+            include_tree = self.get_include(self.includes, "%s-%s" % (include_name, profile),
                                             None, None)
 
             # If we've been passed any mainmenu items, retrieve their properties
@@ -211,7 +211,7 @@ class Template:
                     if visibility_condition is None:
                         visibility_condition = condition.text
                     elif condition.text != "":
-                        visibility_condition += " | " + condition.text
+                        visibility_condition += " | %s" % condition.text
 
                 # Get the include this will be done under
                 _ = self.get_include(self.includes, name, profile.attrib.get("visible"),
@@ -348,7 +348,7 @@ class Template:
                 # We didn't find condition,so create it
                 vis_include = ETree.SubElement(include, "include")
                 vis_include.set("condition", condition)
-                vis_include.text = name + "-" + profile
+                vis_include.text = "%s-%s" % (name, profile)
 
                 return include
 
@@ -361,7 +361,7 @@ class Template:
         if condition is not None:
             vis_include = ETree.SubElement(new_include, "include")
             vis_include.set("condition", condition)
-            vis_include.text = name + "-" + profile
+            vis_include.text = "%s-%s" % (name, profile)
 
         return new_include
 

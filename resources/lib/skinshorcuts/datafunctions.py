@@ -99,12 +99,13 @@ class DataFunctions:
         if label_id in self.label_id_list:
             # We're going to add an --[int] to the end of this
             count = 0
-            while label_id + "--" + str(count) in self.label_id_list:
+            id_strtpl = "%s--%s"
+            while id_strtpl % (label_id, str(count)) in self.label_id_list:
                 count += 1
 
             # We can now use this one
-            self.label_id_list.append(label_id + "--" + str(count))
-            return label_id + "--" + str(count)
+            self.label_id_list.append(id_strtpl % (label_id, str(count)))
+            return id_strtpl % (label_id, str(count))
 
         # We can use this one
         self.label_id_list.append(label_id)
@@ -147,7 +148,7 @@ class DataFunctions:
                       defaults_only=False, process_shortcuts=True, is_sub_level=False):
         # This will load the shortcut file
         # Additionally, if the override files haven't been loaded, we'll load them too
-        log("Loading shortcuts for group " + group)
+        log("Loading shortcuts for group %s" % group)
 
         if profile_dir is None:
             profile_dir = PROFILE_PATH
@@ -198,7 +199,7 @@ class DataFunctions:
                 return tree
 
             if tree is not None:
-                log("Loaded file " + path)
+                log("Loaded file %s" % path)
                 log("Returning unprocessed shortcuts")
                 return tree
 
@@ -420,14 +421,15 @@ class DataFunctions:
                     # The item hasn't been overridden, so change it to an override-action element
                     elem.tag = "override-action"
 
+            node_strtpl = "[%s] + [%s]"
             # Get visibility condition of any skin-provided shortcuts
             for elem in skinoverrides.findall("shortcut"):
                 if elem.text == action.text and "condition" in elem.attrib:
                     if not visibility_node:
                         ETree.SubElement(node, "visibility").text = elem.attrib.get("condition")
                     else:
-                        visibility_node.text = "[" + visibility_node.text + "] + [" + \
-                                               elem.attrib.get("condition") + "]"
+                        visibility_node.text = \
+                            node_strtpl % (visibility_node.text, elem.attrib.get("condition"))
 
             # Get any visibility conditions in the .DATA.xml file
             additional_visibility = node.find("visible")
@@ -435,8 +437,8 @@ class DataFunctions:
                 if visibility_node is None:
                     ETree.SubElement(node, "visibility").text = additional_visibility.text
                 else:
-                    visibility_node.text = "[" + visibility_node.text + "] + [" + \
-                                           additional_visibility.text + "]"
+                    visibility_node.text = \
+                        node_strtpl % (visibility_node.text, additional_visibility.text)
 
         return tree
 
@@ -884,9 +886,9 @@ class DataFunctions:
         # widgets are active
         tree = self.get_overrides_skin()
         for elem in tree.findall("widget"):
-            xbmc.executebuiltin("Skin.Reset(skinshortcuts-widget-" + elem.text + ")")
+            xbmc.executebuiltin("Skin.Reset(skinshortcuts-widget-%s)" % elem.text)
         for elem in tree.findall("background"):
-            xbmc.executebuiltin("Skin.Reset(skinshortcuts-background-" + elem.text + ")")
+            xbmc.executebuiltin("Skin.Reset(skinshortcuts-background-%s)" % elem.text)
 
     @staticmethod
     def create_nice_name(item, localized_only=False):
@@ -1225,10 +1227,10 @@ class DataFunctions:
 
     # in-place prettyprint formatter
     def indent(self, elem, level=0):
-        i = "\n" + level * "\t"
+        i = "\n%s" % (level * "\t")
         if len(elem):
             if not elem.text or not elem.text.strip():
-                elem.text = i + "\t"
+                elem.text = "%s%s" % (i, "\t")
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
             for _elem in elem:
@@ -1282,22 +1284,21 @@ class DataFunctions:
                     # Set the skinid to the current skin id
                     skinid = SKIN_DIR
 
+                return_string = "$SKIN[%s|%s|%s]" % (data, skinid, lasttranslation)
                 # If we're on the same skin as the skinid, get the latest translation
                 if skinid == SKIN_DIR:
                     lasttranslation = xbmc.getLocalizedString(int(data))
-                    return_string = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
-                    return [return_string, "$LOCALIZE[" + data + "]", lasttranslation, data]
+                    return [return_string, "$LOCALIZE[%s]" % data, lasttranslation, data]
 
-                return_string = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
                 return [return_string, lasttranslation, lasttranslation, data]
 
             if 32000 <= int(data) < 33000:
                 # A number from the script
-                return [data, "$ADDON[script.skinshortcuts " + data + "]",
+                return [data, "$ADDON[script.skinshortcuts %s]" % data,
                         LANGUAGE(int(data)), data]
 
             # A number from XBMC itself (probably)
-            return [data, "$LOCALIZE[" + data + "]", xbmc.getLocalizedString(int(data)), data]
+            return [data, "$LOCALIZE[%s]" % data, xbmc.getLocalizedString(int(data)), data]
 
         # This isn't anything we can localize, just return it (in triplicate ;))
         return [data, data, data, data]
@@ -1333,7 +1334,7 @@ class DataFunctions:
                 convert_int=False, is_sub_level=False):
         # Handle integers
         if convert_int and text.isdigit():
-            text = "NUM-" + text
+            text = "NUM-%s" % text
 
         # text to unicode
         if isinstance(text, bytes):
@@ -1437,14 +1438,14 @@ class DataFunctions:
 
         if action.lower().startswith("activatewindow(musiclibrary"):
             if "," in action:
-                return "ActivateWindow(Music," + action.split(",", 1)[1]
+                return "ActivateWindow(Music,%s" % action.split(",", 1)[1]
 
             return "ActivateWindow(Music)"
 
         # Isengard + later video windows
         if action.lower().startswith("activatewindow(videolibrary"):
             if "," in action:
-                return "ActivateWindow(Videos," + action.split(",", 1)[1]
+                return "ActivateWindow(Videos,%s" % action.split(",", 1)[1]
 
             return "ActivateWindow(Videos)"
 

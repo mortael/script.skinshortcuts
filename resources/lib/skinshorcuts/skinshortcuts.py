@@ -86,6 +86,9 @@ class Main:
         if self.TYPE == "resetlist":
             self._resetlist(self.MENUID, self.NEXTACTION)
 
+        setstring_strtpl = "Skin.SetString(%s,%s)"
+        skinreset_strtpl = "Skin.Reset(%s)"
+
         if self.TYPE == "shortcuts":
             # We're just going to choose a shortcut, and save its details to the given
             # skin labels
@@ -110,39 +113,40 @@ class Main:
                     path = selected_shortcut.getProperty("chosenPath")
 
                 if path.startswith("pvr-channel://"):
-                    path = "RunScript(script.skinshortcuts,type=launchpvr&channel=" + \
-                           path.replace("pvr-channel://", "") + ")"
+                    path = "RunScript(script.skinshortcuts,type=launchpvr&channel=%s)" % \
+                           path.replace("pvr-channel://", "")
                 if self.LABEL is not None and selected_shortcut.getLabel() != "":
-                    xbmc.executebuiltin("Skin.SetString(" + self.LABEL + "," +
-                                        selected_shortcut.getLabel() + ")")
+                    xbmc.executebuiltin(setstring_strtpl %
+                                        (self.LABEL, selected_shortcut.getLabel()))
                 if self.ACTION is not None:
-                    xbmc.executebuiltin("Skin.SetString(" + self.ACTION + "," + path + " )")
+                    xbmc.executebuiltin(setstring_strtpl % (self.ACTION, path))
                 if self.SHORTCUTTYPE is not None:
-                    xbmc.executebuiltin("Skin.SetString(" + self.SHORTCUTTYPE + "," +
-                                        selected_shortcut.getLabel2() + ")")
+                    xbmc.executebuiltin(setstring_strtpl %
+                                        (self.SHORTCUTTYPE, selected_shortcut.getLabel2()))
                 if self.THUMBNAIL is not None and selected_shortcut.getProperty("icon"):
-                    xbmc.executebuiltin("Skin.SetString(" + self.THUMBNAIL + "," +
-                                        selected_shortcut.getProperty("icon") + ")")
+                    xbmc.executebuiltin(setstring_strtpl %
+                                        (self.THUMBNAIL, selected_shortcut.getProperty("icon")))
                 if self.THUMBNAIL is not None and selected_shortcut.getProperty("thumbnail"):
-                    xbmc.executebuiltin("Skin.SetString(" + self.THUMBNAIL + "," +
-                                        selected_shortcut.getProperty("thumbnail") + ")")
+                    xbmc.executebuiltin(setstring_strtpl %
+                                        (self.THUMBNAIL,
+                                         selected_shortcut.getProperty("thumbnail")))
                 if self.LIST is not None:
-                    xbmc.executebuiltin("Skin.SetString(" + self.LIST + "," +
-                                        self.data_func.get_list_property(path) + ")")
+                    xbmc.executebuiltin(setstring_strtpl %
+                                        (self.LIST, self.data_func.get_list_property(path)))
             elif selected_shortcut is not None and selected_shortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
                 if self.LABEL is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.LABEL + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.LABEL)
                 if self.ACTION is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.ACTION + " )")
+                    xbmc.executebuiltin(skinreset_strtpl % self.ACTION)
                 if self.SHORTCUTTYPE is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.SHORTCUTTYPE + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.SHORTCUTTYPE)
                 if self.THUMBNAIL is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.THUMBNAIL + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.THUMBNAIL)
                 if self.THUMBNAIL is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.THUMBNAIL + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.THUMBNAIL)
                 if self.LIST is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.LIST + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.LIST)
 
         if self.TYPE == "widgets":
             # We're just going to choose a widget, and save its details to the given
@@ -230,15 +234,15 @@ class Main:
             elif selected_shortcut.getLabel() == "::NONE::":
                 # Clear the skin strings
                 if self.WIDGET is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.WIDGET + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.WIDGET)
                 if self.WIDGETTYPE is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.WIDGETTYPE + " )")
+                    xbmc.executebuiltin(skinreset_strtpl % self.WIDGETTYPE)
                 if self.WIDGETNAME is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.WIDGETNAME + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.WIDGETNAME)
                 if self.WIDGETTARGET is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.WIDGETTARGET + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.WIDGETTARGET)
                 if self.WIDGETPATH is not None:
-                    xbmc.executebuiltin("Skin.Reset(" + self.WIDGETPATH + ")")
+                    xbmc.executebuiltin(skinreset_strtpl % self.WIDGETPATH)
 
         if self.TYPE == "context":
             # Context menu addon asking us to add a folder to the menu
@@ -362,7 +366,7 @@ class Main:
         HOME_WINDOW.setProperty("skinshortcuts", strftime("%Y%m%d%H%M%S", gmtime()))
 
         # Clear window properties for this group, and for backgrounds, widgets, properties
-        HOME_WINDOW.clearProperty("skinshortcuts-" + group)
+        HOME_WINDOW.clearProperty("skinshortcuts-%s" % group)
         HOME_WINDOW.clearProperty("skinshortcutsWidgets")
         HOME_WINDOW.clearProperty("skinshortcutsCustomProperties")
         HOME_WINDOW.clearProperty("skinshortcutsBackgrounds")
@@ -421,7 +425,7 @@ class Main:
             count -= 1
 
         if count != 0:
-            xbmc.executebuiltin("Control.Move(" + menuid + "," + str(count) + " )")
+            xbmc.executebuiltin("Control.Move(%s,%s)" % (menuid, str(count)))
 
         xbmc.executebuiltin("ClearProperty(submenuVisibility, 10000)")
 
@@ -436,6 +440,6 @@ class Main:
         count += 1
 
         if count != 0:
-            xbmc.executebuiltin("Control.Move(" + menuid + "," + str(count) + " )")
+            xbmc.executebuiltin("Control.Move(%s,%s)" % (menuid, str(count)))
 
         xbmc.executebuiltin(unquote(action))

@@ -186,18 +186,16 @@ class NodeFunctions:
         else:
             return ""
 
-        custom_path = path.replace(path_start,
-                                   os.path.join(PROFILE_PATH, "library", path_end)) + "index.xml"
-        custom_file = path.replace(path_start,
-                                   os.path.join(PROFILE_PATH, "library", path_end))[:-1] + ".xml"
-        default_path = path.replace(
-            path_start,
-            os.path.join(KODI_PATH, "system", "library", path_end)
-        ) + "index.xml"
-        default_file = path.replace(
-            path_start,
-            os.path.join(KODI_PATH, "system", "library", path_end)
-        )[:-1] + ".xml"
+        custom_path = "%sindex.xml" % path.replace(path_start,
+                                                   os.path.join(PROFILE_PATH, "library", path_end))
+        custom_file = "%s.xml" % path.replace(path_start,
+                                              os.path.join(PROFILE_PATH, "library", path_end))[:-1]
+        default_path = \
+            "%sindex.xml" % path.replace(path_start,
+                                         os.path.join(KODI_PATH, "system", "library", path_end))
+        default_file = \
+            "%s.xml" % path.replace(path_start,
+                                    os.path.join(KODI_PATH, "system", "library", path_end))[:-1]
 
         # Check whether the node exists - either as a parent node (with an index.xml)
         # or a view node (append .xml) in first custom video nodes, then default video nodes
@@ -215,12 +213,11 @@ class NodeFunctions:
         if path.endswith("/"):
             path = path[:-1]
         path = path.rsplit("/", 1)[0]
-        custom_path = path.replace(path_start,
-                                   os.path.join(PROFILE_PATH, "library", path_end)) + "/index.xml"
-        default_path = path.replace(
-            path_start,
-            os.path.join(KODI_PATH, "system", "library", path_end)
-        ) + "/index.xml"
+        custom_path = "%s/index.xml" % path.replace(path_start,
+                                                    os.path.join(PROFILE_PATH, "library", path_end))
+        default_path = \
+            "%s/index.xml" % path.replace(path_start,
+                                          os.path.join(KODI_PATH, "system", "library", path_end))
         node_parent = None
 
         if xbmcvfs.exists(custom_path):
@@ -265,18 +262,16 @@ class NodeFunctions:
         else:
             return "unknown"
 
-        custom_path = path.replace(path_start,
-                                   os.path.join(PROFILE_PATH, "library", path_end)) + "index.xml"
-        custom_file = path.replace(path_start,
-                                   os.path.join(PROFILE_PATH, "library", path_end))[:-1] + ".xml"
-        default_path = path.replace(
-            path_start,
-            os.path.join(KODI_PATH, "system", "library", path_end)
-        ) + "index.xml"
-        default_file = path.replace(
-            path_start,
-            os.path.join(KODI_PATH, "system", "library", path_end)
-        )[:-1] + ".xml"
+        custom_path = "%sindex.xml" % path.replace(path_start,
+                                                   os.path.join(PROFILE_PATH, "library", path_end))
+        custom_file = "%s.xml" % path.replace(path_start,
+                                              os.path.join(PROFILE_PATH, "library", path_end))[:-1]
+        default_path = \
+            "%sindex.xml" % path.replace(path_start,
+                                         os.path.join(KODI_PATH, "system", "library", path_end))
+        default_file = \
+            "%s.xml" % path.replace(path_start,
+                                    os.path.join(KODI_PATH, "system", "library", path_end))[:-1]
 
         # Check whether the node exists - either as a parent node (with an index.xml)
         # or a view node (append .xml) in first custom video nodes, then default video nodes

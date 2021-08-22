@@ -846,7 +846,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                             if path[1] == "Move":
                                 if path[0] != target:
                                     # Move the original to the target path
-                                    log("Moving " + path[0] + " > " + target)
+                                    log("Moving %s to %s" % (path[0], target))
                                     xbmcvfs.rename(path[0], target)
                             else:
                                 # We're copying the file (actually, we'll re-write the file without
@@ -861,7 +861,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                 # Write it to the target
                                 self.data_func.indent(newtree.getroot())
                                 newtree.write(target, encoding="utf-8")
-                                log("Copying " + path[0] + " > " + target)
+                                log("Copying %s to %s" % (path[0], target))
 
                                 # We'll need to import it's default properties,
                                 # so save the group_name
@@ -1143,9 +1143,10 @@ class GUI(xbmcgui.WindowXMLDialog):
             path = listitem_copy.getProperty("path")
             if path.startswith("||BROWSE||"):
                 # If this is a plugin, call our plugin browser
+                browse_path = "plugin://%s" % path.replace("||BROWSE||", "")
                 return_val = self.lib_func.explorer(
-                    ["plugin://" + path.replace("||BROWSE||", "")],
-                    "plugin://" + path.replace("||BROWSE||", ""),
+                    [browse_path],
+                    browse_path,
                     [self.getControl(111).getSelectedItem().getLabel()],
                     [self.getControl(111).getSelectedItem().getProperty("thumbnail")],
                     self.getControl(111).getSelectedItem().getProperty("shortcutType")
@@ -1345,7 +1346,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 list_control.getListItem(item_index).getProperty("skinshortcuts-orderindex")
             )
 
-            log(str(item_index) + " : " + str(list_control.size()))
+            log("%s : %s" % (str(item_index), str(list_control.size())))
 
             if item_index == list_control.size() - 1:
                 return
@@ -1626,7 +1627,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # If we're setting for an additional widget, get it's number
             widget_id = ""
             if self.current_window.getProperty("widgetID"):
-                widget_id += "." + self.current_window.getProperty("widgetID")
+                widget_id += ".%s" % self.current_window.getProperty("widgetID")
                 self.current_window.clearProperty("widgetID")
 
             # Get the default widget for this item
@@ -1644,7 +1645,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 widget_type.append(key[2])
 
                 if key[0] == default_widget:
-                    widget_label.append(key[1] + " (%s)" % (LANGUAGE(32050)))
+                    widget_label.append("%s (%s)" % (key[1], LANGUAGE(32050)))
                 else:
                     widget_label.append(key[1])
 
@@ -1654,13 +1655,14 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self.lib_func.load_library("playlists")
 
                 # Add them
+                playlist_strtpl = "::PLAYLIST::%s"
                 for playlist in self.lib_func.widget_playlists_list:
-                    widget.append("::PLAYLIST::" + playlist[0])
+                    widget.append(playlist_strtpl % playlist[0])
                     widget_label.append(playlist[1])
                     widget_name.append(playlist[2])
                     widget_type.append(self.widget_playlists_type)
                 for playlist in self.lib_func.script_playlists():
-                    widget.append("::PLAYLIST::" + playlist[0])
+                    widget.append(playlist_strtpl % playlist[0])
                     widget_label.append(playlist[1])
                     widget_name.append(playlist[2])
                     widget_type.append(self.widget_playlists_type)
@@ -1673,17 +1675,17 @@ class GUI(xbmcgui.WindowXMLDialog):
                 return
             if selected_widget == 0:
                 # User selected no widget
-                self._remove_additionalproperty(listitem, "widget" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetName" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetType" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetPlaylist" + widget_id)
+                self._remove_additionalproperty(listitem, "widget%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetName%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetType%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetPlaylist%s" % widget_id)
 
             else:
                 if widget[selected_widget].startswith("::PLAYLIST::"):
-                    self._add_additionalproperty(listitem, "widget" + widget_id, "Playlist")
-                    self._add_additionalproperty(listitem, "widgetName" + widget_id,
+                    self._add_additionalproperty(listitem, "widget%s" % widget_id, "Playlist")
+                    self._add_additionalproperty(listitem, "widgetName%s" % widget_id,
                                                  widget_name[selected_widget])
-                    self._add_additionalproperty(listitem, "widgetPlaylist" + widget_id,
+                    self._add_additionalproperty(listitem, "widgetPlaylist%s" % widget_id,
                                                  widget[selected_widget].strip("::PLAYLIST::"))
                     if self.current_window.getProperty("useWidgetNameAsLabel") == "true" and \
                             widget_id == "":
@@ -1691,12 +1693,12 @@ class GUI(xbmcgui.WindowXMLDialog):
                         self.current_window.clearProperty("useWidgetNameAsLabel")
                 else:
                     self._add_additionalproperty(
-                        listitem, "widgetName" + widget_id,
+                        listitem, "widgetName%s" % widget_id,
                         widget_label[selected_widget].replace(" (%s)" % (LANGUAGE(32050)), "")
                     )
-                    self._add_additionalproperty(listitem, "widget" + widget_id,
+                    self._add_additionalproperty(listitem, "widget%s" % widget_id,
                                                  widget[selected_widget])
-                    self._remove_additionalproperty(listitem, "widgetPlaylist" + widget_id)
+                    self._remove_additionalproperty(listitem, "widgetPlaylist%s" % widget_id)
                     if self.current_window.getProperty("useWidgetNameAsLabel") == "true" and \
                             widget_id == "":
                         self._set_label(
@@ -1706,10 +1708,10 @@ class GUI(xbmcgui.WindowXMLDialog):
                         self.current_window.clearProperty("useWidgetNameAsLabel")
 
                 if widget_type[selected_widget] is not None:
-                    self._add_additionalproperty(listitem, "widgetType" + widget_id,
+                    self._add_additionalproperty(listitem, "widgetType%s" % widget_id,
                                                  widget_type[selected_widget])
                 else:
-                    self._remove_additionalproperty(listitem, "widgetType" + widget_id)
+                    self._remove_additionalproperty(listitem, "widgetType%s" % widget_id)
 
             self.change_made = True
 
@@ -1722,7 +1724,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             # If we're setting for an additional widget, get its number
             widget_id = ""
             if self.current_window.getProperty("widgetID"):
-                widget_id = "." + self.current_window.getProperty("widgetID")
+                widget_id = ".%s" % self.current_window.getProperty("widgetID")
                 self.current_window.clearProperty("widgetID")
 
             # Get the default widget for this item
@@ -1750,7 +1752,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             if selected_shortcut.getProperty("Path") and \
                     selected_shortcut.getProperty("custom") == "true":
                 # User has manually edited the widget path, so we'll update that property only
-                self._add_additionalproperty(listitem, "widgetPath" + widget_id,
+                self._add_additionalproperty(listitem, "widgetPath%s" % widget_id,
                                              selected_shortcut.getProperty("Path"))
                 self.change_made = True
 
@@ -1778,14 +1780,14 @@ class GUI(xbmcgui.WindowXMLDialog):
                 widget_path = \
                     self.lib_func.add_widget_reload(selected_shortcut.getProperty("widgetPath"))
 
-                self._add_additionalproperty(listitem, "widget" + widget_id,
+                self._add_additionalproperty(listitem, "widget%s" % widget_id,
                                              selected_shortcut.getProperty("widget"))
-                self._add_additionalproperty(listitem, "widgetName" + widget_id, widget_name)
-                self._add_additionalproperty(listitem, "widgetType" + widget_id,
+                self._add_additionalproperty(listitem, "widgetName%s" % widget_id, widget_name)
+                self._add_additionalproperty(listitem, "widgetType%s" % widget_id,
                                              selected_shortcut.getProperty("widgetType"))
-                self._add_additionalproperty(listitem, "widgetTarget" + widget_id,
+                self._add_additionalproperty(listitem, "widgetTarget%s" % widget_id,
                                              selected_shortcut.getProperty("widgetTarget"))
-                self._add_additionalproperty(listitem, "widgetPath" + widget_id, widget_path)
+                self._add_additionalproperty(listitem, "widgetPath%s" % widget_id, widget_path)
                 if self.current_window.getProperty("useWidgetNameAsLabel") == "true" and \
                         widget_id == "":
                     self._set_label(listitem, selected_shortcut.getProperty("widgetName"))
@@ -1794,11 +1796,11 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             else:
                 # User has selected 'None'
-                self._remove_additionalproperty(listitem, "widget" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetName" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetType" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetTarget" + widget_id)
-                self._remove_additionalproperty(listitem, "widgetPath" + widget_id)
+                self._remove_additionalproperty(listitem, "widget%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetName%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetType%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetTarget%s" % widget_id)
+                self._remove_additionalproperty(listitem, "widgetPath%s" % widget_id)
                 if self.current_window.getProperty("useWidgetNameAsLabel") == "true" and \
                         widget_id == "":
                     self._set_label(listitem, selected_shortcut.getProperty("widgetName"))
@@ -2017,7 +2019,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Generate list of thumbnails for the dialog
             for key in self.thumbnails:
-                log(repr(key[0]) + " " + repr(key[1]))
+                log("%s %s" % (repr(key[0]), repr(key[1])))
                 thumbnail.append(key[0])
                 thumbnail_label.append(self.lib_func.create(["", key[1], "", {
                     "icon": key[0]
@@ -2175,7 +2177,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     int(HOME_WINDOW.getProperty("skinshortcuts-loading")) <= 5:
                 return
 
-            log("Launching management dialog for submenu/additional menu (" + str(control_id) + ")")
+            log("Launching management dialog for submenu/additional menu (%s)" % str(control_id))
             HOME_WINDOW.setProperty("skinshortcuts-loading",
                                     str(calendar.timegm(gmtime())))
 
@@ -2214,24 +2216,25 @@ class GUI(xbmcgui.WindowXMLDialog):
                 self.getControl(211).getListItem(num).setProperty("labelID", launch_group)
 
             # Check if we're launching a specific additional menu
+            group_strtpl = "%s.%s"
             if control_id == 406:
-                launch_group = launch_group + ".1"
-                launch_default_group = launch_default_group + ".1"
+                launch_group = group_strtpl % (launch_group, "1")
+                launch_default_group = group_strtpl % (launch_default_group, "1")
             elif control_id == 407:
-                launch_group = launch_group + ".2"
-                launch_default_group = launch_default_group + ".2"
+                launch_group = group_strtpl % (launch_group, "2")
+                launch_default_group = group_strtpl % (launch_default_group, "2")
             elif control_id == 408:
-                launch_group = launch_group + ".3"
-                launch_default_group = launch_default_group + ".3"
+                launch_group = group_strtpl % (launch_group, "3")
+                launch_default_group = group_strtpl % (launch_default_group, "3")
             elif control_id == 409:
-                launch_group = launch_group + ".4"
-                launch_default_group = launch_default_group + ".4"
+                launch_group = group_strtpl % (launch_group, "4")
+                launch_default_group = group_strtpl % (launch_default_group, "4")
             elif control_id == 410:
-                launch_group = launch_group + ".5"
-                launch_default_group = launch_default_group + ".5"
+                launch_group = group_strtpl % (launch_group, "5")
+                launch_default_group = group_strtpl % (launch_default_group, "5")
             # Check if 'level' property has been set
             elif self.current_window.getProperty("level"):
-                launch_group = launch_group + "." + self.current_window.getProperty("level")
+                launch_group = "%s.%s" % (launch_group, self.current_window.getProperty("level"))
                 self.current_window.clearProperty("level")
 
             # Check if 'groupname' property has been set
@@ -2463,7 +2466,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 new_item.setProperty("action-play", item.getProperty("action-play"))
                 new_item.setProperty("action-party", item.getProperty("action-party"))
             self.getControl(111).addItem(new_item)
-        self.getControl(101).setLabel(label + " (%s)" % self.getControl(111).size())
+        self.getControl(101).setLabel("%s (%s)" % (label, self.getControl(111).size()))
 
     def _duplicate_listitem(self, listitem, originallistitem=None):
         # Create a copy of an existing listitem
