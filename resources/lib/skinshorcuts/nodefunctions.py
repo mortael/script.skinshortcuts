@@ -17,7 +17,7 @@ from .common import log
 from .common import validate_rpc_response
 from .common_utils import ShowDialog
 from .common_utils import rpc_file_get_directory
-from .constants import ADDON
+from .constants import ADDON_NAME
 from .constants import CWD
 from .constants import DATA_PATH
 from .constants import HOME_WINDOW
@@ -348,7 +348,7 @@ class NodeFunctions:
             log("Invalid JSON response returned")
             log(repr(json_response))
             # And tell the user it failed
-            xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), ADDON.getLocalizedString(32115))
+            xbmcgui.Dialog().ok(ADDON_NAME, LANGUAGE(32115))
             return
 
         # Add actions based on content
@@ -464,7 +464,7 @@ class NodeFunctions:
         HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
 
         # And tell the user it all worked
-        xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"), LANGUAGE(32090))
+        xbmcgui.Dialog().ok(ADDON_NAME, LANGUAGE(32090))
 
     @staticmethod
     def extract_id(path):
@@ -506,7 +506,7 @@ class NodeFunctions:
             message += "[CR](and 1 other property)"
         elif len(property_names) > 2:
             message += "[CR](and %d other properties)" % (len(property_names) - 1)
-        should_run = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"), message)
+        should_run = xbmcgui.Dialog().yesno(ADDON_NAME, message)
         if not should_run:
             return
 

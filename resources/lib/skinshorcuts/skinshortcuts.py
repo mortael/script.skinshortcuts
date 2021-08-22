@@ -27,7 +27,6 @@ from . import nodefunctions
 from . import xmlfunctions
 from .common import log
 from .common import rpc_request
-from .constants import ADDON
 from .constants import ADDON_NAME
 from .constants import CWD
 from .constants import DATA_PATH
@@ -244,7 +243,7 @@ class Main:
         if self.TYPE == "context":
             # Context menu addon asking us to add a folder to the menu
             if not xbmc.getCondVisibility("Skin.HasSetting(SkinShortcuts-FullMenu)"):
-                xbmcgui.Dialog().ok(ADDON_NAME, ADDON.getLocalizedString(32116))
+                xbmcgui.Dialog().ok(ADDON_NAME, LANGUAGE(32116))
             else:
                 self.node_func.add_to_menu(self.CONTEXTFILENAME, self.CONTEXTLABEL,
                                            self.CONTEXTICON, self.CONTEXTCONTENT,

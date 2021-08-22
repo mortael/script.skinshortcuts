@@ -24,6 +24,7 @@ from .common import log
 from .common import toggle_debug_logging
 from .common_utils import ShowDialog
 from .constants import ADDON
+from .constants import ADDON_NAME
 from .constants import CWD
 from .constants import DATA_PATH
 from .constants import DEFAULT_PATH
@@ -611,13 +612,13 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader)"):
                 # Offer to upload a debug log
-                ret = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"),
+                ret = xbmcgui.Dialog().yesno(ADDON_NAME,
                                              LANGUAGE(32097), LANGUAGE(32093))
                 if ret:
                     xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
             else:
                 # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"),
+                xbmcgui.Dialog().ok(ADDON_NAME,
                                     '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
 
             # We're done
@@ -639,13 +640,13 @@ class GUI(xbmcgui.WindowXMLDialog):
         else:
             if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
                 # Offer to upload a debug log
-                ret = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"),
+                ret = xbmcgui.Dialog().yesno(ADDON_NAME,
                                              LANGUAGE(32097), LANGUAGE(32093))
                 if ret:
                     xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
             else:
                 # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"),
+                xbmcgui.Dialog().ok(ADDON_NAME,
                                     '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
 
     def _save_shortcuts_function(self):

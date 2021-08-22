@@ -22,6 +22,7 @@ from .common import log
 from .common import read_file
 from .common import toggle_debug_logging
 from .constants import ADDON
+from .constants import ADDON_NAME
 from .constants import ADDON_VERSION
 from .constants import HOME_WINDOW
 from .constants import KODI_VERSION
@@ -91,7 +92,7 @@ class XMLFunctions:
 
         # Create a progress dialog
         progress = xbmcgui.DialogProgressBG()
-        progress.create(ADDON.getAddonInfo("name"), LANGUAGE(32049))
+        progress.create(ADDON_NAME, LANGUAGE(32049))
         progress.update(0)
 
         # Write the menus
@@ -124,12 +125,12 @@ class XMLFunctions:
 
                 # Offer to upload a debug log
                 if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                    ret = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"),
+                    ret = xbmcgui.Dialog().yesno(ADDON_NAME,
                                                  LANGUAGE(32092) + "[CR]" + LANGUAGE(32093))
                     if ret:
                         xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
                 else:
-                    xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"),
+                    xbmcgui.Dialog().ok(ADDON_NAME,
                                         LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
 
             else:
@@ -151,12 +152,12 @@ class XMLFunctions:
                 else:
                     # Offer to upload a debug log
                     if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
-                        ret = xbmcgui.Dialog().yesno(ADDON.getAddonInfo("name"),
+                        ret = xbmcgui.Dialog().yesno(ADDON_NAME,
                                                      LANGUAGE(32092) + "[CR]" + LANGUAGE(32093))
                         if ret:
                             xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
                     else:
-                        xbmcgui.Dialog().ok(ADDON.getAddonInfo("name"),
+                        xbmcgui.Dialog().ok(ADDON_NAME,
                                             LANGUAGE(32092) + "[CR]" + LANGUAGE(32094))
 
     @staticmethod
