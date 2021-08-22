@@ -37,4 +37,4 @@ Shortcut groupings within the management dialog are made up of several smaller g
  
 If you do not specify a grouping, it will be added to the end of the common group.
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

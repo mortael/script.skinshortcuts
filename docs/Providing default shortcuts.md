@@ -49,4 +49,4 @@ rather than
 
 `<action>ActivateWindow(10025,MovieTitles,return)</action>`
 
-***Quick links*** - [Readme](../../README.md) - [Getting Started](./started/Getting%20Started.md) - [Advanced Usage](./advanced/Advanced%20Usage.md)
+***Quick links*** - [Readme](../README.md) - [Getting Started](./started/Getting%20Started.md) - [Advanced Usage](./advanced/Advanced%20Usage.md)

@@ -126,4 +126,4 @@ Details of how to enable and customise the context menu within the management di
 
 [Read More](./Context%20menu.md)
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md)

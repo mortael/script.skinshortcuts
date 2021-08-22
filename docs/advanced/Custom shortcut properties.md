@@ -110,4 +110,4 @@ When using `<propertySettings />`, it's possible to set the `buttonID` to the sa
 
 In this case, the property select dialog will be shown to the user after the normal action associated with that button has completed. However, the property select dialog will *not* show if the user cancels, or if they select a 'None' option provided by the default control.
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

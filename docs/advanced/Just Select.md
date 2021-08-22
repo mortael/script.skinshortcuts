@@ -36,4 +36,4 @@ You can also use the Just Select method to allow the user to select a widget and
 | `[skinWidgetTarget]` | Yes | The skin string the script will save the `widgetTarget` property of the selected widget to |
 | `[skinWidgetPath]` | Yes | The skin string the script will save the `widgetPath` property of the selected widget to |
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

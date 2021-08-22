@@ -66,4 +66,4 @@ If you have defined background styles, you can use a StringCompare to decide whe
 
 If you are using direct background images, you can use the `background` property as the `<imagepath />` in a multi-image control.
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

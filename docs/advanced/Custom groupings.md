@@ -79,4 +79,4 @@ See ['Just Select' method](./Just%20Select.md)
 
 The widget groupings are handled differently from all other groupings, in that they will not display any prompt to the user about what they want the shortcut they have chosen to do - for example, no prompt if they want to play or display a playlist. Instead, it will always default to displaying the shortcut.
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)

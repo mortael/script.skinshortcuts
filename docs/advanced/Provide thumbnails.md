@@ -17,4 +17,4 @@ If using button 306 to let the user select the thumbnail, you can set the defaul
 
 `<thumbnailBrowseDefault>protocol://path/to/folder</thumbnailBrowseDefault>`
 
-***Quick links*** - [Readme](../../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
+***Quick links*** - [Readme](../../README.md) - [Getting Started](../started/Getting%20Started.md) - [Advanced Usage](./Advanced%20Usage.md)
