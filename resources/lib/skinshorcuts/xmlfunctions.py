@@ -150,7 +150,7 @@ class XMLFunctions:
                                     enabled_system_debug, enabled_script_debug)
                 else:
                     # Offer to upload a debug log
-                    if xbmc.getCondVisibility("System.HasAddon( script.kodi.loguploader )"):
+                    if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
                         ret = xbmcgui.Dialog().yesno(
                             ADDON_NAME, "[CR]".join([LANGUAGE(32092), LANGUAGE(32093)])
                         )
