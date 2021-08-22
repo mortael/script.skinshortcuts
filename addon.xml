@@ -27,6 +27,7 @@
 - removed duplicate code
 - assorted minor fixes
 - updated settings.xml to Kodi's new settings format
+- added to Weblate for translations
 - added ::ENABLE:: to enable an add-on, used like ::INSTALL::
         </news>
         <platform>all</platform>
