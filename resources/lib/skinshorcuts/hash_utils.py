@@ -56,8 +56,8 @@ def read_hashes(hash_file=None):
 
 
 def write_hashes(data):
-    payload = json.dumps(data, indent=4)
     try:
+        payload = json.dumps(data, indent=4)
         write_file(HASH_FILE, payload)
     except:
         log(traceback.print_exc())
