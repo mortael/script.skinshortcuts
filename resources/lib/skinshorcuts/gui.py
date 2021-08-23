@@ -22,8 +22,8 @@ from . import datafunctions
 from . import library
 from .common import log
 from .common_utils import ShowDialog
-from .common_utils import enable_logging
 from .common_utils import disable_logging
+from .common_utils import enable_logging
 from .common_utils import offer_log_upload
 from .constants import CWD
 from .constants import DATA_PATH
@@ -743,8 +743,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                             break
 
                 # Make the change (0 - the main sub-menu, 1-5 - additional submenus )
-                for i in range(0, 6):
-                    if i == 0:
+                for index in range(0, 6):
+                    if index == 0:
                         group_name = label_id_from
                         paths = [
                             [self.data_func.data_xml_filename(DATA_PATH,
@@ -768,27 +768,28 @@ class GUI(xbmcgui.WindowXMLDialog):
                             self.data_func.slugify(label_id_to, True)
                         )
                     else:
-                        group_name = "%s.%s" % (label_id_from, str(i))
+                        group_strtpl = "%s.%s"
+                        group_name = group_strtpl % (label_id_from, str(index))
                         paths = [
                             [self.data_func.data_xml_filename(
                                 DATA_PATH,
-                                self.data_func.slugify("%s.%s" % (label_id_from, str(i)),
+                                self.data_func.slugify(group_strtpl % (label_id_from, str(index)),
                                                        True, is_sub_level=True)
                             ), "Move"],
                             [self.data_func.data_xml_filename(
                                 SKIN_SHORTCUTS_PATH,
-                                self.data_func.slugify("%s.%s" % (default_id_from, str(i)),
+                                self.data_func.slugify(group_strtpl % (default_id_from, str(index)),
                                                        is_sub_level=True)
                             ), "Copy"],
                             [self.data_func.data_xml_filename(
                                 DEFAULT_PATH,
-                                self.data_func.slugify("%s.%s" % (default_id_from, str(i)),
+                                self.data_func.slugify(group_strtpl % (default_id_from, str(index)),
                                                        is_sub_level=True)
                             ), "Copy"]
                         ]
                         target = self.data_func.data_xml_filename(
                             DATA_PATH,
-                            self.data_func.slugify("%s.%s" % (label_id_to, str(i)), True,
+                            self.data_func.slugify(group_strtpl % (label_id_to, str(index)), True,
                                                    is_sub_level=True)
                         )
 

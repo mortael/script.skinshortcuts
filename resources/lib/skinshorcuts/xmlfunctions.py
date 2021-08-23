@@ -20,8 +20,8 @@ from . import datafunctions
 from . import template
 from .common import log
 from .common import read_file
-from .common_utils import enable_logging
 from .common_utils import disable_logging
+from .common_utils import enable_logging
 from .common_utils import offer_log_upload
 from .constants import ADDON
 from .constants import ADDON_NAME
@@ -404,11 +404,9 @@ class XMLFunctions:
                 percent = float(profile_percent) / float(len(menuitems) * 2)
             temple_object.percent = percent * (len(menuitems))
 
-            i = 0
-            for item in menuitems:
-                i += 1
+            for index, item in enumerate(menuitems):
                 itemidmainmenu += 1
-                current_progress = (profile_percent * profile_count) + (percent * i)
+                current_progress = (profile_percent * profile_count) + (percent * (index + 1))
                 progress.update(int(current_progress))
                 temple_object.current = current_progress
                 submenu_default_id = None
@@ -587,8 +585,9 @@ class XMLFunctions:
 
                         # Remove any template-only properties
                         other_properties, _, template_only = self.data_func.get_property_requires()
-                        # pylint: disable=unsupported-membership-test
+
                         for key in other_properties:
+                            # pylint: disable=unsupported-membership-test,useless-suppression
                             if key in all_props and key in template_only:
                                 # This key is template-only
                                 menuitem.remove(all_props[key])

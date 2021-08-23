@@ -36,7 +36,7 @@ from .constants import MASTER_PATH
 from .constants import SKIN_DIR
 
 
-class Main:
+class Main:  # pylint: disable=too-few-public-methods
     # MAIN ENTRY POINT
     def __init__(self):
         self._parse_argv()
