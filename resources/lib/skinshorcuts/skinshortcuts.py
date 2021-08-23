@@ -427,7 +427,7 @@ class Main:
         if count != 0:
             xbmc.executebuiltin("Control.Move(%s,%s)" % (menuid, str(count)))
 
-        xbmc.executebuiltin("ClearProperty(submenuVisibility, 10000)")
+        xbmc.executebuiltin("ClearProperty(submenuVisibility,10000)")
 
     @staticmethod
     def _resetlist(menuid, action):

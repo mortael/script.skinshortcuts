@@ -358,7 +358,7 @@ class NodeFunctions:
             paths.append("SlideShow(%s,random)" % path)
             labels.append("Slideshow(recursive)")
             paths.append("SlideShow(%s,recursive,notrandom)" % path)
-            labels.append("Slideshow(recursive, random)")
+            labels.append("Slideshow(recursive,random)")
             paths.append("SlideShow(%s,recursive,random)" % path)
         if path.endswith(".xsp"):
             labels.append("Play")
