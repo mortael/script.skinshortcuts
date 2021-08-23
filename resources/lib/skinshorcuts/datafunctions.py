@@ -788,7 +788,7 @@ class DataFunctions:
                 if property_name not in fallback_properties:
                     # Save the property name in the order in which we processed it
                     fallback_properties.append(property_name)
-                if property_name not in list(fallbacks.keys()):
+                if property_name not in fallbacks:
                     # Create an empty list to hold fallbacks for this property
                     fallbacks[property_name] = []
                 # Check whether any attribute/value pair has to match for this fallback
@@ -1227,19 +1227,19 @@ class DataFunctions:
 
     # in-place prettyprint formatter
     def indent(self, elem, level=0):
-        i = "\n%s" % (level * "\t")
+        whitespace = "\n%s" % (level * "\t")
         if len(elem):
             if not elem.text or not elem.text.strip():
-                elem.text = "%s%s" % (i, "\t")
+                elem.text = "%s%s" % (whitespace, "\t")
             if not elem.tail or not elem.tail.strip():
-                elem.tail = i
+                elem.tail = whitespace
             for _elem in elem:
                 self.indent(_elem, level + 1)
             if not elem.tail or not elem.tail.strip():
-                elem.tail = i
+                elem.tail = whitespace
         else:
             if level and (not elem.tail or not elem.tail.strip()):
-                elem.tail = i
+                elem.tail = whitespace
 
     @staticmethod
     def local(data):

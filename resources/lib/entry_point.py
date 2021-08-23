@@ -6,6 +6,7 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
+# pylint: disable=import-error
 from skinshorcuts import skinshortcuts
 from skinshorcuts.common import log
 from skinshorcuts.constants import ADDON_VERSION

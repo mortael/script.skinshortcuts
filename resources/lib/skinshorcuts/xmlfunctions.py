@@ -20,7 +20,9 @@ from . import datafunctions
 from . import template
 from .common import log
 from .common import read_file
-from .common_utils import toggle_debug_logging
+from .common_utils import disable_logging
+from .common_utils import enable_logging
+from .common_utils import offer_log_upload
 from .constants import ADDON
 from .constants import ADDON_NAME
 from .constants import ADDON_VERSION
@@ -32,6 +34,7 @@ from .constants import SKIN_PATH
 from .hash_utils import generate_file_hash
 from .hash_utils import read_hashes
 from .hash_utils import write_hashes
+from .property_utils import has_fallback_property
 
 
 class XMLFunctions:
@@ -112,54 +115,24 @@ class XMLFunctions:
         if complete is True:
             # Menu is built, reload the skin
             xbmc.executebuiltin("ReloadSkin()")
-        else:
+            return
+
             # Menu couldn't be built - generate a debug log
+        # If we enabled debug logging
+        if system_debug or script_debug:
+            # Disable any logging we enabled
+            disable_logging(system_debug, script_debug)
+            offer_log_upload(message_id=32092)
+            return
 
-            # If we enabled debug logging
-            if system_debug or script_debug:
-                # Disable any logging we enabled
-                if system_debug:
-                    toggle_debug_logging(enable=False)
-                if script_debug:
-                    ADDON.setSetting("enable_logging", "false")
+        system_debug, script_debug = enable_logging()
 
-                # Offer to upload a debug log
-                if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                    ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                                 "[CR]".join([LANGUAGE(32092), LANGUAGE(32093)]))
-                    if ret:
-                        xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
-                else:
-                    xbmcgui.Dialog().ok(ADDON_NAME, "[CR]".join([LANGUAGE(32092), LANGUAGE(32094)]))
-
-            else:
-                # Enable any debug logging needed
-                enabled_system_debug = False
-                enabled_script_debug = False
-
-                if toggle_debug_logging(enable=True):
-                    enabled_system_debug = True
-
-                if not ADDON.getSettingBool("enable_logging"):
-                    ADDON.setSetting("enable_logging", "true")
-                    enabled_script_debug = True
-
-                if enabled_system_debug or enabled_script_debug:
-                    # We enabled one or more of the debug options, re-run this function
-                    self.build_menu(mainmenu_id, groups, num_levels, build_mode, options, minitems,
-                                    enabled_system_debug, enabled_script_debug)
-                else:
-                    # Offer to upload a debug log
-                    if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                        ret = xbmcgui.Dialog().yesno(
-                            ADDON_NAME, "[CR]".join([LANGUAGE(32092), LANGUAGE(32093)])
-                        )
-
-                        if ret:
-                            xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
-                    else:
-                        xbmcgui.Dialog().ok(ADDON_NAME,
-                                            "[CR]".join([LANGUAGE(32092), LANGUAGE(32094)]))
+        if system_debug or script_debug:
+            # We enabled one or more of the debug options, re-run this function
+            self.build_menu(mainmenu_id, groups, num_levels, build_mode, options, minitems,
+                            system_debug, script_debug)
+        else:
+            offer_log_upload(message_id=32092)
 
     @staticmethod
     def shouldwerun(profilelist):
@@ -431,11 +404,9 @@ class XMLFunctions:
                 percent = float(profile_percent) / float(len(menuitems) * 2)
             temple_object.percent = percent * (len(menuitems))
 
-            i = 0
-            for item in menuitems:
-                i += 1
+            for index, item in enumerate(menuitems):
                 itemidmainmenu += 1
-                current_progress = (profile_percent * profile_count) + (percent * i)
+                current_progress = (profile_percent * profile_count) + (percent * (index + 1))
                 progress.update(int(current_progress))
                 temple_object.current = current_progress
                 submenu_default_id = None
@@ -465,7 +436,7 @@ class XMLFunctions:
                     # Remove any template-only properties
                     other_properties, _, template_only = self.data_func.get_property_requires()
                     for key in other_properties:
-                        if key in list(all_props.keys()) and key in template_only:
+                        if key in all_props and key in template_only:
                             # This key is template-only
                             menuitem.remove(all_props[key])
                             all_props.pop(key)
@@ -614,9 +585,10 @@ class XMLFunctions:
 
                         # Remove any template-only properties
                         other_properties, _, template_only = self.data_func.get_property_requires()
-                        # pylint: disable=unsupported-membership-test
+
                         for key in other_properties:
-                            if key in list(all_props.keys()) and key in template_only:
+                            # pylint: disable=unsupported-membership-test,useless-suppression
+                            if key in all_props and key in template_only:
                                 # This key is template-only
                                 menuitem.remove(all_props[key])
                                 all_props.pop(key)
@@ -891,21 +863,10 @@ class XMLFunctions:
 
         # Add fallback properties
         for key in fallback_properties:
-            if key not in list(all_props.keys()):
+            if key not in all_props:
                 # Check whether we have a fallback for the value
                 for property_match in fallbacks[key]:
-                    matches = False
-                    if property_match[1] is None:
-                        # This has no conditions, so it matched
-                        matches = True
-                    else:
-                        # This has an attribute and a value to match against
-                        for prop in properties:
-                            if prop[0] == property_match[1] and prop[1] == property_match[2]:
-                                matches = True
-                                break
-
-                    if matches:
+                    if has_fallback_property(property_match, properties):
                         additionalproperty = ETree.SubElement(newelement, "property")
                         additionalproperty.set("name", key)
                         additionalproperty.text = property_match[0]
@@ -918,8 +879,7 @@ class XMLFunctions:
         # Remove any properties whose requirements haven't been met
         for key in other_properties:
             # pylint: disable=unsubscriptable-object
-            if key in list(all_props.keys()) and key in list(requires.keys()) and \
-                    requires[key] not in list(all_props.keys()):
+            if key in all_props and key in requires and requires[key] not in all_props:
                 # This properties requirements aren't met
                 newelement.remove(all_props[key])
                 all_props.pop(key)
@@ -976,8 +936,7 @@ class XMLFunctions:
                 onclickelement.text = onclick.text
 
             # Also add it as a path property
-            if not self.property_exists("path", newelement) and "path" \
-                    not in list(all_props.keys()):
+            if not self.property_exists("path", newelement) and "path" not in all_props:
                 # we only add the path property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 pathelement = ETree.SubElement(newelement, "property")
@@ -986,8 +945,7 @@ class XMLFunctions:
                 all_props["path"] = pathelement
 
             # Get 'list' property (the action property of an ActivateWindow shortcut)
-            if not self.property_exists("list", newelement) and "list" \
-                    not in list(all_props.keys()):
+            if not self.property_exists("list", newelement) and "list" not in all_props:
                 # we only add the list property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 list_element = ETree.SubElement(newelement, "property")

@@ -22,9 +22,9 @@ from . import datafunctions
 from . import library
 from .common import log
 from .common_utils import ShowDialog
-from .common_utils import toggle_debug_logging
-from .constants import ADDON
-from .constants import ADDON_NAME
+from .common_utils import disable_logging
+from .common_utils import enable_logging
+from .common_utils import offer_log_upload
 from .constants import CWD
 from .constants import DATA_PATH
 from .constants import DEFAULT_PATH
@@ -33,6 +33,7 @@ from .constants import LANGUAGE
 from .constants import SKIN_DIR
 from .constants import SKIN_PATH
 from .constants import SKIN_SHORTCUTS_PATH
+from .property_utils import has_fallback_property
 from .property_utils import read_properties
 from .property_utils import write_properties
 
@@ -474,18 +475,10 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Add fallback properties
         for key in fallback_properties:
-            if key not in list(all_props.keys()):
+            if key not in all_props:
                 # Check whether we have a fallback for the value
                 for property_match in fallbacks[key]:
-                    matches = False
-                    if property_match[1] is None:
-                        # This has no conditions, so it matched
-                        matches = True
-                    elif property_match[1] in list(all_props.keys()) and \
-                            all_props[property_match[1]] == property_match[2]:
-                        matches = True
-
-                    if matches:
+                    if has_fallback_property(property_match, all_props):
                         all_props[key] = property_match[0]
                         break
 
@@ -495,11 +488,10 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Remove any properties whose requirements haven't been met
         # pylint: disable=unsubscriptable-object
         for key in other_properties:
-            if key in list(all_props.keys()) and key in list(requires.keys()) and \
-                    requires[key] not in list(all_props.keys()):
+            if key in all_props and key in requires and requires[key] not in all_props:
                 # This properties requirements aren't met
                 all_props.pop(key)
-                if "%s-NUM" % key in list(all_props.keys()):
+                if "%s-NUM" % key in all_props:
                     all_props.pop("%s-NUM" % key)
 
         # Save the new properties to the listitem
@@ -508,7 +500,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         for key in added:
             listitem.setProperty(key, all_props[key])
         for key in removed:
-            if key not in list(all_props.keys()):
+            if key not in all_props:
                 continue
             listitem.setProperty(key, None)
         for key in changed:
@@ -601,53 +593,20 @@ class GUI(xbmcgui.WindowXMLDialog):
             log("Failed to save shortcuts")
 
         # We failed to save the shortcuts
-
         if system_debug or script_debug:
             # Disable any logging we enabled
-            if system_debug:
-                toggle_debug_logging(enable=False)
-
-            if script_debug:
-                ADDON.setSetting("enable_logging", "false")
-
-            if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                # Offer to upload a debug log
-                ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                             LANGUAGE(32097), LANGUAGE(32093))
-                if ret:
-                    xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
-            else:
-                # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON_NAME,
-                                    '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
-
-            # We're done
+            disable_logging(system_debug, script_debug)
+            offer_log_upload(message_id=32097)
             return
 
         # Enable any debug logging needed
-        system_debug = False
-        script_debug = False
-        if toggle_debug_logging(enable=True):
-            system_debug = True
-
-        if not ADDON.getSettingBool("enable_logging"):
-            ADDON.setSetting("enable_logging", "true")
-            script_debug = True
+        system_debug, script_debug = enable_logging()
 
         if system_debug or script_debug:
             # We enabled one or more of the debug options, re-run this function
             self._save_shortcuts(system_debug, script_debug)
         else:
-            if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                # Offer to upload a debug log
-                ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                             LANGUAGE(32097), LANGUAGE(32093))
-                if ret:
-                    xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
-            else:
-                # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON_NAME,
-                                    '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
+            offer_log_upload(message_id=32097)
 
     def _save_shortcuts_function(self):
         # Save shortcuts
@@ -784,8 +743,8 @@ class GUI(xbmcgui.WindowXMLDialog):
                             break
 
                 # Make the change (0 - the main sub-menu, 1-5 - additional submenus )
-                for i in range(0, 6):
-                    if i == 0:
+                for index in range(0, 6):
+                    if index == 0:
                         group_name = label_id_from
                         paths = [
                             [self.data_func.data_xml_filename(DATA_PATH,
@@ -809,27 +768,28 @@ class GUI(xbmcgui.WindowXMLDialog):
                             self.data_func.slugify(label_id_to, True)
                         )
                     else:
-                        group_name = "%s.%s" % (label_id_from, str(i))
+                        group_strtpl = "%s.%s"
+                        group_name = group_strtpl % (label_id_from, str(index))
                         paths = [
                             [self.data_func.data_xml_filename(
                                 DATA_PATH,
-                                self.data_func.slugify("%s.%s" % (label_id_from, str(i)),
+                                self.data_func.slugify(group_strtpl % (label_id_from, str(index)),
                                                        True, is_sub_level=True)
                             ), "Move"],
                             [self.data_func.data_xml_filename(
                                 SKIN_SHORTCUTS_PATH,
-                                self.data_func.slugify("%s.%s" % (default_id_from, str(i)),
+                                self.data_func.slugify(group_strtpl % (default_id_from, str(index)),
                                                        is_sub_level=True)
                             ), "Copy"],
                             [self.data_func.data_xml_filename(
                                 DEFAULT_PATH,
-                                self.data_func.slugify("%s.%s" % (default_id_from, str(i)),
+                                self.data_func.slugify(group_strtpl % (default_id_from, str(index)),
                                                        is_sub_level=True)
                             ), "Copy"]
                         ]
                         target = self.data_func.data_xml_filename(
                             DATA_PATH,
-                            self.data_func.slugify("%s.%s" % (label_id_to, str(i)), True,
+                            self.data_func.slugify(group_strtpl % (label_id_to, str(index)), True,
                                                    is_sub_level=True)
                         )
 
@@ -904,13 +864,12 @@ class GUI(xbmcgui.WindowXMLDialog):
         for prop in current_properties:
             # [ groupname, itemLabelID, property, value ]
             if not prop[0] == self.group:
-                if prop[0] in list(label_id_changes.keys()):
+                if prop[0] in label_id_changes:
                     prop[0] = label_id_changes[prop[0]]
                 elif "." in prop[0] and prop[0].rsplit(".", 1)[1].isdigit():
                     # Additional menu
                     group_name, group_value = prop[0].rsplit(".", 1)
-                    if group_name in list(label_id_changes.keys()) and \
-                            int(group_value) in range(1, 6):
+                    if group_name in label_id_changes and int(group_value) in range(1, 6):
                         prop[0] = "%s.%s" % (label_id_changes[group_name], group_value)
                 save_data.append(prop)
 

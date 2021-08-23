@@ -13,6 +13,9 @@ import xbmcgui
 
 from . import jsonrpc
 from .common import log
+from .constants import ADDON
+from .constants import ADDON_NAME
+from .constants import LANGUAGE
 
 
 class ShowDialog(xbmcgui.WindowXMLDialog):
@@ -97,3 +100,40 @@ def toggle_debug_logging(enable=False):
         logging_enabled = not logging_enabled
 
     return logging_enabled == enable
+
+
+def enable_logging():
+    system_debug = False
+    script_debug = False
+    if system_debug:
+        system_debug = toggle_debug_logging(enable=True) is True
+    if script_debug:
+        ADDON.setSettingBool('enable_logging', True)
+        script_debug = True
+
+    return system_debug, script_debug
+
+
+def disable_logging(system_debug, script_debug):
+    if system_debug or script_debug:
+        # Disable any logging we enabled
+        if system_debug:
+            toggle_debug_logging(enable=False)
+        if script_debug:
+            ADDON.setSettingBool('enable_logging', False)
+
+
+def offer_log_upload(message_id):
+    result = False
+    dialog = xbmcgui.Dialog()
+
+    # Offer to upload a debug log
+    if xbmc.getCondVisibility('System.HasAddon(script.kodi.loguploader)'):
+        result = dialog.yesno(ADDON_NAME, '[CR]'.join([LANGUAGE(message_id), LANGUAGE(32093)]))
+        if result:
+            xbmc.executebuiltin('RunScript(script.kodi.loguploader)')
+
+    else:
+        dialog.ok(ADDON_NAME, '[CR]'.join([LANGUAGE(message_id), LANGUAGE(32094)]))
+
+    return result is True
