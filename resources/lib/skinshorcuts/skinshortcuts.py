@@ -64,7 +64,7 @@ class Main:
 
         if self.TYPE == "launch":
             xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False,
-                                      listitem=xbmcgui.ListItem())
+                                      listitem=xbmcgui.ListItem(offscreen=True))
             self._launch_shortcut()
         if self.TYPE == "launchpvr":
             json_payload = {
@@ -262,7 +262,7 @@ class Main:
             # Tell XBMC not to try playing any media
             try:
                 xbmcplugin.setResolvedUrl(handle=int(sys.argv[1]), succeeded=False,
-                                          listitem=xbmcgui.ListItem())
+                                          listitem=xbmcgui.ListItem(offscreen=True))
             except:
                 log("Not launched from a list item")
             self._reset_all_shortcuts()

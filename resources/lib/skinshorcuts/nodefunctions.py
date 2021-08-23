@@ -364,11 +364,12 @@ class NodeFunctions:
             labels.append("Play")
             paths.append("PlayMedia(%s)" % path)
 
-        all_menu_items = [xbmcgui.ListItem(label=LANGUAGE(32112))]  # Main menu
+        all_menu_items = [xbmcgui.ListItem(label=LANGUAGE(32112), offscreen=True)]  # Main menu
         all_label_ids = ["mainmenu"]
         if is_node:
+            # Main menu + autofill submenu
             all_menu_items.append(
-                xbmcgui.ListItem(label=LANGUAGE(32113))  # Main menu + autofill submenu
+                xbmcgui.ListItem(label=LANGUAGE(32113, offscreen=True))
             )
             all_label_ids.append("mainmenu")
 
@@ -377,7 +378,8 @@ class NodeFunctions:
         data_func.clear_label_id()
         for menuitem in menuitems.findall("shortcut"):
             # Get existing items labelID's
-            listitem = xbmcgui.ListItem(label=data_func.local(menuitem.find("label").text)[2])
+            listitem = xbmcgui.ListItem(label=data_func.local(menuitem.find("label").text)[2],
+                                        offscreen=True)
             listitem.setArt({
                 'icon': menuitem.find("icon").text
             })

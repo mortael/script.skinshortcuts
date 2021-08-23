@@ -695,14 +695,14 @@ class LibraryFunctions:
 
         # Build listitem
         if thumbnail is not None:
-            listitem = xbmcgui.ListItem(label=display_label, label2=display_label_2)
+            listitem = xbmcgui.ListItem(label=display_label, label2=display_label_2, offscreen=True)
             listitem.setArt({
                 'icon': display_icon,
                 'thumb': thumbnail
             })
             listitem.setProperty("thumbnail", thumbnail)
         else:
-            listitem = xbmcgui.ListItem(label=display_label, label2=display_label_2)
+            listitem = xbmcgui.ListItem(label=display_label, label2=display_label_2, offscreen=True)
             listitem.setArt({
                 'icon': ''
             })
@@ -1875,7 +1875,7 @@ class LibraryFunctions:
             selected_action = listings[selected_item].getProperty("path")
             if selected_action == "::UP::":
                 # User wants to go out of explorer, back to select_shortcut
-                listitem = xbmcgui.ListItem(label="back")
+                listitem = xbmcgui.ListItem(label="back", offscreen=True)
                 listitem.setProperty("path", "::UP::")
 
                 return listitem
@@ -1887,7 +1887,7 @@ class LibraryFunctions:
 
                 # Create a listitem
                 listitem = xbmcgui.ListItem(label=label[len(label) - 1].replace("  >", ""),
-                                            label2=local_item_type)
+                                            label2=local_item_type, offscreen=True)
                 listitem.setArt({
                     'icon': "DefaultShortcut.png",
                     'thumb': thumbnail[len(thumbnail) - 1]
@@ -2602,7 +2602,7 @@ class LibraryFunctions:
                     action = keyboard.getText()
                     if action != "":
                         # Create a really simple listitem to return
-                        selected_shortcut = xbmcgui.ListItem('', LANGUAGE(32024))
+                        selected_shortcut = xbmcgui.ListItem('', LANGUAGE(32024), offscreen=True)
                         selected_shortcut.setProperty("Path", action)
                         selected_shortcut.setProperty("custom", "true")
                     else:
@@ -2613,7 +2613,7 @@ class LibraryFunctions:
 
             elif path == "::NONE::":
                 # Create a really simple listitem to return
-                selected_shortcut = xbmcgui.ListItem("::NONE::")
+                selected_shortcut = xbmcgui.ListItem("::NONE::", offscreen=True)
 
             # Check that explorer hasn't sent us back here
             if selected_shortcut is not None and selected_shortcut.getProperty("path") == "::UP::":
