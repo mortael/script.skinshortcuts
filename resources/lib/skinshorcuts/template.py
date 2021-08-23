@@ -237,7 +237,7 @@ class Template:
                     for variable in variables.findall("variable"):
                         # If the profile doesn't have a dict in final_variables, create one
                         profile_visibility = profile.attrib.get("visible")
-                        if profile_visibility not in list(final_variables.keys()):
+                        if profile_visibility not in final_variables:
                             final_variables[profile_visibility] = {}
 
                         # Save the variable name
@@ -247,7 +247,7 @@ class Template:
 
                         # Get any existing values for this profile + variable
                         new_variables = []
-                        if var_name in list(final_variables[profile_visibility].keys()):
+                        if var_name in final_variables[profile_visibility]:
                             new_variables = final_variables[profile_visibility][var_name]
 
                         # Loop through new values provided by this template
@@ -291,7 +291,7 @@ class Template:
         # Firstly, lets pull out the specific variables from all the variables we've been passed
         limited_variables = {}
         for profile in all_variables:
-            if variable_name in list(all_variables[profile].keys()):
+            if variable_name in all_variables[profile]:
                 limited_variables[profile] = all_variables[profile][variable_name]
 
         num_profiles = len(limited_variables)

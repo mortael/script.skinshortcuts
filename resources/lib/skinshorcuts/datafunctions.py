@@ -788,7 +788,7 @@ class DataFunctions:
                 if property_name not in fallback_properties:
                     # Save the property name in the order in which we processed it
                     fallback_properties.append(property_name)
-                if property_name not in list(fallbacks.keys()):
+                if property_name not in fallbacks:
                     # Create an empty list to hold fallbacks for this property
                     fallbacks[property_name] = []
                 # Check whether any attribute/value pair has to match for this fallback

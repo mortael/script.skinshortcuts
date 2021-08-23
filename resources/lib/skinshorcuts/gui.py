@@ -488,11 +488,10 @@ class GUI(xbmcgui.WindowXMLDialog):
         # Remove any properties whose requirements haven't been met
         # pylint: disable=unsubscriptable-object
         for key in other_properties:
-            if key in list(all_props.keys()) and key in list(requires.keys()) and \
-                    requires[key] not in list(all_props.keys()):
+            if key in all_props and key in requires and requires[key] not in all_props:
                 # This properties requirements aren't met
                 all_props.pop(key)
-                if "%s-NUM" % key in list(all_props.keys()):
+                if "%s-NUM" % key in all_props:
                     all_props.pop("%s-NUM" % key)
 
         # Save the new properties to the listitem
@@ -501,7 +500,7 @@ class GUI(xbmcgui.WindowXMLDialog):
         for key in added:
             listitem.setProperty(key, all_props[key])
         for key in removed:
-            if key not in list(all_props.keys()):
+            if key not in all_props:
                 continue
             listitem.setProperty(key, None)
         for key in changed:
@@ -864,13 +863,12 @@ class GUI(xbmcgui.WindowXMLDialog):
         for prop in current_properties:
             # [ groupname, itemLabelID, property, value ]
             if not prop[0] == self.group:
-                if prop[0] in list(label_id_changes.keys()):
+                if prop[0] in label_id_changes:
                     prop[0] = label_id_changes[prop[0]]
                 elif "." in prop[0] and prop[0].rsplit(".", 1)[1].isdigit():
                     # Additional menu
                     group_name, group_value = prop[0].rsplit(".", 1)
-                    if group_name in list(label_id_changes.keys()) and \
-                            int(group_value) in range(1, 6):
+                    if group_name in label_id_changes and int(group_value) in range(1, 6):
                         prop[0] = "%s.%s" % (label_id_changes[group_name], group_value)
                 save_data.append(prop)
 

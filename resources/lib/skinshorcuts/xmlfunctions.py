@@ -438,7 +438,7 @@ class XMLFunctions:
                     # Remove any template-only properties
                     other_properties, _, template_only = self.data_func.get_property_requires()
                     for key in other_properties:
-                        if key in list(all_props.keys()) and key in template_only:
+                        if key in all_props and key in template_only:
                             # This key is template-only
                             menuitem.remove(all_props[key])
                             all_props.pop(key)
@@ -589,7 +589,7 @@ class XMLFunctions:
                         other_properties, _, template_only = self.data_func.get_property_requires()
                         # pylint: disable=unsupported-membership-test
                         for key in other_properties:
-                            if key in list(all_props.keys()) and key in template_only:
+                            if key in all_props and key in template_only:
                                 # This key is template-only
                                 menuitem.remove(all_props[key])
                                 all_props.pop(key)
@@ -880,8 +880,7 @@ class XMLFunctions:
         # Remove any properties whose requirements haven't been met
         for key in other_properties:
             # pylint: disable=unsubscriptable-object
-            if key in list(all_props.keys()) and key in list(requires.keys()) and \
-                    requires[key] not in list(all_props.keys()):
+            if key in all_props and key in requires and requires[key] not in all_props:
                 # This properties requirements aren't met
                 newelement.remove(all_props[key])
                 all_props.pop(key)
@@ -938,8 +937,7 @@ class XMLFunctions:
                 onclickelement.text = onclick.text
 
             # Also add it as a path property
-            if not self.property_exists("path", newelement) and "path" \
-                    not in list(all_props.keys()):
+            if not self.property_exists("path", newelement) and "path" not in all_props:
                 # we only add the path property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 pathelement = ETree.SubElement(newelement, "property")
@@ -948,8 +946,7 @@ class XMLFunctions:
                 all_props["path"] = pathelement
 
             # Get 'list' property (the action property of an ActivateWindow shortcut)
-            if not self.property_exists("list", newelement) and "list" \
-                    not in list(all_props.keys()):
+            if not self.property_exists("list", newelement) and "list" not in all_props:
                 # we only add the list property if there isn't already one in the list
                 # because it has to be unique in Kodi lists
                 list_element = ETree.SubElement(newelement, "property")

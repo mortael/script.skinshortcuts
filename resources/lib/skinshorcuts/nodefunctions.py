@@ -517,7 +517,7 @@ class NodeFunctions:
         all_props[group] = {}
         for current_property in current_properties:
             # If the group isn't in all_props, add it
-            if current_property[0] not in list(all_props.keys()):
+            if current_property[0] not in all_props:
                 all_props[current_property[0]] = {}
             # If the labelID isn't in the all_props[ group ], add it
             if current_property[1] not in list(all_props[current_property[0]].keys()):
@@ -533,15 +533,14 @@ class NodeFunctions:
             log("Setting %s to %s" % (property_name, property_values[count]))
             if len(label_id_values) != 1:
                 label_id = label_id_values[count]
-            if label_id not in list(all_props[group].keys()):
+            if label_id not in all_props[group]:
                 all_props[group][label_id] = {}
             all_props[group][label_id][property_name] = property_values[count]
 
             # Remove any properties whose requirements haven't been met
             for key in other_properties:
-                if key in list(all_props[group][label_id].keys()) and \
-                        key in list(requires.keys()) and \
-                        requires[key] not in list(all_props[group][label_id].keys()):
+                if key in all_props[group][label_id] and key in requires and \
+                        requires[key] not in all_props[group][label_id]:
                     # This properties requirements aren't met
                     log("Removing value %s" % key)
                     all_props[group][label_id].pop(key)
