@@ -21,8 +21,8 @@ import xbmcvfs
 from . import datafunctions
 from . import library
 from .common import log
-from .common import toggle_debug_logging
 from .common_utils import ShowDialog
+from .common_utils import toggle_debug_logging
 from .constants import ADDON
 from .constants import ADDON_NAME
 from .constants import CWD
