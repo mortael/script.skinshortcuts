@@ -19,13 +19,11 @@ import xbmcgui
 import xbmcvfs
 
 from . import datafunctions
+from . import jsonrpc
 from . import nodefunctions
 from .common import log
 from .common import read_file
-from .common import rpc_request
-from .common import validate_rpc_response
 from .common_utils import ShowDialog
-from .common_utils import rpc_file_get_directory
 from .constants import ADDON_ID
 from .constants import CWD
 from .constants import DATA_PATH
@@ -36,19 +34,9 @@ from .constants import PROFILE_PATH
 
 
 def kodiwalk(path, string_force=False):
-    json_payload = {
-        "jsonrpc": "2.0",
-        "method": "Files.GetDirectory",
-        "params": {
-            "directory": "%s" % str(path),
-            "media": "files"
-        },
-        "id": 1
-    }
-    json_response = rpc_request(json_payload)
     files = []
-    if 'result' in json_response and 'files' in json_response['result'] and \
-            json_response['result']['files'] is not None:
+    json_response = jsonrpc.files_get_directory(str(path))
+    if json_response:
         for item in json_response['result']['files']:
             if 'file' in item and 'filetype' in item and 'label' in item:
                 if item['filetype'] == 'directory' and \
@@ -218,8 +206,9 @@ class LibraryFunctions:
         # Do a JSON query for upnp sources
         # (so that they'll show first time the user asks to see them)
         if self.loaded["upnp"][0] is False:
-            response = rpc_file_get_directory('upnp://')
-            self.loaded["upnp"][0] = validate_rpc_response(response)
+            self.loaded["upnp"][0] = \
+                jsonrpc.files_get_directory('upnp://', ["title", "file", "thumbnail"]) \
+                not in (False, None)
 
     # ==============================================
     # === BUILD/DISPLAY AVAILABLE SHORTCUT NODES ===
@@ -1070,21 +1059,11 @@ class LibraryFunctions:
 
         # Add tv channels
         listitems = []
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "PVR.GetChannels",
-            "params": {
-                "channelgroupid": "alltv",
-                "properties": ["thumbnail", "channeltype", "hidden",
-                               "locked", "channel", "lastplayed"]
-            }
-        }
-        json_response = rpc_request(json_payload)
+        json_response = jsonrpc.pvr_get_channels("alltv", ["thumbnail", "channeltype", "hidden",
+                                                           "locked", "channel", "lastplayed"])
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'channels' in json_response['result'] and \
-                json_response['result']['channels'] is not None:
+        if json_response:
             for item in json_response['result']['channels']:
                 listitems.append(self.create(
                     ["pvr-channel://%s" % str(item['channelid']), item['label'], "::SCRIPT::32076",
@@ -1098,21 +1077,11 @@ class LibraryFunctions:
 
         # Add radio channels
         listitems = []
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "PVR.GetChannels",
-            "params": {
-                "channelgroupid": "allradio",
-                "properties": ["thumbnail", "channeltype", "hidden",
-                               "locked", "channel", "lastplayed"]
-            }
-        }
-        json_response = rpc_request(json_payload)
+        json_response = jsonrpc.pvr_get_channels("allradio", ["thumbnail", "channeltype", "hidden",
+                                                              "locked", "channel", "lastplayed"])
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'channels' in json_response['result'] and \
-                json_response['result']['channels'] is not None:
+        if json_response:
             for item in json_response['result']['channels']:
                 listitems.append(self.create(
                     ["pvr-channel://%s" % str(item['channelid']), item['label'], "::SCRIPT::32077",
@@ -1177,25 +1146,17 @@ class LibraryFunctions:
         # Do a JSON query for upnp sources (so that they'll show first time
         # the user asks to see them)
         if self.loaded["upnp"][0] is False:
-            response = rpc_file_get_directory('upnp://')
-            self.loaded["upnp"][0] = validate_rpc_response(response)
+            self.loaded["upnp"][0] = \
+                jsonrpc.files_get_directory('upnp://', ["title", "file", "thumbnail"]) \
+                not in (False, None)
 
     def librarysources(self):
         # Add video sources
         listitems = []
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Files.GetSources",
-            "params": {
-                "media": "video"
-            }
-        }
-        json_response = rpc_request(json_payload)
+        json_response = jsonrpc.files_get_sources("video")
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'sources' in json_response['result'] and \
-                json_response['result']['sources'] is not None:
+        if json_response:
             for item in json_response['result']['sources']:
                 listitems.append(self.create(
                     ["||SOURCE||%s" % item['file'], item['label'], "32069", {
@@ -1208,19 +1169,10 @@ class LibraryFunctions:
 
         # Add audio sources
         listitems = []
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Files.GetSources",
-            "params": {
-                "media": "music"
-            }
-        }
-        json_response = rpc_request(json_payload)
+        json_response = jsonrpc.files_get_sources("music")
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'sources' in json_response['result'] and \
-                json_response['result']['sources'] is not None:
+        if json_response:
             for item in json_response['result']['sources']:
                 listitems.append(self.create(
                     ["||SOURCE||%s" % item['file'], item['label'], "32073", {
@@ -1233,19 +1185,10 @@ class LibraryFunctions:
 
         # Add picture sources
         listitems = []
-        json_payload = {
-            "jsonrpc": "2.0",
-            "id": 0,
-            "method": "Files.GetSources",
-            "params": {
-                "media": "pictures"
-            }
-        }
-        json_response = rpc_request(json_payload)
+        json_response = jsonrpc.files_get_sources("pictures")
 
         # Add all directories returned by the json query
-        if 'result' in json_response and 'sources' in json_response['result'] and \
-                json_response['result']['sources'] is not None:
+        if json_response:
             for item in json_response['result']['sources']:
                 listitems.append(self.create(
                     ["||SOURCE||%s" % item['file'], item['label'], "32089", {
@@ -1477,19 +1420,10 @@ class LibraryFunctions:
             if not shortcut_type:
                 continue
 
-            json_payload = {
-                "jsonrpc": "2.0",
-                "id": 0,
-                "method": "Addons.Getaddons",
-                "params": {
-                    "content": "%s" % contenttype,
-                    "properties": ["name", "path", "thumbnail", "enabled"]
-                }
-            }
-            json_response = rpc_request(json_payload)
+            json_response = jsonrpc.addons_get_addons(contenttype,
+                                                      ["name", "path", "thumbnail", "enabled"])
 
-            if 'result' in json_response and 'addons' in json_response['result'] and \
-                    json_response['result']['addons'] is not None:
+            if json_response:
                 for item in json_response['result']['addons']:
                     if item['enabled'] is True:
                         path = "RunAddOn(%s)" % item['addonid']
@@ -1738,16 +1672,14 @@ class LibraryFunctions:
         dialog.create(dialog_label, LANGUAGE(32063))
 
         # we retrieve a whole bunch of properties, needed to guess the content type properly
-        json_response = rpc_file_get_directory(location, ["title", "file", "thumbnail",
-                                                          "episode", "showtitle", "season",
-                                                          "album", "artist", "imdbnumber",
-                                                          "firstaired", "mpaa", "trailer",
-                                                          "studio", "art"])
-        rpc_success = validate_rpc_response(json_response)
+        json_response = jsonrpc.files_get_directory(location, ["title", "file", "thumbnail",
+                                                               "episode", "showtitle", "season",
+                                                               "album", "artist", "imdbnumber",
+                                                               "firstaired", "mpaa", "trailer",
+                                                               "studio", "art"])
 
         # Add all directories returned by the json query
-        if rpc_success and 'files' in json_response['result'] and \
-                json_response['result']['files']:
+        if json_response:
             json_result = json_response['result']['files']
 
             for item in json_result:
@@ -2370,11 +2302,10 @@ class LibraryFunctions:
         # this gets images from a vfs path to be used as backgrounds or icons
         images = []
 
-        json_response = rpc_file_get_directory(path, ["title", "art", "file", "fanart"])
-        rpc_success = validate_rpc_response(json_response)
+        json_response = jsonrpc.files_get_directory(path, ["title", "art", "file",
+                                                           "fanart", "thumbnail"])
 
-        if rpc_success and 'files' in json_response['result'] and \
-                json_response['result']['files']:
+        if json_response:
             json_result = json_response['result']['files']
             for item in json_result:
                 label = item["label"]

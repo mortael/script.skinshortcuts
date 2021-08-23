@@ -22,11 +22,11 @@ import xbmcplugin
 import xbmcvfs
 
 from . import datafunctions
+from . import jsonrpc
 from . import library
 from . import nodefunctions
 from . import xmlfunctions
 from .common import log
-from .common import rpc_request
 from .constants import ADDON_NAME
 from .constants import CWD
 from .constants import DATA_PATH
@@ -67,17 +67,8 @@ class Main:
                                       listitem=xbmcgui.ListItem(offscreen=True))
             self._launch_shortcut()
         if self.TYPE == "launchpvr":
-            json_payload = {
-                "jsonrpc": "2.0",
-                "id": 0,
-                "method": "Player.Open",
-                "params": {
-                    "item": {
-                        "channelid": "%s" % self.CHANNEL
-                    }
-                }
-            }
-            _ = rpc_request(json_payload)
+            jsonrpc.player_open(self.CHANNEL)
+
         if self.TYPE == "manage":
             self._manage_shortcuts(self.GROUP, self.DEFAULTGROUP, self.NOLABELS, self.GROUPNAME)
 

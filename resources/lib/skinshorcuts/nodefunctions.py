@@ -13,10 +13,9 @@ import xbmc
 import xbmcgui
 import xbmcvfs
 
+from . import jsonrpc
 from .common import log
-from .common import validate_rpc_response
 from .common_utils import ShowDialog
-from .common_utils import rpc_file_get_directory
 from .constants import ADDON_NAME
 from .constants import CWD
 from .constants import DATA_PATH
@@ -323,14 +322,12 @@ class NodeFunctions:
 
         # Work out if it's a single item, or a node
         is_node = False
-        json_path = path.replace("\\", "\\\\")
-        json_response = rpc_file_get_directory(json_path)
-        rpc_success = validate_rpc_response(json_response)
         node_paths = []
+        json_path = path.replace("\\", "\\\\")
+        json_response = jsonrpc.files_get_directory(json_path, ["title", "file", "thumbnail"])
 
         # Add all directories returned by the json query
-        if rpc_success and 'files' in json_response['result'] and \
-                json_response['result']['files'] is not None:
+        if json_response:
             labels = [LANGUAGE(32058)]
             paths = ["ActivateWindow(%s,%s,return)" % (window, path)]
             for item in json_response['result']['files']:

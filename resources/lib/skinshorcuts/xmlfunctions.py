@@ -20,7 +20,7 @@ from . import datafunctions
 from . import template
 from .common import log
 from .common import read_file
-from .common import toggle_debug_logging
+from .common_utils import toggle_debug_logging
 from .constants import ADDON
 from .constants import ADDON_NAME
 from .constants import ADDON_VERSION

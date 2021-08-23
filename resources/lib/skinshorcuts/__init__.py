@@ -12,6 +12,7 @@ __all__ = [
     'datafunctions',
     'gui',
     'hash_utils',
+    'jsonrpc',
     'library',
     'nodefunctions',
     'property_utils',

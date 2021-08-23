@@ -11,8 +11,8 @@ from traceback import print_exc
 import xbmc
 import xbmcgui
 
+from . import jsonrpc
 from .common import log
-from .common import rpc_request
 
 
 class ShowDialog(xbmcgui.WindowXMLDialog):
@@ -77,18 +77,23 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         pass
 
 
-def rpc_file_get_directory(directory, properties=None):
-    if not isinstance(properties, list):
-        properties = ["title", "file", "thumbnail"]
+def toggle_debug_logging(enable=False):
+    # return None on error
+    response = jsonrpc.get_settings()
+    if not response:
+        return None
 
-    json_payload = {
-        "jsonrpc": "2.0",
-        "id": 0,
-        "method": "Files.GetDirectory",
-        "params": {
-            "properties": properties,
-            "directory": "%s" % directory,
-            "media": "files"
-        }
-    }
-    return rpc_request(json_payload)
+    logging_enabled = True
+    for item in response['result']['settings']:
+        if item['id'] == 'debug.showloginfo':
+            logging_enabled = item['value'] is True
+            break
+
+    if (not enable and logging_enabled) or (enable and not logging_enabled):
+        response = jsonrpc.debug_show_log_info(enable is True)
+        if not response:
+            return None
+
+        logging_enabled = not logging_enabled
+
+    return logging_enabled == enable
