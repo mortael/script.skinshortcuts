@@ -14,7 +14,9 @@ script.skinshortcuts was written with the intention of making user customizable 
 
 See the [latest release](https://github.com/mikesilvo164/script.skinshortcuts/releases/latest) for a complete list of changes
 
-## With Thanks - Because their names don't deserve to be at the bottom 😃
+## With Thanks
+
+Because their names don't deserve to be at the bottom 😃
 
 - Huge thanks to Ronie, whose code for listing plugins is used in this script
 - Equally, huge thanks to Ronie and 'Black, for their favourites code used in this script
