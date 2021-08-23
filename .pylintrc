@@ -63,7 +63,6 @@ confidence=
 disable=too-few-public-methods,
         missing-class-docstring,
         missing-function-docstring,
-        duplicate-code,
         bare-except,
         import-error,
         too-many-branches,
@@ -296,7 +295,7 @@ ignore-comments=yes
 ignore-docstrings=yes
 
 # Ignore imports when computing similarities.
-ignore-imports=no
+ignore-imports=yes
 
 # Minimum lines number of a similarity.
 min-similarity-lines=4

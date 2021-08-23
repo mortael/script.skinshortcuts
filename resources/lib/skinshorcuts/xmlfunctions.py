@@ -32,6 +32,7 @@ from .constants import SKIN_PATH
 from .hash_utils import generate_file_hash
 from .hash_utils import read_hashes
 from .hash_utils import write_hashes
+from .property_utils import has_fallback_property
 
 
 class XMLFunctions:
@@ -891,21 +892,10 @@ class XMLFunctions:
 
         # Add fallback properties
         for key in fallback_properties:
-            if key not in list(all_props.keys()):
+            if key not in all_props:
                 # Check whether we have a fallback for the value
                 for property_match in fallbacks[key]:
-                    matches = False
-                    if property_match[1] is None:
-                        # This has no conditions, so it matched
-                        matches = True
-                    else:
-                        # This has an attribute and a value to match against
-                        for prop in properties:
-                            if prop[0] == property_match[1] and prop[1] == property_match[2]:
-                                matches = True
-                                break
-
-                    if matches:
+                    if has_fallback_property(property_match, properties):
                         additionalproperty = ETree.SubElement(newelement, "property")
                         additionalproperty.set("name", key)
                         additionalproperty.text = property_match[0]

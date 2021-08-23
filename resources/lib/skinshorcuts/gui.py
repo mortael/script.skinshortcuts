@@ -33,6 +33,7 @@ from .constants import LANGUAGE
 from .constants import SKIN_DIR
 from .constants import SKIN_PATH
 from .constants import SKIN_SHORTCUTS_PATH
+from .property_utils import has_fallback_property
 from .property_utils import read_properties
 from .property_utils import write_properties
 
@@ -474,18 +475,10 @@ class GUI(xbmcgui.WindowXMLDialog):
 
         # Add fallback properties
         for key in fallback_properties:
-            if key not in list(all_props.keys()):
+            if key not in all_props:
                 # Check whether we have a fallback for the value
                 for property_match in fallbacks[key]:
-                    matches = False
-                    if property_match[1] is None:
-                        # This has no conditions, so it matched
-                        matches = True
-                    elif property_match[1] in list(all_props.keys()) and \
-                            all_props[property_match[1]] == property_match[2]:
-                        matches = True
-
-                    if matches:
+                    if has_fallback_property(property_match, all_props):
                         all_props[key] = property_match[0]
                         break
 
