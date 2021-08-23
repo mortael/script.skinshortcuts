@@ -22,9 +22,9 @@ from . import datafunctions
 from . import library
 from .common import log
 from .common_utils import ShowDialog
-from .common_utils import toggle_debug_logging
-from .constants import ADDON
-from .constants import ADDON_NAME
+from .common_utils import enable_logging
+from .common_utils import disable_logging
+from .common_utils import offer_log_upload
 from .constants import CWD
 from .constants import DATA_PATH
 from .constants import DEFAULT_PATH
@@ -594,53 +594,20 @@ class GUI(xbmcgui.WindowXMLDialog):
             log("Failed to save shortcuts")
 
         # We failed to save the shortcuts
-
         if system_debug or script_debug:
             # Disable any logging we enabled
-            if system_debug:
-                toggle_debug_logging(enable=False)
-
-            if script_debug:
-                ADDON.setSetting("enable_logging", "false")
-
-            if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                # Offer to upload a debug log
-                ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                             LANGUAGE(32097), LANGUAGE(32093))
-                if ret:
-                    xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
-            else:
-                # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON_NAME,
-                                    '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
-
-            # We're done
+            disable_logging(system_debug, script_debug)
+            offer_log_upload(message_id=32097)
             return
 
         # Enable any debug logging needed
-        system_debug = False
-        script_debug = False
-        if toggle_debug_logging(enable=True):
-            system_debug = True
-
-        if not ADDON.getSettingBool("enable_logging"):
-            ADDON.setSetting("enable_logging", "true")
-            script_debug = True
+        system_debug, script_debug = enable_logging()
 
         if system_debug or script_debug:
             # We enabled one or more of the debug options, re-run this function
             self._save_shortcuts(system_debug, script_debug)
         else:
-            if xbmc.getCondVisibility("System.HasAddon(script.kodi.loguploader)"):
-                # Offer to upload a debug log
-                ret = xbmcgui.Dialog().yesno(ADDON_NAME,
-                                             LANGUAGE(32097), LANGUAGE(32093))
-                if ret:
-                    xbmc.executebuiltin("RunScript(script.kodi.loguploader)")
-            else:
-                # Inform user menu couldn't be saved
-                xbmcgui.Dialog().ok(ADDON_NAME,
-                                    '[CR]'.join([LANGUAGE(32097), LANGUAGE(32094)]))
+            offer_log_upload(message_id=32097)
 
     def _save_shortcuts_function(self):
         # Save shortcuts
