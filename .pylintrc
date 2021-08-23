@@ -64,7 +64,6 @@ disable=too-few-public-methods,
         missing-class-docstring,
         missing-function-docstring,
         bare-except,
-        import-error,
         too-many-branches,
         too-many-statements,
         too-many-nested-blocks,
@@ -366,7 +365,7 @@ ignored-classes=optparse.Values,thread._local,_thread._local
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis). It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=
+ignored-modules=xbmc,xbmcaddon,xbmcgui,xbmcplugin,xbmcvfs
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.

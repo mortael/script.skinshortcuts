@@ -6,9 +6,9 @@
     See LICENSES/GPL-2.0-only.txt for more information.
 """
 
-from skinshorcuts import skinshortcuts
-from skinshorcuts.common import log
-from skinshorcuts.constants import ADDON_VERSION
+from skinshorcuts import skinshortcuts  # pylint: disable=import-error
+from skinshorcuts.common import log  # pylint: disable=import-error
+from skinshorcuts.constants import ADDON_VERSION  # pylint: disable=import-error
 
 log('script version %s started' % ADDON_VERSION)
 skinshortcuts.Main()
