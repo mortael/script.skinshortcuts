@@ -19,7 +19,7 @@ ignore-patterns=
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
-jobs=1
+jobs=0
 
 # Control the amount of potential inferred values when inferring a single
 # object. This can help the performance when dealing with large functions or
@@ -31,7 +31,7 @@ limit-inference-results=100
 load-plugins=
 
 # Pickle collected data for later comparisons.
-persistent=yes
+persistent=no
 
 # Specify a configuration file.
 #rcfile=
@@ -60,20 +60,16 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=too-few-public-methods,
-        missing-class-docstring,
+disable=missing-class-docstring,
         missing-function-docstring,
-        bare-except,
         too-many-branches,
         too-many-statements,
         too-many-nested-blocks,
         too-many-locals,
-        too-many-arguments,
         too-many-instance-attributes,
         too-many-return-statements,
         too-many-public-methods,
-        too-many-lines
-
+        bare-except,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -145,7 +141,7 @@ bad-names=foo,
           tata
 
 # Naming style matching correct class attribute names.
-class-attribute-naming-style=any
+class-attribute-naming-style=snake_case
 
 # Regular expression matching correct class attribute names. Overrides class-
 # attribute-naming-style.
@@ -177,15 +173,10 @@ function-naming-style=snake_case
 #function-rgx=
 
 # Good variable names which should always be accepted, separated by a comma.
-good-names=i,
-           j,
-           k,
-           ex,
-           Run,
-           _
+good-names=_
 
 # Include a hint for the correct naming format with invalid-name.
-include-naming-hint=no
+include-naming-hint=yes
 
 # Naming style matching correct inline iteration names.
 inlinevar-naming-style=any
@@ -248,7 +239,7 @@ indent-string='    '
 max-line-length=100
 
 # Maximum number of lines in a module.
-max-module-lines=2000
+max-module-lines=3000
 
 # List of optional constructs for which whitespace checking is disabled. `dict-
 # separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
@@ -274,7 +265,7 @@ logging-format-style=old
 
 # Logging modules to check that the string format arguments are in logging
 # function parameter format.
-logging-modules=logging
+logging-modules=
 
 
 [MISCELLANEOUS]
@@ -439,7 +430,8 @@ valid-metaclass-classmethod-first-arg=cls
 [DESIGN]
 
 # Maximum number of arguments for function / method.
-max-args=8
+# TODO: reduce to 8
+max-args=12
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=10
