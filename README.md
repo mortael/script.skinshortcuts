@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/mikesilvo164/script.skinshortcuts/master/resources/media/icon.png" width="256" height="256" alt="Skin Shortcuts">
+
 # Skin Shortcuts
 
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fmikesilvo164%2Fscript.skinshortcuts%2Fbadge&logo=none)](https://actions-badge.atrox.dev/mikesilvo164/script.skinshortcuts/goto)
@@ -5,8 +7,6 @@
 ![Kodi Version](https://img.shields.io/badge/kodi-matrix%2B-success.svg)
 ![Contributors](https://img.shields.io/github/contributors/mikesilvo164/script.skinshortcuts.svg)
 ![GitHub Latest Release](https://img.shields.io/github/v/release/mikesilvo164/script.skinshortcuts)
-
-**Python 3 compatible only NO Python 2 support. IS NOT BACKWARDS COMPATIBLE!!**
 
 script.skinshortcuts was written with the intention of making user customizable shortcuts on the home page easier for skinners.
 
