@@ -46,7 +46,8 @@ class ShowDialog(xbmcgui.WindowXMLDialog):
         self.getControl(7).setLabel(xbmc.getLocalizedString(222))
 
         for item in self.listing:
-            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2())
+            listitem = xbmcgui.ListItem(label=item.getLabel(), label2=item.getLabel2(),
+                                        offscreen=True)
             listitem.setArt({
                 'icon': item.getProperty('icon'),
                 'thumb': item.getProperty('thumbnail')
