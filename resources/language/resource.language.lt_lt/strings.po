@@ -515,6 +515,10 @@ msgctxt "#32123"
 msgid "Games"
 msgstr ""
 
+msgctxt "#32124"
+msgid "This addon is for skin developers, and requires skin support"
+msgstr ""
+
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"
 #~ msgstr "Individuali nuoroda"
