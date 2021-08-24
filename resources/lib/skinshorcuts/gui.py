@@ -143,9 +143,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                     if self.group == "mainmenu":
                         self.getControl(500).setLabel(LANGUAGE(32071))
                     elif self.groupname is not None:
-                        self.getControl(500).setLabel(LANGUAGE(32080).replace(
-                            "::MENUNAME::", self.groupname)
-                        )
+                        self.getControl(500).setLabel(LANGUAGE(32080) % self.groupname)
                     else:
                         self.getControl(500).setLabel(LANGUAGE(32072))
             except:
