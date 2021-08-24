@@ -12,5 +12,6 @@ from skinshorcuts.common import log
 from skinshorcuts.constants import ADDON_VERSION
 
 log('script version %s started' % ADDON_VERSION)
-skinshortcuts.Main()
+script = skinshortcuts.Script()
+script.route()
 log('script stopped')
