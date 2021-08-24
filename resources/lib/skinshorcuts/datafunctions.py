@@ -184,15 +184,13 @@ class DataFunctions:
 
             if tree is not None and process_shortcuts:
                 # If this is a user-selected list of shortcuts...
+                if group == "mainmenu":
+                    self._get_skin_required(tree)
+
                 if path == user_shortcuts:
-                    if group == "mainmenu":
-                        self._get_skin_required(tree)
                     # Process shortcuts, marked as user-selected
                     self._process_shortcuts(tree, group, profile_dir, True)
-
                 else:
-                    if group == "mainmenu":
-                        self._get_skin_required(tree)
                     self._process_shortcuts(tree, group, profile_dir)
 
                 log("Loaded file")
@@ -284,6 +282,7 @@ class DataFunctions:
 
             if node.find("thumb") is None:
                 ETree.SubElement(node, "thumb").text = ""
+
             for additional_property in additional_properties:
                 if additional_property[0] == "thumb":
                     node.find("thumb").text = additional_property[1]
@@ -349,6 +348,7 @@ class DataFunctions:
             for override_tree in override_trees:
                 if has_overriden is True:
                     continue
+
                 if override_tree is not None:
                     for elem in override_tree.findall("override"):
                         # Pull out the current action, and any already-overridden actions
@@ -374,6 +374,7 @@ class DataFunctions:
                                 (check_group is None or check_group == group)) or \
                                     (elem.attrib.get("action") == "globaloverride" and
                                      (check_group is None or check_group == group)):
+
                                 # Check the XBMC version matches
                                 if "version" in elem.attrib:
                                     if elem.attrib.get("version") != KODI_VERSION:
@@ -396,6 +397,7 @@ class DataFunctions:
                                                                               item_to_override.text)
                                     else:
                                         newaction.text = actions.text
+
                                     if override_visibility is not None:
                                         newaction.set("condition", override_visibility)
 
@@ -403,6 +405,7 @@ class DataFunctions:
                                 if len(elem.findall("action")) == 0:
                                     newaction = ETree.SubElement(node, "override-action")
                                     newaction.text = item_to_override.text
+
                                     if override_visibility is not None:
                                         newaction.set("condition", override_visibility)
 
@@ -470,6 +473,7 @@ class DataFunctions:
                     ETree.SubElement(required_shortcut, "icon").text = elem.attrib.get("icon")
                 else:
                     ETree.SubElement(required_shortcut, "icon").text = "DefaultShortcut.png"
+
                 if "thumb" in elem.attrib:
                     ETree.SubElement(required_shortcut, "thumb").text = \
                         elem.attrib.get("thumbnail")
@@ -489,20 +493,22 @@ class DataFunctions:
 
         if tree is not None:
             for elem in tree.findall("icon"):
-                if old_icon is None:
-                    if ("labelID" in elem.attrib and elem.attrib.get("labelID") == label_id) or \
-                            ("image" in elem.attrib and elem.attrib.get("image") == icon):
-                        # LabelID matched
-                        if "group" in elem.attrib:
-                            if elem.attrib.get("group") == group:
-                                # Group also matches - change icon
-                                old_icon = icon
-                                new_icon = elem.text
+                if old_icon is not None:
+                    continue
 
-                        elif "grouping" not in elem.attrib:
-                            # No group - change icon
+                if elem.attrib.get("labelID") == label_id or elem.attrib.get("image") == icon:
+                    # LabelID matched
+                    if "group" in elem.attrib:
+                        if elem.attrib.get("group") == group:
+                            # Group also matches - change icon
                             old_icon = icon
                             new_icon = elem.text
+
+                    elif "grouping" not in elem.attrib:
+                        # No group - change icon
+                        old_icon = icon
+                        new_icon = elem.text
+
         return old_icon, new_icon
 
     def _get_icon_overrides(self, tree, icon, group, label_id, set_to_default=True):
@@ -605,6 +611,7 @@ class DataFunctions:
                 log(print_exc())
                 log("Failed to load current properties")
                 self.current_properties = [None]
+
         else:
             self.current_properties = [None]
 
@@ -631,6 +638,7 @@ class DataFunctions:
                         self.default_properties.append([elem.attrib.get("group"), label_id,
                                                         elem.attrib.get('property'),
                                                         elem.text, default_id])
+
                 else:
                     # Widget or background
                     if "group" not in elem.attrib:
@@ -657,11 +665,13 @@ class DataFunctions:
                                                                     "widgetType",
                                                                     widget_details["type"],
                                                                     default_id])
+
                                 if "path" in widget_details:
                                     self.default_properties.append(["mainmenu", label_id,
                                                                     "widgetPath",
                                                                     widget_details["path"],
                                                                     default_id])
+
                                 if "target" in widget_details:
                                     self.default_properties.append(["mainmenu", label_id,
                                                                     "widgetTarget",
@@ -674,23 +684,28 @@ class DataFunctions:
                                 self.default_properties.append(["mainmenu", label_id, "widget",
                                                                 elem.attrib.get("label"),
                                                                 default_id])
+
                             if "label" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id, "widgetName",
                                                                 elem.attrib.get("label"),
                                                                 default_id])
+
                             if "type" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id, "widgetType",
                                                                 elem.attrib.get("type"),
                                                                 default_id])
+
                             if "path" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id, "widgetPath",
                                                                 elem.attrib.get("path"),
                                                                 default_id])
+
                             if "target" in elem.attrib:
                                 self.default_properties.append(["mainmenu", label_id,
                                                                 "widgetTarget",
                                                                 elem.attrib.get("target"),
                                                                 default_id])
+
                     else:
                         self.default_properties.append([elem.attrib.get("group"), label_id,
                                                         elem_search[0].split(":", maxsplit=1)[0],
@@ -713,16 +728,19 @@ class DataFunctions:
                                                                 "widgetName",
                                                                 widget_details["name"],
                                                                 default_id])
+
                                 if "type" in widget_details:
                                     self.default_properties.append([elem.attrib.get("group"),
                                                                     label_id, "widgetType",
                                                                     widget_details["type"],
                                                                     default_id])
+
                                 if "path" in widget_details:
                                     self.default_properties.append([elem.attrib.get("group"),
                                                                     label_id, "widgetPath",
                                                                     widget_details["path"],
                                                                     default_id])
+
                                 if "target" in widget_details:
                                     self.default_properties.append([elem.attrib.get("group"),
                                                                     label_id, "widgetTarget",
@@ -736,16 +754,19 @@ class DataFunctions:
                                                                 "widgetName",
                                                                 elem.attrib.get("label"),
                                                                 default_id])
+
                             if "type" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetType",
                                                                 elem.attrib.get("type"),
                                                                 default_id])
+
                             if "path" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetPath",
                                                                 elem.attrib.get("path"),
                                                                 default_id])
+
                             if "target" in elem.attrib:
                                 self.default_properties.append([elem.attrib.get("group"), label_id,
                                                                 "widgetTarget",
@@ -788,9 +809,11 @@ class DataFunctions:
                 if property_name not in fallback_properties:
                     # Save the property name in the order in which we processed it
                     fallback_properties.append(property_name)
+
                 if property_name not in fallbacks:
                     # Create an empty list to hold fallbacks for this property
                     fallbacks[property_name] = []
+
                 # Check whether any attribute/value pair has to match for this fallback
                 attrib_name = None
                 attrib_value = None
@@ -798,6 +821,7 @@ class DataFunctions:
                     # This particular property is a matched property
                     attrib_name = elem.attrib.get("attribute")
                     attrib_value = elem.attrib.get("value")
+
                 # Upgrade widgetTarget where value is video to videos
                 value = elem.text
                 if property_name.startswith("widgetTarget") and value == "video":
@@ -829,9 +853,11 @@ class DataFunctions:
             if property_name not in self.property_information["otherProperties"]:
                 # Save the property name in the order in which we processed it
                 self.property_information["otherProperties"].append(property_name)
+
             if "requires" in elem.attrib:
                 # This property requires another to be present
                 requires[property_name] = elem.attrib.get("requires")
+
             if "templateonly" in elem.attrib and elem.attrib.get("templateonly").lower() == "true":
                 # This property is only used by the template, and should not be
                 # written to the main menu
@@ -855,12 +881,16 @@ class DataFunctions:
                 widget_info = {
                     "name": elem.attrib.get("label")
                 }
+
                 if "type" in elem.attrib:
                     widget_info["type"] = elem.attrib.get("type")
+
                 if "path" in elem.attrib:
                     widget_info["path"] = elem.attrib.get("path")
+
                 if "target" in elem.attrib:
                     widget_info["target"] = elem.attrib.get("target")
+
                 self.widget_name_and_type[widget_id] = widget_info
                 return widget_info
 
@@ -887,39 +917,34 @@ class DataFunctions:
         tree = self.get_overrides_skin()
         for elem in tree.findall("widget"):
             xbmc.executebuiltin("Skin.Reset(skinshortcuts-widget-%s)" % elem.text)
+
         for elem in tree.findall("background"):
             xbmc.executebuiltin("Skin.Reset(skinshortcuts-background-%s)" % elem.text)
 
     @staticmethod
     def create_nice_name(item, localized_only=False):
         # Translate certain localized strings into non-localized form for labelID
-        if localized_only is False:
-            if item == "3":
-                return "videos"
-            if item == "2":
-                return "music"
-            if item == "342":
-                return "movies"
-            if item == "20343":
-                return "tvshows"
-            if item == "32022":
-                return "livetv"
-            if item == "20389":
-                return "musicvideos"
-            if item == "10002":
-                return "pictures"
-            if item == "12600":
-                return "weather"
-            if item == "10001":
-                return "programs"
-            if item == "32032":
-                return "dvd"
-            if item == "10004":
-                return "settings"
-            if item == "32087":
-                return "radio"
+        default = item.lower().replace(" ", "")
 
-        return item.lower().replace(" ", "")
+        if localized_only:
+            return default
+
+        strings = {
+            '3': 'videos',
+            '2': 'music',
+            '342': 'movies',
+            '20343': 'tvshows',
+            '32022': 'livetv',
+            '20389': 'musicvideos',
+            '10002': 'pictures',
+            '12600': 'weather',
+            '10001': 'programs',
+            '32032': 'dvd',
+            '10004': 'settings',
+            '32087': 'radio',
+        }
+
+        return strings.get(item, default)
 
     def check_visibility(self, action):
         # Return whether mainmenu items should be displayed
@@ -939,6 +964,7 @@ class DataFunctions:
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
+
             return self.node_func.get_visibility(path[1])
 
         # Audio node visibility - Isengard and earlier
@@ -949,6 +975,7 @@ class DataFunctions:
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
+
             return self.node_func.get_visibility(path[1])
 
         # Audio node visibility - Additional checks for Jarvis and later
@@ -959,33 +986,45 @@ class DataFunctions:
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
+
             return self.node_func.get_visibility(path[1])
 
         # Power menu visibilities
         if action in ("quit()", "quit"):
             return "System.ShowExitButton"
+
         if action in ("powerdown()", "powerdown"):
             return "System.CanPowerDown"
+
         if action == "alarmclock(shutdowntimer,shutdown())":
             return "!System.HasAlarm(shutdowntimer) + [System.CanPowerDown | System.CanSuspend " \
                    "| System.CanHibernate]"
+
         if action == "cancelalarm(shutdowntimer)":
             return "System.HasAlarm(shutdowntimer)"
+
         if action in ("suspend()", "suspend"):
             return "System.CanSuspend"
+
         if action in ("hibernate()", "hibernate"):
             return "System.CanHibernate"
+
         if action in ("reset()", "reset"):
             return "System.CanReboot"
+
         if action == "system.logoff":
             return "[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + " \
                    "System.Loggedon"
+
         if action == "mastermode":
             return "System.HasLocks"
+
         if action == "inhibitidleshutdown(true)":
             return "System.HasShutdown +!System.IsInhibit"
+
         if action == "inhibitidleshutdown(false)":
             return "System.HasShutdown + System.IsInhibit"
+
         if action == "restartapp":
             return "[System.Platform.Windows | System.Platform.Linux] +! " \
                    "System.Platform.Linux.RaspberryPi"
@@ -993,29 +1032,40 @@ class DataFunctions:
         # General visibilities
         if action == "activatewindow(weather)":
             return "!String.IsEmpty(Weather.Plugin)"
+
         if action.startswith("activatewindowandfocus(mypvr") or action.startswith("playpvr") and \
                 not ADDON.getSettingBool("donthidepvr"):
             return "PVR.HasTVChannels"
+
         if action.startswith("activatewindow(tv") and not ADDON.getSettingBool("donthidepvr"):
             return "System.HasPVRAddon"
+
         if action.startswith("activatewindow(radio") and \
                 not ADDON.getSettingBool("donthidepvr"):
             return "System.HasPVRAddon"
+
         if action.startswith("activatewindow(videos,movie"):
             return "Library.HasContent(Movies)"
+
         if action.startswith("activatewindow(videos,recentlyaddedmovies"):
             return "Library.HasContent(Movies)"
+
         if action.startswith("activatewindow(videos,tvshow") or \
                 action.startswith("activatewindow(videos,tvshow"):
             return "Library.HasContent(TVShows)"
+
         if action.startswith("activatewindow(videos,recentlyaddedepisodes"):
             return "Library.HasContent(TVShows)"
+
         if action.startswith("activatewindow(videos,musicvideo"):
             return "Library.HasContent(MusicVideos)"
+
         if action.startswith("activatewindow(videos,recentlyaddedmusicvideos"):
             return "Library.HasContent(MusicVideos)"
+
         if action in ("xbmc.playdvd()", "playdvd"):
             return "System.HasMediaDVD"
+
         if action.startswith("activatewindow(eventlog"):
             return "system.getbool(eventlog.enabled)"
 
@@ -1034,8 +1084,10 @@ class DataFunctions:
                 action = ""
             else:
                 action = action.text
+
             find_elem = "shortcutEquivalent"
             find_attrib = "action"
+
         elif check_type == "groupings":
             if action is None:
                 action = ""
@@ -1048,6 +1100,7 @@ class DataFunctions:
         for tree in trees:
             if tree.find("versionEquivalency") is None:
                 continue
+
             for elem in tree.find("versionEquivalency").findall(find_elem):
                 if elem.attrib.get(find_attrib) is not None and \
                         elem.attrib.get(find_attrib).lower() != action.lower():
@@ -1062,6 +1115,7 @@ class DataFunctions:
                 if elem.text == "All":
                     # This shortcut matches all newer versions
                     return True
+
                 if int(elem.text) >= int(KODI_VERSION):
                     return True
 
@@ -1097,6 +1151,7 @@ class DataFunctions:
                 return_properties.append(
                     self.upgrade_additional_properties(current_property[2], current_property[3])
                 )
+
             elif len(current_property) != 4:
                 if default_id is not None and current_property[0] == group and \
                         current_property[4] == default_id:
@@ -1127,6 +1182,7 @@ class DataFunctions:
             # If this is a sublevel, and the skin has asked for sub levels to not be shared...
             if is_sub_level and tree.find("doNotShareLevels") is not None:
                 return False
+
             # If the skin has asked for all menu's not to be shared...
             if tree.find("doNotShareMenu") is not None:
                 return False
@@ -1134,6 +1190,7 @@ class DataFunctions:
         # Check if the user has asked for their menus not to be shared
         if not ADDON.getSettingBool("shared_menu"):
             return False
+
         return True
 
     def get_shared_skin_list(self):
@@ -1148,6 +1205,7 @@ class DataFunctions:
                         can_import, skin_name = self.parse_hash_file(os.path.join(DATA_PATH, file))
                         if can_import is True:
                             skin_names.append(skin_name)
+
                     elif file.endswith(".DATA.xml") and \
                             not file.startswith("%s-" % SKIN_DIR):
                         skin_files.append(file)
@@ -1162,6 +1220,7 @@ class DataFunctions:
                     if matched is False:
                         matched = True
                     remove_files.append(skin_file)
+
             if matched is False:
                 # This skin doesn't have a custom menu
                 remove_skins.append(skin_name)
@@ -1200,6 +1259,7 @@ class DataFunctions:
                 can_import = True
                 if skin_name:
                     return True, skin_name
+
             if _hash[0] == "::SKINDIR::":
                 skin_name = _hash[1]
                 if can_import is True:
@@ -1215,6 +1275,7 @@ class DataFunctions:
                 new_file = old_file.replace(skin_name, SKIN_DIR)
             else:
                 new_file = "%s-%s" % (SKIN_DIR, old_file)
+
             old_path = os.path.join(DATA_PATH, old_file)
             new_path = os.path.join(DATA_PATH, new_file)
 
@@ -1231,12 +1292,16 @@ class DataFunctions:
         if len(elem):
             if not elem.text or not elem.text.strip():
                 elem.text = "%s%s" % (whitespace, "\t")
+
             if not elem.tail or not elem.tail.strip():
                 elem.tail = whitespace
+
             for _elem in elem:
                 self.indent(_elem, level + 1)
+
             if not elem.tail or not elem.tail.strip():
                 elem.tail = whitespace
+
         else:
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = whitespace
@@ -1262,10 +1327,13 @@ class DataFunctions:
 
         if not data.find("::SCRIPT::") == -1:
             data = data[10:]
+
         elif not data.find("::LOCAL::") == -1:
             data = data[9:]
+
         elif not data.find("$LOCALIZE[") == -1:
             data = data.replace("$LOCALIZE[", "").replace("]", "").replace(" ", "")
+
         elif not data.find("$ADDON[script.skinshortcuts") == -1:
             data = data.replace("$ADDON[script.skinshortcuts", "").replace("]", "").replace(" ", "")
 
@@ -1325,8 +1393,10 @@ class DataFunctions:
                 next_len = len(truncated) + len(word) + len(separator)
                 if next_len <= max_length:
                     truncated += '{0}{1}'.format(word, separator)
+
         if not truncated:
             truncated = string[:max_length]
+
         return truncated.strip(separator)
 
     def slugify(self, text, user_shortcuts=False, entities=True, decimal=True,
@@ -1398,6 +1468,7 @@ class DataFunctions:
             # Handle (the not uncommon) situation where the trailing ')' has been forgotten
             if onclick.endswith(")"):
                 list_property = onclick[:-1]
+
             list_property = list_property.split("(", 1)[1]
 
             # Split what we've got left on commas
@@ -1407,12 +1478,15 @@ class DataFunctions:
             if len(list_property) == 1:
                 # 'elementWeWant'
                 return list_property[0]
+
             if len(list_property) == 2 and list_property[1].lower().replace(" ", "") == "return":
                 # 'elementWeWant' 'return'
                 return list_property[0]
+
             if len(list_property) == 2:
                 # 'windowToActivate' 'elementWeWant'
                 return list_property[1]
+
             if len(list_property) == 3:
                 # 'windowToActivate' 'elementWeWant' 'return'
                 return list_property[1]

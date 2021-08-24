@@ -59,6 +59,7 @@ class NodeFunctions:
     def parse_view(self, file, nodes, is_folder=False, orig_folder=None, orig_path=None):
         if not is_folder and file.endswith("index.xml"):
             return
+
         try:
             # Load the xml file
             tree = ETree.parse(file)
@@ -72,6 +73,7 @@ class NodeFunctions:
                     index = int(index)
                     index += 1
                     index = str(index)
+
             else:
                 self.index_counter -= 1
                 index = str(self.index_counter)
@@ -84,6 +86,7 @@ class NodeFunctions:
                 if not xbmc.getCondVisibility(visible_attrib):
                     # The node isn't visible
                     return
+
                 if "Library.HasContent(" in visible_attrib and "+" not in visible_attrib and \
                         "|" not in visible_attrib:
                     media_type = visible_attrib.split("(")[1].split(")")[0].lower()
@@ -95,6 +98,7 @@ class NodeFunctions:
 
             # Get label and icon
             label = root.find("label").text
+
             icon = root.find("icon")
             if icon is not None:
                 icon = icon.text
@@ -104,6 +108,7 @@ class NodeFunctions:
             if is_folder:
                 # Add it to our list of nodes
                 nodes[int(index)] = [label, icon, orig_folder, "folder", orig_index, media_type]
+
             else:
                 # Check for a path
                 path = root.find("path")
@@ -116,6 +121,7 @@ class NodeFunctions:
                 if group is None:
                     # Add it as an item
                     nodes[int(index)] = [label, icon, orig_path, "item", orig_index, media_type]
+
                 else:
                     # Add it as grouped
                     nodes[int(index)] = [label, icon, orig_path, "grouped", orig_index, media_type]
@@ -128,14 +134,17 @@ class NodeFunctions:
             "library://video",
             os.path.join(PROFILE_PATH, "library", "video")
         )[:-1]
+
         default_path_video = path.replace(
             "library://video",
             os.path.join(KODI_PATH, "system", "library", "video")
         )[:-1]
+
         custom_path_audio = path.replace(
             "library://music",
             os.path.join(PROFILE_PATH, "library", "music")
         )[:-1]
+
         default_path_audio = path.replace(
             "library://music",
             os.path.join(KODI_PATH, "system", "library", "music")
@@ -149,6 +158,7 @@ class NodeFunctions:
                 path = try_path
                 found_path = True
                 break
+
         if found_path is False:
             return False
 
@@ -160,6 +170,7 @@ class NodeFunctions:
 
             group = root.find("group")
             return group is not None
+
         except:
             return False
 
@@ -167,22 +178,10 @@ class NodeFunctions:
     # Function used by DataFunctions.py #
     #####################################
 
-    @staticmethod
-    def get_visibility(path):
-        path = path.replace("videodb://", "library://video/")
-        path = path.replace("musicdb://", "library://music/")
-        if path.endswith(".xml"):
-            path = path[:-3]
-        if path.endswith(".xml/"):
-            path = path[:-4]
+    def get_visibility(self, path):
+        path, path_start, path_end = self._modify_path_and_parts(path)
 
-        if "library://video" in path:
-            path_start = "library://video"
-            path_end = "video"
-        elif "library://music" in path:
-            path_start = "library://music"
-            path_end = "music"
-        else:
+        if None in (path_start, path_end):
             return ""
 
         custom_path = "%sindex.xml" % path.replace(path_start,
@@ -203,6 +202,7 @@ class NodeFunctions:
             node_file = custom_path
         elif xbmcvfs.exists(default_path):
             node_file = default_path
+
         if xbmcvfs.exists(custom_file):
             node_file = custom_file
         elif xbmcvfs.exists(default_file):
@@ -211,7 +211,9 @@ class NodeFunctions:
         # Next check if there is a parent node
         if path.endswith("/"):
             path = path[:-1]
+
         path = path.rsplit("/", 1)[0]
+
         custom_path = "%s/index.xml" % path.replace(path_start,
                                                     os.path.join(PROFILE_PATH, "library", path_end))
         default_path = \
@@ -230,6 +232,7 @@ class NodeFunctions:
         for xml_file in (node_file, node_parent):
             if xml_file is None:
                 continue
+
             # Open the file
             try:
                 # Load the xml file
@@ -238,27 +241,16 @@ class NodeFunctions:
 
                 if "visible" in root.attrib:
                     return root.attrib.get("visible")
+
             except:
                 pass
 
         return ""
 
-    @staticmethod
-    def get_media_type(path):
-        path = path.replace("videodb://", "library://video/")
-        path = path.replace("musicdb://", "library://music/")
-        if path.endswith(".xml"):
-            path = path[:-3]
-        if path.endswith(".xml/"):
-            path = path[:-4]
+    def get_media_type(self, path):
+        path, path_start, path_end = self._modify_path_and_parts(path)
 
-        if "library://video" in path:
-            path_start = "library://video"
-            path_end = "video"
-        elif "library://music" in path:
-            path_start = "library://music"
-            path_end = "music"
-        else:
+        if None in (path_start, path_end):
             return "unknown"
 
         custom_path = "%sindex.xml" % path.replace(path_start,
@@ -276,12 +268,16 @@ class NodeFunctions:
         # or a view node (append .xml) in first custom video nodes, then default video nodes
         if xbmcvfs.exists(custom_path):
             path = custom_path
+
         elif xbmcvfs.exists(custom_file):
             path = custom_file
+
         elif xbmcvfs.exists(default_path):
             path = default_path
+
         elif xbmcvfs.exists(default_file):
             path = default_file
+
         else:
             return "unknown"
 
@@ -335,6 +331,7 @@ class NodeFunctions:
                     is_node = True
                     labels.append(item["label"])
                     node_paths.append("ActivateWindow(%s,%s,return)" % (window, item["file"]))
+
         else:
             # Unable to add to get directory listings
             log("Invalid JSON response returned")
@@ -348,6 +345,7 @@ class NodeFunctions:
             labels.append("Play")
             paths.append("RunScript(script.skinshortcuts,type=launchalbum&album=%s)" %
                          (self.extract_id(path)))
+
         if window == 10002:
             labels.append("Slideshow")
             paths.append("SlideShow(%s,notrandom)" % path)
@@ -357,6 +355,7 @@ class NodeFunctions:
             paths.append("SlideShow(%s,recursive,notrandom)" % path)
             labels.append("Slideshow(recursive,random)")
             paths.append("SlideShow(%s,recursive,random)" % path)
+
         if path.endswith(".xsp"):
             labels.append("Play")
             paths.append("PlayMedia(%s)" % path)
@@ -466,9 +465,12 @@ class NodeFunctions:
         item_id = path
         if "?" in item_id:
             item_id = item_id.rsplit("?", 1)[0]
+
         if item_id.endswith("/"):
             item_id = item_id[:-1]
+
         item_id = item_id.rsplit("/", 1)[1]
+
         return item_id
 
     # ##############################################
@@ -486,10 +488,12 @@ class NodeFunctions:
         # Split up property names and values
         property_names = properties.split("|")
         property_values = values.replace("::INFO::", "$INFO").split("|")
+
         label_id_values = label_id.split("|")
         if len(label_id_values) == 0:
             # No labelID passed in, lets assume we were called in error
             return
+
         if len(property_names) == 0:
             # No values passed in, lets assume we were called in error
             return
@@ -498,8 +502,10 @@ class NodeFunctions:
         message = "Set %s property to %s?" % (property_names[0], property_values[0])
         if len(property_names) == 2:
             message += "[CR](and 1 other property)"
+
         elif len(property_names) > 2:
             message += "[CR](and %d other properties)" % (len(property_names) - 1)
+
         should_run = xbmcgui.Dialog().yesno(ADDON_NAME, message)
         if not should_run:
             return
@@ -519,9 +525,11 @@ class NodeFunctions:
             # If the group isn't in all_props, add it
             if current_property[0] not in all_props:
                 all_props[current_property[0]] = {}
+
             # If the labelID isn't in the all_props[ group ], add it
             if current_property[1] not in list(all_props[current_property[0]].keys()):
                 all_props[current_property[0]][current_property[1]] = {}
+
             # And add the property to all_props[ group ][ labelID ]
             if current_property[3] is not None:
                 all_props[current_property[0]][current_property[1]][current_property[2]] = \
@@ -533,8 +541,10 @@ class NodeFunctions:
             log("Setting %s to %s" % (property_name, property_values[count]))
             if len(label_id_values) != 1:
                 label_id = label_id_values[count]
+
             if label_id not in all_props[group]:
                 all_props[group][label_id] = {}
+
             all_props[group][label_id][property_name] = property_values[count]
 
             # Remove any properties whose requirements haven't been met
@@ -567,3 +577,26 @@ class NodeFunctions:
 
         # Mark that the menu needs to be rebuilt
         HOME_WINDOW.setProperty("skinshortcuts-reloadmainmenu", "True")
+
+    @staticmethod
+    def _modify_path_and_parts(path):
+        video_path = "library://video/"
+        music_path = "library://music/"
+        path_start = None
+        path_end = None
+
+        path = path.replace("videodb://", video_path)
+        path = path.replace("musicdb://", music_path)
+
+        if path.endswith((".xml", ".xml/")):
+            path = path.rstrip("/")[:-3]
+
+        if video_path.rstrip('/') in path:
+            path_start = video_path.rstrip('/')
+            path_end = "video"
+
+        elif music_path.rstrip('/') in path:
+            path_start = music_path.rstrip('/')
+            path_end = "music"
+
+        return path, path_start, path_end
