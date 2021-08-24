@@ -72,6 +72,7 @@ class Script:
         route_attrib = 'route_%s' % self.TYPE.lower()
         if not hasattr(self, route_attrib):
             log('Error routing %s to self.%s()' % (self.TYPE, route_attrib))
+            return
 
         route_method = getattr(self, route_attrib)
         route_method()
