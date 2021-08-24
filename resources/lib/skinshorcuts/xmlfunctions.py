@@ -63,10 +63,10 @@ class XMLFunctions:
         HOME_WINDOW.setProperty("skinshortcuts-isrunning", "True")
 
         # Get a list of profiles
-        fav_file = xbmcvfs.translatePath('special://userdata/profiles.xml')
+        profiles_xml = xbmcvfs.translatePath('special://userdata/profiles.xml')
         tree = None
-        if xbmcvfs.exists(fav_file):
-            contents = read_file(fav_file)
+        if xbmcvfs.exists(profiles_xml):
+            contents = read_file(profiles_xml)
             tree = ETree.fromstring(contents)
 
         profilelist = []
@@ -74,21 +74,20 @@ class XMLFunctions:
             profiles = tree.findall("profile")
             for profile in profiles:
                 name = profile.find("name").text
-                _dir = profile.find("directory").text
-                log("Profile found: %s (%s)" % (name, _dir))
+                path = profile.find("directory").text
+                log("Profile found: %s (%s)" % (name, path))
 
                 # Localise the directory
-                if "://" in _dir:
-                    _dir = xbmcvfs.translatePath(_dir)
+                if "://" in path:
+                    path = xbmcvfs.translatePath(path)
                 # Base if off of the master profile
-                _dir = xbmcvfs.translatePath(os.path.join("special://masterprofile", _dir))
-                profilelist.append([_dir, "String.IsEqual(System.ProfileName,%s)" % name, name])
+                path = xbmcvfs.translatePath(os.path.join("special://masterprofile", path))
+                profilelist.append([path, "String.IsEqual(System.ProfileName,%s)" % name, name])
 
         else:
             profilelist = [["special://masterprofile", None]]
 
-        shouldwerun = self.shouldwerun(profilelist)
-        if shouldwerun is False:
+        if not self.shouldwerun(profilelist):
             log("Menu is up to date")
             HOME_WINDOW.clearProperty("skinshortcuts-isrunning")
             return
@@ -112,12 +111,12 @@ class XMLFunctions:
         HOME_WINDOW.clearProperty("skinshortcuts-isrunning")
         progress.close()
 
-        if complete is True:
+        if complete:
             # Menu is built, reload the skin
             xbmc.executebuiltin("ReloadSkin()")
             return
 
-            # Menu couldn't be built - generate a debug log
+        # Menu couldn't be built - generate a debug log
         # If we enabled debug logging
         if system_debug or script_debug:
             # Disable any logging we enabled
@@ -170,6 +169,7 @@ class XMLFunctions:
                     )
                     paths.append(path)
                     skinpaths.append(path)
+                break
 
         # Check for the includes file
         for path in paths:
@@ -262,9 +262,9 @@ class XMLFunctions:
                         log("Failed to compare hash of Item: %s Value: %s" %
                             (item, value))
 
-            else:
+            if hashed_value is not None:
                 if xbmcvfs.exists(hashed_item):
-                    log("File now exists %s" % hashed_item)
+                    log("New file detected %s" % hashed_item)
                     return True
 
         # Set or clear the FullMenu skin bool
@@ -313,11 +313,14 @@ class XMLFunctions:
         overridestree = self.data_func.get_overrides_skin()
         check_for_shortcuts_overrides = overridestree.getroot().findall("checkforshortcut")
         for check_for_shortcut_override in check_for_shortcuts_overrides:
-            if "property" in check_for_shortcut_override.attrib:
+            if "property" not in check_for_shortcut_override.attrib:
+                continue
                 # Add this to the list of shortcuts we'll check for
-                self.check_for_shortcuts.append((check_for_shortcut_override.text.lower(),
-                                                 check_for_shortcut_override.attrib.get("property"),
-                                                 "False"))
+            self.check_for_shortcuts.append(
+                (check_for_shortcut_override.text.lower(),
+                 check_for_shortcut_override.attrib.get("property"),
+                 "False")
+            )
 
         mainmenu_tree = ETree.SubElement(root, "include")
         mainmenu_tree.set("name", "skinshortcuts-mainmenu")
@@ -372,7 +375,7 @@ class XMLFunctions:
 
             # If building the main menu, split the mainmenu shortcut nodes into the menuitems list
             full_menu = False
-            if groups == "" or groups.split("|")[0] == "mainmenu":
+            if groups == "" or groups.split("|", maxsplit=1)[0] == "mainmenu":
                 # Set a skinstring that marks that we're providing the whole menu
                 xbmc.executebuiltin("Skin.SetBool(SkinShortcuts-FullMenu)")
                 hashlist.append(["::FULLMENU::", "True"])
@@ -387,10 +390,9 @@ class XMLFunctions:
                 hashlist.append(["::FULLMENU::", "False"])
 
             # If building specific groups, split them into the menuitems list
-            count = 0
             if groups != "":
                 for group in groups.split("|"):
-                    if count != 0 or group != "mainmenu":
+                    if group != "mainmenu":
                         menuitems.append(group)
 
             if len(menuitems) == 0:
@@ -398,10 +400,11 @@ class XMLFunctions:
                 break
 
             itemidmainmenu = 0
-            if len(temple_object.other_templates) == 0:
-                percent = profile_percent / len(menuitems)
-            else:
-                percent = float(profile_percent) / float(len(menuitems) * 2)
+            ratio_denominator = float(len(menuitems))
+            if len(temple_object.other_templates) > 0:
+                ratio_denominator = ratio_denominator * 2.0
+            percent = float(profile_percent) / ratio_denominator
+
             temple_object.percent = percent * (len(menuitems))
 
             for index, item in enumerate(menuitems):
@@ -460,8 +463,7 @@ class XMLFunctions:
                     mainmenu_item_b = None
 
                 # Build the submenu
-                count = 0  # Used to keep track of additional submenu
-                for submenu_tree in submenu_trees:
+                for count, submenu_tree in enumerate(submenu_trees):
                     submenu_visibility_name = submenu
                     if count == 1:
                         submenu = "%s.%s" % (submenu, str(count))
@@ -654,8 +656,6 @@ class XMLFunctions:
                                                             convert_int=True)),
                         item, None, build_others, mainmenuitems=template_current_main_menu_item)
 
-                    count += 1
-
             if self.has_settings is False:
                 # Check if the overrides asks for a forced settings...
                 overridestree = self.data_func.get_overrides_skin()
@@ -675,18 +675,17 @@ class XMLFunctions:
                         ETree.SubElement(newelement, "onclick").text = "ActivateWindow(settings)"
                         ETree.SubElement(newelement, "visible").text = profile[1]
 
-            if len(self.check_for_shortcuts) != 0:
-                # Add a value to the variable for all checkForShortcuts
-                for check_for_shortcut in self.check_for_shortcuts:
-                    if profile[1] is not None and xbmc.getCondVisibility(profile[1]):
-                        # Current profile - set the skin bool
-                        if check_for_shortcut[2] == "True":
-                            xbmc.executebuiltin("Skin.SetBool(%s)" % (check_for_shortcut[1]))
-                        else:
-                            xbmc.executebuiltin("Skin.Reset(%s)" % (check_for_shortcut[1]))
-                    # Save this to the hashes file, so we can set it on profile changes
-                    hashlist.append(["::SKINBOOL::", [profile[1], check_for_shortcut[1],
-                                                      check_for_shortcut[2]]])
+            # Add a value to the variable for all checkForShortcuts
+            for check_for_shortcut in self.check_for_shortcuts:
+                if profile[1] is not None and xbmc.getCondVisibility(profile[1]):
+                    # Current profile - set the skin bool
+                    if check_for_shortcut[2] == "True":
+                        xbmc.executebuiltin("Skin.SetBool(%s)" % (check_for_shortcut[1]))
+                    else:
+                        xbmc.executebuiltin("Skin.Reset(%s)" % (check_for_shortcut[1]))
+                # Save this to the hashes file, so we can set it on profile changes
+                hashlist.append(["::SKINBOOL::", [profile[1], check_for_shortcut[1],
+                                                  check_for_shortcut[2]]])
 
             # Build the template for the main menu
             temple_object.parse_items("mainmenu", 0, template_main_menu_items, profile[2],
@@ -759,6 +758,7 @@ class XMLFunctions:
         # Set ID
         if itemid != -1:
             newelement.set("id", str(itemid))
+
         idproperty = ETree.SubElement(newelement, "property")
         idproperty.set("name", "id")
         idproperty.text = "$NUMBER[%s]" % (str(itemid))
@@ -785,6 +785,7 @@ class XMLFunctions:
             ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
         else:
             ETree.SubElement(newelement, "icon").text = icon.text
+
         thumb = item.find("thumb")
         if thumb is not None:
             ETree.SubElement(newelement, "thumb").text = item.find("thumb").text
@@ -794,6 +795,7 @@ class XMLFunctions:
         label_id.text = item.find("labelID").text
         label_id.set("name", "labelID")
         all_props["labelID"] = label_id
+
         default_id = ETree.SubElement(newelement, "property")
         default_id.text = item.find("defaultID").text
         default_id.set("name", "defaultID")
@@ -814,49 +816,48 @@ class XMLFunctions:
 
         # Additional properties
         properties = ast.literal_eval(item.find("additional-properties").text)
-        if len(properties) != 0:
-            for prop in properties:
-                if prop[0] == "node.visible":
-                    visible_property = ETree.SubElement(newelement, "visible")
-                    visible_property.text = prop[1]
-                else:
-                    additionalproperty = ETree.SubElement(newelement, "property")
-                    additionalproperty.set("name", prop[0])
-                    additionalproperty.text = prop[1]
-                    all_props[prop[0]] = additionalproperty
+        for prop in properties:
+            if prop[0] == "node.visible":
+                visible_property = ETree.SubElement(newelement, "visible")
+                visible_property.text = prop[1]
+            else:
+                additionalproperty = ETree.SubElement(newelement, "property")
+                additionalproperty.set("name", prop[0])
+                additionalproperty.text = prop[1]
+                all_props[prop[0]] = additionalproperty
 
-                    # If this is a widget or background, set a skin setting to say it's enabled
-                    if prop[0] == "widget":
-                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-%s)" % prop[1])
-                        # And if it's the main menu, list it
-                        if group_name == "mainmenu":
-                            xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-%s,%s)" %
-                                                (str(self.widget_count), prop[1]))
-                            self.widget_count += 1
-                    elif prop[0] == "background":
-                        xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-%s)" % prop[1])
-
-                    # If this is the main menu, and we're cloning widgets,
-                    # backgrounds or properties...
+                # If this is a widget or background, set a skin setting to say it's enabled
+                if prop[0] == "widget":
+                    xbmc.executebuiltin("Skin.SetBool(skinshortcuts-widget-%s)" % prop[1])
+                    # And if it's the main menu, list it
                     if group_name == "mainmenu":
-                        if "clonewidgets" in options:
-                            widget_properties = ["widget", "widgetName", "widgetType",
-                                                 "widgetTarget", "widgetPath", "widgetPlaylist"]
-                            if prop[0] in widget_properties:
-                                self.main_widget[prop[0]] = prop[1]
-                        if "clonebackgrounds" in options:
-                            background_properties = ["background", "backgroundName",
-                                                     "backgroundPlaylist", "backgroundPlaylistName"]
-                            if prop[0] in background_properties:
-                                self.main_background[prop[0]] = prop[1]
-                        if "cloneproperties" in options:
-                            self.main_properties[prop[0]] = prop[1]
+                        xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-%s,%s)" %
+                                            (str(self.widget_count), prop[1]))
+                        self.widget_count += 1
+                elif prop[0] == "background":
+                    xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-%s)" % prop[1])
 
-                    # For backwards compatibility, save widgetPlaylist as widgetPath too
-                    if prop[0] == "widgetPlaylist":
-                        additionalproperty = ETree.SubElement(newelement, "property")
-                        additionalproperty.set("name", "widgetPath")
-                        additionalproperty.text = prop[1]
+                # If this is the main menu, and we're cloning widgets,
+                # backgrounds or properties...
+                if group_name == "mainmenu":
+                    if "clonewidgets" in options:
+                        widget_properties = ["widget", "widgetName", "widgetType",
+                                             "widgetTarget", "widgetPath", "widgetPlaylist"]
+                        if prop[0] in widget_properties:
+                            self.main_widget[prop[0]] = prop[1]
+                    if "clonebackgrounds" in options:
+                        background_properties = ["background", "backgroundName",
+                                                 "backgroundPlaylist", "backgroundPlaylistName"]
+                        if prop[0] in background_properties:
+                            self.main_background[prop[0]] = prop[1]
+                    if "cloneproperties" in options:
+                        self.main_properties[prop[0]] = prop[1]
+
+                # For backwards compatibility, save widgetPlaylist as widgetPath too
+                if prop[0] == "widgetPlaylist":
+                    additionalproperty = ETree.SubElement(newelement, "property")
+                    additionalproperty.set("name", "widgetPath")
+                    additionalproperty.text = prop[1]
 
         # Get fallback properties, property requirements, template_only value of properties
         fallback_properties, fallbacks = self.data_func.get_custom_property_fallbacks(group_name)
