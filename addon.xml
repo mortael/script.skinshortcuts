@@ -38,7 +38,7 @@
             <icon>resources/media/icon.png</icon>
             <fanart>resources/media/fanart.jpg</fanart>
         </assets>
-        <description lang="de_DE">Add-on für Skins für einfache Bearbeitung und Auflistung von benutzerdefinierten Verknüpfungen (erfordert Skin-Unterstützung)</description>
+        <description lang="de_DE">Addon für Skins zum einfachen Bearbeiten und Auflisten von benutzerdefinierten Verknüpfungen (erfordert Skin-Unterstützung)</description>
         <description lang="el_GR">Πρόσθετο για κελύφη, το οποίο παρέχει έναν απλό τρόπο διαχείρισης και κατηγοριοποίησης των συντομεύσεων του χρήστη (πρέπει να υποστηρίζεται από το κέλυφος)</description>
         <description lang="en_GB">Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)</description>
         <description lang="en_NZ">Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)</description>
@@ -55,7 +55,7 @@
         <description lang="pl_PL">Wtyczka dla skór, która zapewnia proste zarządzanie i tworzenie list skrótów użytkownika (wymaga wsparcia skóry)</description>
         <description lang="pt_BR">Add-on para que as skins possam prover gerenciamento de lista de atalhos para o menu principal (requer suporte da skin)</description>
         <description lang="pt_PT">Um add-on que permite que os temas tenham recursos simples para gerir e listar atalhos de utilizadores (é necessário suporte do tema)</description>
-        <description lang="ru_RU">Дополнение для обложек, предоставляющее простой способ управления и список пользовательских ярлыков (требуется поддержка обложкой)</description>
+        <description lang="ru_RU">Дополнение для обложек, предоставляющее простой способ управления пользовательскими ярлыками (требуется поддержка обложкой)</description>
         <description lang="sk_SK">Doplnok poskytujúci jednoduchý manažment zoznamu užívateľských odkazov (vyžaduje podporu v doplnku pre vzhľad)</description>
         <description lang="sv_SE">Skinntillägg som tillhandahåller enkel hantering och översikt av användargenvägar (om skinnet stöder det)</description>
         <description lang="zh_TW">插件为皮肤提供了简单的管理和用户连接方式列表 (需要皮肤支持)</description>
