@@ -41,6 +41,7 @@ class NodeFunctions:
         try:
             for _dir in dirs:
                 self.parse_node(os.path.join(path, _dir), _dir, nodes, prefix)
+
             for file in files:
                 self.parse_view(os.path.join(path, file), nodes,
                                 orig_path="%s/%s" % (prefix, file))
