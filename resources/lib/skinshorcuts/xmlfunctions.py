@@ -80,6 +80,7 @@ class XMLFunctions:
                 # Localise the directory
                 if "://" in path:
                     path = xbmcvfs.translatePath(path)
+
                 # Base if off of the master profile
                 path = xbmcvfs.translatePath(os.path.join("special://masterprofile", path))
                 profilelist.append([path, "String.IsEqual(System.ProfileName,%s)" % name, name])
@@ -204,37 +205,44 @@ class XMLFunctions:
                     if KODI_VERSION != hashed_value:
                         log("Now running a different version of Kodi")
                         return True
+
                 elif hashed_item == "::SKINVER::":
                     # Check the skin version is still the same as hashed_value
                     checked_skin_ver = True
                     if skin_version != hashed_value:
                         log("Now running a different skin version")
                         return True
+
                 elif hashed_item == "::SCRIPTVER::":
                     # Check the script version is still the same as hashed_value
                     checked_script_ver = True
                     if ADDON_VERSION != hashed_value:
                         log("Now running a different script version")
                         return True
+
                 elif hashed_item == "::PROFILELIST::":
                     # Check the profilelist is still the same as hashed_value
                     checked_profile_list = True
                     if profilelist != hashed_value:
                         log("Profiles have changes")
                         return True
+
                 elif hashed_item == "::HIDEPVR::":
                     checked_pvr_vis = True
                     if ADDON.getSetting("donthidepvr") != hashed_value:
                         log("PVR visibility setting has changed")
+
                 elif hashed_item == "::SHARED::":
                     # Check whether shared-menu setting has changed
                     checked_shared_menu = True
                     if ADDON.getSetting("shared_menu") != hashed_value:
                         log("Shared menu setting has changed")
                         return True
+
                 elif hashed_item == "::LANGUAGE::":
                     # We no longer need to rebuild on a system language change
                     pass
+
                 elif hashed_item == "::SKINBOOL::":
                     # A boolean we need to set (if profile matches)
                     if xbmc.getCondVisibility(hashed_value[0]):
@@ -242,12 +250,15 @@ class XMLFunctions:
                             xbmc.executebuiltin("Skin.SetBool(%s)" % (hashed_value[1]))
                         else:
                             xbmc.executebuiltin("Skin.Reset(%s)" % (hashed_value[1]))
+
                 elif hashed_item == "::FULLMENU::":
                     # Mark that we need to set the fullmenu bool
                     found_full_menu = True
+
                 elif hashed_item == "::SKINDIR::":
                     # Used to import menus from one skin to another, nothing to check here
                     pass
+
                 else:
                     try:
                         hexdigest = generate_file_hash(hashed_item)
@@ -275,9 +286,8 @@ class XMLFunctions:
 
         # If the skin or script version, or profile list, haven't been checked,
         # we need to rebuild the menu (most likely we're running an old version of the script)
-        if checked_kodi_ver is False or checked_skin_ver is False or \
-                checked_script_ver is False or checked_profile_list is False or \
-                checked_pvr_vis is False or checked_shared_menu is False:
+        if False in (checked_kodi_ver, checked_skin_ver, checked_script_ver,
+                     checked_profile_list, checked_pvr_vis, checked_shared_menu):
             return True
 
         # If we get here, the menu does not need to be rebuilt.
@@ -315,7 +325,8 @@ class XMLFunctions:
         for check_for_shortcut_override in check_for_shortcuts_overrides:
             if "property" not in check_for_shortcut_override.attrib:
                 continue
-                # Add this to the list of shortcuts we'll check for
+
+            # Add this to the list of shortcuts we'll check for
             self.check_for_shortcuts.append(
                 (check_for_shortcut_override.text.lower(),
                  check_for_shortcut_override.attrib.get("property"),
@@ -333,6 +344,7 @@ class XMLFunctions:
                 subtree.set("name", "skinshortcuts-submenu")
             else:
                 subtree.set("name", "skinshortcuts-submenu-%s" % str(level))
+
             if subtree not in submenu_trees:
                 submenu_trees.append(subtree)
 
@@ -360,6 +372,7 @@ class XMLFunctions:
                 new_check_for_shortcuts.append(
                     (check_for_shortcut[0], check_for_shortcut[1], "False")
                 )
+
             self.check_for_shortcuts = new_check_for_shortcuts
 
             # Clear any previous labelID's
@@ -383,7 +396,9 @@ class XMLFunctions:
                         .findall("shortcut"):
                     menuitems.append(node)
                     submenu_items.append(node)
+
                 full_menu = True
+
             else:
                 # Clear any skinstring marking that we're providing the whole menu
                 xbmc.executebuiltin("Skin.Reset(SkinShortcuts-FullMenu)")
@@ -403,6 +418,7 @@ class XMLFunctions:
             ratio_denominator = float(len(menuitems))
             if len(temple_object.other_templates) > 0:
                 ratio_denominator = ratio_denominator * 2.0
+
             percent = float(profile_percent) / ratio_denominator
 
             temple_object.percent = percent * (len(menuitems))
@@ -527,6 +543,7 @@ class XMLFunctions:
                             except:
                                 # There probably isn't a main menu
                                 pass
+
                         else:
                             try:
                                 has_submenu = ETree.SubElement(mainmenu_item_a, "property")
@@ -546,6 +563,7 @@ class XMLFunctions:
                         setprop_str = "SetProperty(submenuVisibility,%s,10000)" % \
                                       self.data_func.slugify(submenu_visibility_name,
                                                              convert_int=True)
+
                         for onclickelement in mainmenu_item_b.findall("onclick"):
                             if "condition" in onclickelement.attrib:
                                 onclickelement.set(
@@ -559,6 +577,7 @@ class XMLFunctions:
                                 newonclick = ETree.SubElement(mainmenu_item_b, "onclick")
                                 newonclick.text = setprop_str
                                 newonclick.set("condition", onclickelement.attrib.get("condition"))
+
                             else:
                                 onclickelement.set(
                                     "condition",
@@ -647,6 +666,7 @@ class XMLFunctions:
                     build_others = False
                     if item in submenu_items:
                         build_others = True
+
                     temple_object.parse_items(
                         "submenu", count, template_submenu_items, profile[2],
                         profile[1], "String.IsEqual(Container(%s).ListItem"
@@ -683,6 +703,7 @@ class XMLFunctions:
                         xbmc.executebuiltin("Skin.SetBool(%s)" % (check_for_shortcut[1]))
                     else:
                         xbmc.executebuiltin("Skin.Reset(%s)" % (check_for_shortcut[1]))
+
                 # Save this to the hashes file, so we can set it on profile changes
                 hashlist.append(["::SKINBOOL::", [profile[1], check_for_shortcut[1],
                                                   check_for_shortcut[2]]])
@@ -701,6 +722,7 @@ class XMLFunctions:
                     for id_element in item.findall("property"):
                         if id_element.attrib.get("name") == "id":
                             id_element.text = "$NUM[%s]" % (str(itemidmainmenu))
+
                     mainmenu_tree.append(item)
 
         # Build any 'Other' templates
@@ -781,6 +803,7 @@ class XMLFunctions:
         icon = item.find("override-icon")
         if icon is None:
             icon = item.find("icon")
+
         if icon is None:
             ETree.SubElement(newelement, "icon").text = "DefaultShortcut.png"
         else:
@@ -834,6 +857,7 @@ class XMLFunctions:
                         xbmc.executebuiltin("Skin.SetString(skinshortcuts-widget-%s,%s)" %
                                             (str(self.widget_count), prop[1]))
                         self.widget_count += 1
+
                 elif prop[0] == "background":
                     xbmc.executebuiltin("Skin.SetBool(skinshortcuts-background-%s)" % prop[1])
 
@@ -845,11 +869,13 @@ class XMLFunctions:
                                              "widgetTarget", "widgetPath", "widgetPlaylist"]
                         if prop[0] in widget_properties:
                             self.main_widget[prop[0]] = prop[1]
+
                     if "clonebackgrounds" in options:
                         background_properties = ["background", "backgroundName",
                                                  "backgroundPlaylist", "backgroundPlaylistName"]
                         if prop[0] in background_properties:
                             self.main_background[prop[0]] = prop[1]
+
                     if "cloneproperties" in options:
                         self.main_properties[prop[0]] = prop[1]
 
@@ -915,6 +941,7 @@ class XMLFunctions:
                 onclickelement.text = \
                     "RunScript(script.skinshortcuts,type=launchpvr&channel=%s)" % \
                     onclick.text.replace("pvr-channel://", "")
+
             elif onclick.text.startswith("ActivateWindow(") and SKIN_PATH in onclick.text:
                 # Skin-relative links
                 try:
@@ -933,6 +960,7 @@ class XMLFunctions:
                                               (action_parts[0], new_action, action_parts[2])
                 except:
                     pass
+
             else:
                 onclickelement.text = onclick.text
 
@@ -971,6 +999,7 @@ class XMLFunctions:
                                                         check_for_shortcut[1], "True"))
                     else:
                         new_check_for_shortcuts.append(check_for_shortcut)
+
                 self.check_for_shortcuts = new_check_for_shortcuts
 
         # Visibility
@@ -980,10 +1009,12 @@ class XMLFunctions:
                 visibility_element.text = "%s + [%s]" % (profile_visibility, visibility_condition)
             else:
                 visibility_element.text = visibility_condition
+
             is_submenu_element = ETree.SubElement(newelement, "property")
             is_submenu_element.set("name", "isSubmenu")
             is_submenu_element.text = "True"
             all_props["isSubmenu"] = is_submenu_element
+
         elif profile_visibility is not None:
             visibility_element = ETree.SubElement(newelement, "visible")
             visibility_element.text = profile_visibility
@@ -1011,12 +1042,14 @@ class XMLFunctions:
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.main_widget[key]
                     all_props[key] = additionalproperty
+
             if "clonebackgrounds" in options and len(list(self.main_background.keys())) != 0:
                 for key in list(self.main_background.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
                     additionalproperty.set("name", key)
                     additionalproperty.text = self.data_func.local(self.main_background[key])[1]
                     all_props[key] = additionalproperty
+
             if "cloneproperties" in options and len(list(self.main_properties.keys())) != 0:
                 for key in list(self.main_properties.keys()):
                     additionalproperty = ETree.SubElement(newelement, "property")
@@ -1060,6 +1093,7 @@ class XMLFunctions:
             if not property_label_id:
                 if property_name not in property_patterns:
                     property_patterns[property_name] = [property_pattern_element.text, False]
+
             elif property_label_id == label_id:
                 if property_name not in property_patterns or \
                         property_patterns[property_name][1] is False:
@@ -1075,6 +1109,7 @@ class XMLFunctions:
                 property_name = sub_element.get("name")
                 if property_name and sub_element.text:
                     property_replacements.append(("::%s::" % property_name, sub_element.text))
+
             elif sub_element.text:
                 property_replacements.append(("::%s::" % sub_element.tag, sub_element.text))
 
@@ -1085,6 +1120,7 @@ class XMLFunctions:
         for item in element.findall("property"):
             if property_name in item.attrib:
                 return True
+
         return False
 
     @staticmethod
