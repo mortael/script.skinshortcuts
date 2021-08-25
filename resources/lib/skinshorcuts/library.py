@@ -870,119 +870,127 @@ class LibraryFunctions:
     # ============================
 
     def common(self):
-        listitems = []
-
         # Videos, Movies, TV Shows, Live TV, Music, Music Videos, Pictures, Weather, Programs,
         # Play dvd, eject tray
         # Settings, File Manager, Profiles, System Info
-        listitems.append(self.create(["ActivateWindow(Videos)", "3", "32034", {
-            "icon": "DefaultVideo.png"
-        }]))
 
-        listitems.append(self.create(
-            ["ActivateWindow(Videos,videodb://movies/titles/,return)", "342", "32034", {
+        listitems = [
+            self.create(["ActivateWindow(Videos)", "3", "32034", {
+                "icon": "DefaultVideo.png"
+            }]),
+            self.create(["ActivateWindow(Videos,videodb://movies/titles/,return)", "342", "32034", {
                 "icon": "DefaultMovies.png"
-            }]
-        ))
-
-        listitems.append(self.create(
-            ["ActivateWindow(Videos,videodb://tvshows/titles/,return)", "20343", "32034", {
+            }]),
+            self.create(["ActivateWindow(Videos,videodb://tvshows/titles/,return)", "20343",
+                         "32034", {
+                             "icon": "DefaultTVShows.png"
+                         }]),
+            self.create(["ActivateWindow(TVGuide)", "32022", "32034", {
                 "icon": "DefaultTVShows.png"
-            }]
-        ))
-
-        listitems.append(self.create(["ActivateWindow(TVGuide)", "32022", "32034", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(RadioGuide)", "32087", "32034", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(Music)", "2", "32034", {
-            "icon": "DefaultMusicAlbums.png"
-        }]))
-
-        listitems.append(self.create(["PlayerControl(PartyMode)", "589", "32034", {
-            "icon": "DefaultMusicAlbums.png"
-        }]))
-
-        listitems.append(self.create(["PlayerControl(PartyMode(Video))", "32108", "32034", {
-            "icon": "DefaultMusicVideos.png"
-        }]))
-
-        listitems.append(self.create(
-            ["ActivateWindow(Videos,videodb://musicvideos/titles/,return)", "20389", "32034", {
+            }]),
+            self.create(["ActivateWindow(RadioGuide)", "32087", "32034", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["ActivateWindow(Music)", "2", "32034", {
+                "icon": "DefaultMusicAlbums.png"
+            }]),
+            self.create(["PlayerControl(PartyMode)", "589", "32034", {
+                "icon": "DefaultMusicAlbums.png"
+            }]),
+            self.create(["PlayerControl(PartyMode(Video))", "32108", "32034", {
                 "icon": "DefaultMusicVideos.png"
-            }]
-        ))
-
-        listitems.append(self.create(["ActivateWindow(Pictures)", "10002", "32034", {
-            "icon": "DefaultPicture.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(Weather)", "12600", "32034", {
-            "icon": "Weather.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(Programs,Addons,return)", "10001", "32034", {
-            "icon": "DefaultProgram.png"
-        }]))
-
-        listitems.append(self.create(["PlayDVD", "32032", "32034", {
-            "icon": "DefaultDVDFull.png"
-        }]))
-
-        listitems.append(self.create(["EjectTray()", "32033", "32034", {
-            "icon": "DefaultDVDFull.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(Settings)", "10004", "32034", {
-            "icon": "Settings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(FileManager)", "7", "32034", {
-            "icon": "DefaultFolder.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(Profiles)", "13200", "32034", {
-            "icon": "UnknownUser.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(SystemInfo)", "10007", "32034", {
-            "icon": "SystemInfo.png"
-        }]))
-
-        listitems.append(self.create(
-            ["ActivateWindow(EventLog,events://,return)", "14111", "32034", {
+            }]),
+            self.create(["ActivateWindow(Videos,videodb://musicvideos/titles/,return)", "20389",
+                         "32034", {
+                             "icon": "DefaultMusicVideos.png"
+                         }]),
+            self.create(["ActivateWindow(Pictures)", "10002", "32034", {
+                "icon": "DefaultPicture.png"
+            }]),
+            self.create(["ActivateWindow(Weather)", "12600", "32034", {
+                "icon": "Weather.png"
+            }]),
+            self.create(["ActivateWindow(Programs,Addons,return)", "10001", "32034", {
+                "icon": "DefaultProgram.png"
+            }]),
+            self.create(["PlayDVD", "32032", "32034", {
+                "icon": "DefaultDVDFull.png"
+            }]),
+            self.create(["EjectTray()", "32033", "32034", {
+                "icon": "DefaultDVDFull.png"
+            }]),
+            self.create(["ActivateWindow(Settings)", "10004", "32034", {
+                "icon": "Settings.png"
+            }]),
+            self.create(["ActivateWindow(FileManager)", "7", "32034", {
+                "icon": "DefaultFolder.png"
+            }]),
+            self.create(["ActivateWindow(Profiles)", "13200", "32034", {
+                "icon": "UnknownUser.png"
+            }]),
+            self.create(["ActivateWindow(SystemInfo)", "10007", "32034", {
+                "icon": "SystemInfo.png"
+            }]),
+            self.create(["ActivateWindow(EventLog,events://,return)", "14111", "32034", {
                 "icon": "Events.png"
-            }]
-        ))
-
-        listitems.append(self.create(["ActivateWindow(Favourites)", "1036", "32034", {
-            "icon": "Favourites.png"
-        }]))
-
+            }]),
+            self.create(["ActivateWindow(Favourites)", "1036", "32034", {
+                "icon": "Favourites.png"
+            }]),
+        ]
         self.add_to_dictionary("common", listitems)
 
     def more(self):
-        listitems = []
-
-        listitems.append(self.create(["Reboot", "13013", "32054", {
-            "icon": "Reboot.png"
-        }]))
-
-        listitems.append(self.create(["ShutDown", "13005", "32054", {
-            "icon": "Shutdown.png"
-        }]))
-
-        listitems.append(self.create(["PowerDown", "13016", "32054", {
-            "icon": "PowerDown.png"
-        }]))
-
-        listitems.append(self.create(["Quit", "13009", "32054", {
-            "icon": "Quit.png"
-        }]))
+        listitems = [
+            self.create(["Reboot", "13013", "32054", {
+                "icon": "Reboot.png"
+            }]),
+            self.create(["ShutDown", "13005", "32054", {
+                "icon": "Shutdown.png"
+            }]),
+            self.create(["PowerDown", "13016", "32054", {
+                "icon": "PowerDown.png"
+            }]),
+            self.create(["Quit", "13009", "32054", {
+                "icon": "Quit.png"
+            }]),
+            self.create(["Hibernate", "13010", "32054", {
+                "icon": "Hibernate.png"
+            }]),
+            self.create(["Suspend", "13011", "32054", {
+                "icon": "Suspend.png"
+            }]),
+            self.create(["AlarmClock(shutdowntimer,XBMC.Shutdown())", "19026", "32054", {
+                "icon": "ShutdownTimer.png"
+            }]),
+            self.create(["CancelAlarm(shutdowntimer)", "20151", "32054", {
+                "icon": "CancelShutdownTimer.png"
+            }]),
+            self.create(["ActivateScreensaver", "360", "32054", {
+                "icon": "ActivateScreensaver.png"
+            }]),
+            self.create(["Minimize", "13014", "32054", {
+                "icon": "Minimize.png"
+            }]),
+            self.create(["Mastermode", "20045", "32054", {
+                "icon": "Mastermode.png"
+            }]),
+            self.create(["RipCD", "600", "32054", {
+                "icon": "RipCD.png"
+            }]),
+            self.create(["UpdateLibrary(video,,true)", "32046", "32054", {
+                "icon": "UpdateVideoLibrary.png"
+            }]),
+            self.create(["UpdateLibrary(music,,true)", "32047", "32054", {
+                "icon": "UpdateMusicLibrary.png"
+            }]),
+            self.create(["CleanLibrary(video,true)", "32055", "32054", {
+                "icon": "CleanVideoLibrary.png"
+            }]),
+            self.create(["CleanLibrary(music,true)", "32056", "32054", {
+                "icon": "CleanMusicLibrary.png"
+            }]),
+        ]
 
         if (xbmc.getCondVisibility("System.Platform.Windows") or
             xbmc.getCondVisibility("System.Platform.Linux")) and \
@@ -991,140 +999,74 @@ class LibraryFunctions:
                 "icon": "RestartApp.png"
             }]))
 
-        listitems.append(self.create(["Hibernate", "13010", "32054", {
-            "icon": "Hibernate.png"
-        }]))
-
-        listitems.append(self.create(["Suspend", "13011", "32054", {
-            "icon": "Suspend.png"
-        }]))
-
-        listitems.append(self.create(
-            ["AlarmClock(shutdowntimer,XBMC.Shutdown())", "19026", "32054", {
-                "icon": "ShutdownTimer.png"
-            }]
-        ))
-
-        listitems.append(self.create(["CancelAlarm(shutdowntimer)", "20151", "32054", {
-            "icon": "CancelShutdownTimer.png"
-        }]))
-
         if xbmc.getCondVisibility("System.HasLoginScreen"):
             listitems.append(self.create(["System.LogOff", "20126", "32054", {
                 "icon": "LogOff.png"
             }]))
 
-        listitems.append(self.create(["ActivateScreensaver", "360", "32054", {
-            "icon": "ActivateScreensaver.png"
-        }]))
-
-        listitems.append(self.create(["Minimize", "13014", "32054", {
-            "icon": "Minimize.png"
-        }]))
-
-        listitems.append(self.create(["Mastermode", "20045", "32054", {
-            "icon": "Mastermode.png"
-        }]))
-
-        listitems.append(self.create(["RipCD", "600", "32054", {
-            "icon": "RipCD.png"
-        }]))
-
-        listitems.append(self.create(["UpdateLibrary(video,,true)", "32046", "32054", {
-            "icon": "UpdateVideoLibrary.png"
-        }]))
-
-        listitems.append(self.create(["UpdateLibrary(music,,true)", "32047", "32054", {
-            "icon": "UpdateMusicLibrary.png"
-        }]))
-
-        listitems.append(self.create(["CleanLibrary(video,true)", "32055", "32054", {
-            "icon": "CleanVideoLibrary.png"
-        }]))
-
-        listitems.append(self.create(["CleanLibrary(music,true)", "32056", "32054", {
-            "icon": "CleanMusicLibrary.png"
-        }]))
-
         self.add_to_dictionary("commands", listitems)
 
     def settings(self):
-        listitems = []
-
-        listitems.append(self.create(["ActivateWindow(Settings)", "10004", "10004", {
-            "icon": "Settings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(PVRSettings)", "19020", "10004", {
-            "icon": "PVRSettings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(AddonBrowser)", "24001", "10004", {
-            "icon": "DefaultAddon.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(ServiceSettings)", "14036", "10004", {
-            "icon": "ServiceSettings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(SystemSettings)", "13000", "10004", {
-            "icon": "SystemSettings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(SkinSettings)", "20077", "10004", {
-            "icon": "SkinSettings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(PlayerSettings)", "14200", "10004", {
-            "icon": "PlayerSettings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(LibrarySettings)", "14202", "10004", {
-            "icon": "LibrarySettings.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(InterfaceSettings)", "14206", "10004", {
-            "icon": "InterfaceSettings.png"
-        }]))
+        listitems = [
+            self.create(["ActivateWindow(Settings)", "10004", "10004", {
+                "icon": "Settings.png"
+            }]),
+            self.create(["ActivateWindow(PVRSettings)", "19020", "10004", {
+                "icon": "PVRSettings.png"
+            }]),
+            self.create(["ActivateWindow(AddonBrowser)", "24001", "10004", {
+                "icon": "DefaultAddon.png"
+            }]),
+            self.create(["ActivateWindow(ServiceSettings)", "14036", "10004", {
+                "icon": "ServiceSettings.png"
+            }]),
+            self.create(["ActivateWindow(SystemSettings)", "13000", "10004", {
+                "icon": "SystemSettings.png"
+            }]),
+            self.create(["ActivateWindow(SkinSettings)", "20077", "10004", {
+                "icon": "SkinSettings.png"
+            }]),
+            self.create(["ActivateWindow(PlayerSettings)", "14200", "10004", {
+                "icon": "PlayerSettings.png"
+            }]),
+            self.create(["ActivateWindow(LibrarySettings)", "14202", "10004", {
+                "icon": "LibrarySettings.png"
+            }]),
+            self.create(["ActivateWindow(InterfaceSettings)", "14206", "10004", {
+                "icon": "InterfaceSettings.png"
+            }]),
+        ]
 
         self.add_to_dictionary("settings", listitems)
 
     def pvrlibrary(self):
         # PVR
-        listitems = []
-
-        listitems.append(self.create(["ActivateWindow(TVChannels)", "19019", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(TVGuide)", "22020", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(TVRecordings)", "19163", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(TVTimers)", "19040", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(TVTimerRules)", "19138", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(TVSearch)", "137", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["PlayPvrTV", "32066", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
-        listitems.append(self.create(["PlayPvr", "32068", "32017", {
-            "icon": "DefaultTVShows.png"
-        }]))
-
+        listitems = [
+            self.create(["ActivateWindow(TVChannels)", "19019", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["ActivateWindow(TVGuide)", "22020", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["ActivateWindow(TVRecordings)", "19163", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["ActivateWindow(TVTimers)", "19040", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["ActivateWindow(TVTimerRules)", "19138", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["ActivateWindow(TVSearch)", "137", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["PlayPvrTV", "32066", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+            self.create(["PlayPvr", "32068", "32017", {
+                "icon": "DefaultTVShows.png"
+            }]),
+        ]
         self.add_to_dictionary("pvr", listitems)
 
         # Add tv channels
@@ -1165,40 +1107,33 @@ class LibraryFunctions:
         self.add_to_dictionary("pvr-radio", listitems)
 
     def radiolibrary(self):
-        listitems = []
-
         # PVR
-        listitems.append(self.create(["ActivateWindow(RadioChannels)", "19019", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(RadioGuide)", "22020", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(RadioRecordings)", "19163", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(RadioTimers)", "19040", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(RadioTimerRules)", "19138", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["ActivateWindow(RadioSearch)", "137", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["PlayPvrRadio", "32067", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
-
-        listitems.append(self.create(["PlayPvr", "32068", "32087", {
-            "icon": "DefaultAudio.png"
-        }]))
+        listitems = [
+            self.create(["ActivateWindow(RadioChannels)", "19019", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["ActivateWindow(RadioGuide)", "22020", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["ActivateWindow(RadioRecordings)", "19163", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["ActivateWindow(RadioTimers)", "19040", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["ActivateWindow(RadioTimerRules)", "19138", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["ActivateWindow(RadioSearch)", "137", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["PlayPvrRadio", "32067", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+            self.create(["PlayPvr", "32068", "32087", {
+                "icon": "DefaultAudio.png"
+            }]),
+        ]
 
         self.add_to_dictionary("radio", listitems)
 
