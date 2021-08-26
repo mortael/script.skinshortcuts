@@ -43,6 +43,7 @@ jobs:
 
       - name: Comment on the PR
         uses: mshick/add-pr-comment@v1
+        if: ${{ steps.check.outputs.close }}
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]'
