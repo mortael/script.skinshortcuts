@@ -273,7 +273,7 @@ class XMLFunctions:
                         log("Failed to compare hash of Item: %s Value: %s" %
                             (item, value))
 
-            if hashed_value is not None:
+            if hashed_value is None:
                 if xbmcvfs.exists(hashed_item):
                     log("New file detected %s" % hashed_item)
                     return True
