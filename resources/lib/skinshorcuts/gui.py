@@ -1469,23 +1469,23 @@ class GUI(xbmcgui.WindowXMLDialog):
                 restore_items = []
 
                 # Save the labelID list from DATA
-                original_label_id_list = self.data_func.labelIDList
-                self.data_func.labelIDList = []
+                original_label_id_list = self.data_func.label_id_list
+                self.data_func.label_id_list = []
 
                 # Get a list of all shortcuts that were originally in the menu and
-                # restore labelIDList
+                # restore label_id_list
                 self.data_func.clear_label_id()
                 shortcuts = self.data_func.get_shortcuts(self.group,
                                                          default_group=self.default_group,
                                                          defaults_only=True)
-                self.data_func.labelIDList = original_label_id_list
+                self.data_func.label_id_list = original_label_id_list
 
                 for shortcut in shortcuts.getroot().findall("shortcut"):
                     # Parse the shortcut
                     item = self._parse_shortcut(shortcut)
 
                     # Check if a shortcuts labelID is already in the list
-                    if item[1].getProperty("labelID") not in self.data_func.labelIDList:
+                    if item[1].getProperty("labelID") not in self.data_func.label_id_list:
                         restore_pretty.append(self.lib_func.create(
                             ["", item[1].getLabel(), item[1].getLabel2(), {
                                 "icon": item[1].getProperty("icon")
@@ -1510,7 +1510,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                 # We now have our shortcut to return. Add it to self.all_list_items and labelID list
                 self.all_list_items.append(restore_items[restore_shortcut])
-                self.data_func.labelIDList.append(
+                self.data_func.label_id_list.append(
                     restore_items[restore_shortcut].getProperty("labelID")
                 )
 
