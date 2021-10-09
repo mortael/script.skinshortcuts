@@ -217,3 +217,5 @@ pip-log.txt
 #SiLVO
 *.sublime-project
 *.sublime-workspace
+
+.idea
