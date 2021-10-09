@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: noreply@noreply.com\n"
+"Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2021-08-22 19:29+0000\n"
-"Last-Translator: Christian Gade <gade@kodi.tv>\n"
+"PO-Revision-Date: 2021-10-09 11:30+0000\n"
+"Last-Translator: nixxo <nixxo@protonmail.com>\n"
 "Language-Team: Italian <https://kodi.weblate.cloud/projects/kodi-add-ons-scripts/script-skinshortcuts/it_it/>\n"
 "Language: it_it\n"
 "MIME-Version: 1.0\n"
@@ -115,7 +115,7 @@ msgstr "Timer"
 
 msgctxt "#32024"
 msgid "Custom item"
-msgstr ""
+msgstr "Voce personalizzata"
 
 msgctxt "#32025"
 msgid "Set label"
@@ -131,7 +131,7 @@ msgstr "Azione personalizzata"
 
 msgctxt "#32028"
 msgid "Restore menu items"
-msgstr ""
+msgstr "Ripristina voci menù"
 
 msgctxt "#32029"
 msgid "Common"
@@ -155,7 +155,7 @@ msgstr "Espelli Vassoio"
 
 msgctxt "#32034"
 msgid "Common menu item"
-msgstr ""
+msgstr "Voci menù comuni"
 
 msgctxt "#32035"
 msgid "Choose which items to display on the Main Menu"
@@ -167,7 +167,7 @@ msgstr "Scegli una scorciatoia per il menu %s"
 
 msgctxt "#32037"
 msgid "Reset all menu items"
-msgstr ""
+msgstr "Ripristina tutte le voci menù"
 
 msgctxt "#32038"
 msgid "Are you sure you want to reset all menu items back to default?"
@@ -259,7 +259,7 @@ msgstr "Skin della Playlist"
 
 msgctxt "#32060"
 msgid "What do you want to do with the playlist?"
-msgstr ""
+msgstr "Cosa fare con la playlist?"
 
 msgctxt "#32061"
 msgid "Display"
@@ -271,15 +271,15 @@ msgstr "Guarda"
 
 msgctxt "#32063"
 msgid "Getting directory listing..."
-msgstr "Ottenimento lista dierectory......"
+msgstr "Ottenimento lista directory......"
 
 msgctxt "#32064"
 msgid "No available items"
-msgstr ""
+msgstr "Nessuna voce disponibile"
 
 msgctxt "#32065"
 msgid "There are no available items to choose from for the category that you choose."
-msgstr ""
+msgstr "Non ci sono voci disponibili per la categoria scelta."
 
 msgctxt "#32066"
 msgid "Last TV channel"
@@ -499,23 +499,23 @@ msgstr "Widget predefiniti"
 
 msgctxt "#32120"
 msgid "Never hide PVR shortcuts"
-msgstr ""
+msgstr "Mai nascondere scorciatoia PVR"
 
 msgctxt "#32121"
 msgid "Share menu between compatible skins"
-msgstr ""
+msgstr "Condividi menù tra le skin compatibili"
 
 msgctxt "#32122"
 msgid "Enable debug logging"
-msgstr ""
+msgstr "Abilita logging debug"
 
 msgctxt "#32123"
 msgid "Games"
-msgstr ""
+msgstr "Giochi"
 
 msgctxt "#32124"
 msgid "This addon is for skin developers, and requires skin support"
-msgstr ""
+msgstr "Questo addon è per gli sviluppatori di skin, e richiede il supporto della skin"
 
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"
