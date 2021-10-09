@@ -289,11 +289,11 @@ class Script:
         self.WIDGETTARGET = params.get("skinWidgetTarget", None)
         self.WIDGETPATH = params.get("skinWidgetPath", None)
 
-        if self.CUSTOM == "True" or self.CUSTOM == "true":
+        if self.CUSTOM in ("True", "true"):
             self.CUSTOM = True
         else:
             self.CUSTOM = False
-        if self.NONE == "True" or self.NONE == "true":
+        if self.NONE in ("True", "true"):
             self.NONE = True
         else:
             self.NONE = False
