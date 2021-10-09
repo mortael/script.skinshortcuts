@@ -1,17 +1,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: noreply@noreply.com\n"
+"Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2017-02-09 14:34+0100\n"
-"Last-Translator: Kodi Translation Team\n"
-"Language-Team: Polish\n"
-"Language: pl\n"
+"PO-Revision-Date: 2021-09-05 13:30+0000\n"
+"Last-Translator: Marek Adamski <fevbew@wp.pl>\n"
+"Language-Team: Polish <https://kodi.weblate.cloud/projects/kodi-add-ons-scripts/script-skinshortcuts/pl_pl/>\n"
+"Language: pl_pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.8.11\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "Addon Description"
 msgid "Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)"
@@ -175,7 +175,7 @@ msgstr "Czy jesteś pewien, że chcesz przywrócić wszystkie domyślne pozycje 
 
 msgctxt "#32039"
 msgid "Pick widget for %s"
-msgstr "Wybór gadżetu dla %s"
+msgstr "Wybór widżetu dla %s"
 
 msgctxt "#32040"
 msgid "Playlist"
@@ -415,7 +415,7 @@ msgstr "Zapisywanie menu..."
 
 msgctxt "#32099"
 msgid "Widget"
-msgstr "Gadżet"
+msgstr "Widżet"
 
 msgctxt "#32100"
 msgid "Use as widget"
@@ -487,32 +487,32 @@ msgstr "Skóra, która używasz nie obsługuje dodawania pozycji do menu startow
 
 msgctxt "#32117"
 msgid "Disable shortcut"
-msgstr ""
+msgstr "Wyłącz skrót"
 
 msgctxt "#32118"
 msgid "Smart shortcuts"
-msgstr ""
+msgstr "Inteligentne skróty"
 
 msgctxt "#32119"
 msgid "Default widgets"
-msgstr ""
+msgstr "Domyślne widżety"
 
 msgctxt "#32120"
 msgid "Never hide PVR shortcuts"
-msgstr ""
+msgstr "Nigdy nie ukrywaj skrótów PVR"
 
 msgctxt "#32121"
 msgid "Share menu between compatible skins"
-msgstr ""
+msgstr "Udostępnij menu między kompatybilnymi skórami"
 
 msgctxt "#32122"
 msgid "Enable debug logging"
-msgstr ""
+msgstr "Rejestruj komunikaty diagnostyczne"
 
 msgctxt "#32123"
 msgid "Games"
-msgstr ""
+msgstr "Gry"
 
 msgctxt "#32124"
 msgid "This addon is for skin developers, and requires skin support"
-msgstr ""
+msgstr "Ten dodatek jest przeznaczony dla twórców skór i wymaga obsługi skór"
