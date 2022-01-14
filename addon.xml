@@ -9,6 +9,7 @@
     <extension point="xbmc.addon.metadata">
         <news>
 [fix] some widgets not working |contrib: bumpaneer|
+[lang] update translations from Weblate
         </news>
         <platform>all</platform>
         <license>GPL-2.0-only</license>
