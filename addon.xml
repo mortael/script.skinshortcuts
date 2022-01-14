@@ -9,6 +9,7 @@
     <extension point="xbmc.addon.metadata">
         <news>
 [fix] some widgets not working |contrib: bumpaneer|
+[fix] fix configuration of widgets/actions on some skins |contrib: eXoterr|
 [lang] update translations from Weblate
         </news>
         <platform>all</platform>
