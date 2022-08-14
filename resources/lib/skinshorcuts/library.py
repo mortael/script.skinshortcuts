@@ -1393,7 +1393,7 @@ class LibraryFunctions:
         for favourite in listing:
             name = favourite.attributes['name'].nodeValue
             path = favourite.childNodes[0].nodeValue
-            if ('RunScript' not in path) and ('StartAndroidActivity' not in path) and \
+            if path.lower().startswith('activatewindow') and \
                     not path.endswith(',return)'):
                 path = path.rstrip(')')
                 path = '%s,return)' % path
