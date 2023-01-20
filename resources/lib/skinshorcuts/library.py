@@ -1048,7 +1048,7 @@ class LibraryFunctions:
             self.create(["ActivateWindow(TVGuide)", "22020", "32017", {
                 "icon": "DefaultTVShows.png"
             }]),
-            self.create(["ActivateWindow(TVRecordings)", "19163", "32017", {
+            self.create(["ActivateWindow(TVRecordings)", "19017", "32017", {
                 "icon": "DefaultTVShows.png"
             }]),
             self.create(["ActivateWindow(TVTimers)", "19040", "32017", {
@@ -1115,7 +1115,7 @@ class LibraryFunctions:
             self.create(["ActivateWindow(RadioGuide)", "22020", "32087", {
                 "icon": "DefaultAudio.png"
             }]),
-            self.create(["ActivateWindow(RadioRecordings)", "19163", "32087", {
+            self.create(["ActivateWindow(RadioRecordings)", "19017", "32087", {
                 "icon": "DefaultAudio.png"
             }]),
             self.create(["ActivateWindow(RadioTimers)", "19040", "32087", {
