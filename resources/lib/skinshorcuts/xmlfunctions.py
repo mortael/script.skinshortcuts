@@ -66,8 +66,11 @@ class XMLFunctions:
         profiles_xml = xbmcvfs.translatePath('special://userdata/profiles.xml')
         tree = None
         if xbmcvfs.exists(profiles_xml):
-            contents = read_file(profiles_xml)
-            tree = ETree.fromstring(contents)
+            try:
+                contents = read_file(profiles_xml)
+                tree = ETree.fromstring(contents)
+            except FileNotFoundError:
+                pass
 
         profilelist = []
         if tree is not None:
