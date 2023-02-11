@@ -2475,7 +2475,7 @@ class LibraryFunctions:
         # Show select dialog
         _ = self._allow_install_widget_provider(None, is_widget, self.allow_widget_install)
         show_dialog = ShowDialog("DialogSelect.xml", CWD, listing=available_shortcuts,
-                                 windowtitle=window_title)
+                                 window_title=window_title)
         show_dialog.doModal()
         number = show_dialog.result
         del show_dialog
