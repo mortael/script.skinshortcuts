@@ -89,7 +89,7 @@ class XMLFunctions:
                 profilelist.append([path, "String.IsEqual(System.ProfileName,%s)" % name, name])
 
         else:
-            profilelist = [["special://masterprofile", None]]
+            profilelist = [["special://masterprofile", None, 'masterprofile']]
 
         if not self.shouldwerun(profilelist):
             log("Menu is up to date")
