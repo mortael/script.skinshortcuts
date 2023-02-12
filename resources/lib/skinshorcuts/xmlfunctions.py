@@ -89,7 +89,10 @@ class XMLFunctions:
                 profilelist.append([path, "String.IsEqual(System.ProfileName,%s)" % name, name])
 
         else:
-            profilelist = [["special://masterprofile", None, 'masterprofile']]
+            name = xbmc.getInfoLabel("System.ProfileName")
+            profilelist = [[xbmcvfs.translatePath("special://masterprofile/"),
+                            "String.IsEqual(System.ProfileName,%s)" % name,
+                            name]]
 
         if not self.shouldwerun(profilelist):
             log("Menu is up to date")
