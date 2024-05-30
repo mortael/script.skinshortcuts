@@ -968,10 +968,7 @@ class DataFunctions:
             return self.node_func.get_visibility(path[1])
 
         # Audio node visibility - Isengard and earlier
-        if action.startswith("activatewindow(musiclibrary,musicdb://") or \
-                action.startswith("activatewindow(10502,musicdb://") or \
-                action.startswith("activatewindow(musiclibrary,library://music/") or \
-                action.startswith("activatewindow(10502,library://music/"):
+        if action.startswith(("activatewindow(musiclibrary,musicdb://", "activatewindow(10502,musicdb://", "activatewindow(musiclibrary,library://music/", "activatewindow(10502,library://music/")):
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
@@ -981,8 +978,7 @@ class DataFunctions:
         # Audio node visibility - Additional checks for Jarvis and later
         # (Note when cleaning up in the future, some of the Isengard checks -
         # those with window 10502 - are still valid...)
-        if action.startswith("activatewindow(music,musicdb://") or \
-                action.startswith("activatewindow(music,library://music/"):
+        if action.startswith(("activatewindow(music,musicdb://", "activatewindow(music,library://music/")):
             path = action.split(",")
             if path[1].endswith(")"):
                 path[1] = path[1][:-1]
@@ -1033,7 +1029,7 @@ class DataFunctions:
         if action == "activatewindow(weather)":
             return "!String.IsEmpty(Weather.Plugin)"
 
-        if action.startswith("activatewindowandfocus(mypvr") or action.startswith("playpvr") and \
+        if action.startswith(("activatewindowandfocus(mypvr", "playpvr")) and \
                 not ADDON.getSettingBool("donthidepvr"):
             return "PVR.HasTVChannels"
 
@@ -1050,8 +1046,7 @@ class DataFunctions:
         if action.startswith("activatewindow(videos,recentlyaddedmovies"):
             return "Library.HasContent(Movies)"
 
-        if action.startswith("activatewindow(videos,tvshow") or \
-                action.startswith("activatewindow(videos,tvshow"):
+        if action.startswith(("activatewindow(videos,tvshow",)):
             return "Library.HasContent(TVShows)"
 
         if action.startswith("activatewindow(videos,recentlyaddedepisodes"):

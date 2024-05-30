@@ -380,7 +380,7 @@ class Script:
                         if is_shared:
                             delete_file = True
                         elif file.startswith(SKIN_DIR) and \
-                                (file.endswith(".properties") or file.endswith(".DATA.xml")):
+                                file.endswith((".properties", ".DATA.xml")):
                             delete_file = True
 
                         # if file != "settings.xml" and ( not isShared or

@@ -1999,8 +1999,7 @@ class LibraryFunctions:
                 return self.explorer(history, history[len(history) - 1], label, thumbnail,
                                      item_type, is_widget=is_widget)
 
-            if selected_action.startswith("ActivateWindow(") or \
-                    selected_action.startswith("$INFO"):
+            if selected_action.startswith(("ActivateWindow(", "$INFO")):
                 # The user wants to create a shortcut to a specific shortcut listed
                 listitem = listings[selected_item]
 

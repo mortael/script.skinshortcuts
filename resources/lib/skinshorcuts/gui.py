@@ -1856,7 +1856,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                         virtual_image = key[0]
 
                     label = key[1]
-                    if label.startswith("$INFO") or label.startswith("$VAR"):
+                    if label.startswith(("$INFO", "$VAR")):
                         label = xbmc.getInfoLabel(label)
 
                     if default_background == key[0]:
@@ -2330,9 +2330,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
                         if "label" in elem.attrib:
                             label_value = elem.attrib.get("label")
-                            if label_value.startswith("$INFO") or \
-                                    label_value.startswith("$VAR") or \
-                                    label_value.startswith("$NUMBER"):
+                            if label_value.startswith(("$INFO", "$VAR", "$NUMBER")):
                                 property_label.append(xbmc.getInfoLabel(label_value))
                                 property_pretty.append(
                                     self.lib_func.create(
