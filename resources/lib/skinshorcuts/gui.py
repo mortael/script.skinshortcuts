@@ -36,6 +36,7 @@ from .constants import SKIN_SHORTCUTS_PATH
 from .property_utils import has_fallback_property
 from .property_utils import read_properties
 from .property_utils import write_properties
+import defusedxml.ElementTree
 
 ACTION_CANCEL_DIALOG = (9, 10, 92, 216, 247, 257, 275, 61467, 61448,)
 ACTION_CONTEXT_MENU = (117,)
@@ -810,7 +811,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                                 # We're copying the file (actually, we'll re-write the file without
                                 # any LOCKED elements and with icons/thumbs
                                 # adjusted to absolute paths)
-                                newtree = ETree.parse(path[0])
+                                newtree = defusedxml.ElementTree.parse(path[0])
                                 for newnode in newtree.getroot().findall("shortcut"):
                                     search_node = newnode.find("locked")
                                     if search_node is not None:
