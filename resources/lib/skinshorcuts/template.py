@@ -18,6 +18,7 @@ from simpleeval import simple_eval
 
 from .common import log
 from .constants import SKIN_SHORTCUTS_PATH
+import defusedxml.ElementTree
 
 
 class Template:
@@ -27,7 +28,7 @@ class Template:
         self.other_templates = []
 
         try:
-            self.tree = ETree.parse(self.templatepath)
+            self.tree = defusedxml.ElementTree.parse(self.templatepath)
 
             log("Loaded template.xml file")
 
