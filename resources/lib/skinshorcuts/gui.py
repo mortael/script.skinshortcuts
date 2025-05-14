@@ -9,7 +9,6 @@
 import _thread as thread
 import ast
 import calendar
-import random
 import xml.etree.ElementTree as ETree
 from time import gmtime
 from traceback import print_exc
@@ -36,6 +35,7 @@ from .constants import SKIN_SHORTCUTS_PATH
 from .property_utils import has_fallback_property
 from .property_utils import read_properties
 from .property_utils import write_properties
+import secrets
 
 ACTION_CANCEL_DIALOG = (9, 10, 92, 216, 247, 257, 275, 61467, 61448,)
 ACTION_CONTEXT_MENU = (117,)
@@ -734,7 +734,7 @@ class GUI(xbmcgui.WindowXMLDialog):
                 if len(label_id_changes) != 1:
                     for idx in range(1, len(label_id_changes)):
                         if label_id_changes[idx][0] == label_id_to:
-                            temp_location = str(random.randrange(0, 9999999999999999))
+                            temp_location = str(secrets.SystemRandom().randrange(0, 9999999999999999))
                             label_id_changes[0][1] = temp_location
                             label_id_changes.append([temp_location, label_id_to, default_id_from])
                             label_id_to = temp_location
