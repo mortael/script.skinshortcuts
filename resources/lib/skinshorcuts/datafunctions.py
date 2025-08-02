@@ -31,6 +31,7 @@ from .constants import SKIN_DIR
 from .constants import SKIN_SHORTCUTS_PATH
 from .hash_utils import read_hashes
 from .property_utils import read_properties
+import defusedxml.ElementTree
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile(r'&(%s);' % '|'.join(name2codepoint))
@@ -177,7 +178,7 @@ class DataFunctions:
 
             if xbmcvfs.exists(path):
                 try:
-                    tree = ETree.parse(path)
+                    tree = defusedxml.ElementTree.parse(path)
                 except:
                     log("Failed attempt to load file %s" % path)
                     continue
@@ -533,7 +534,7 @@ class DataFunctions:
             return self.overrides["script"]
 
         try:
-            tree = ETree.parse(self.default_overrides_file)
+            tree = defusedxml.ElementTree.parse(self.default_overrides_file)
             self.overrides["script"] = tree
             return tree
         except:
@@ -550,7 +551,7 @@ class DataFunctions:
             return self.overrides["skin"]
 
         try:
-            tree = ETree.parse(self.skin_overrides_file)
+            tree = defusedxml.ElementTree.parse(self.skin_overrides_file)
             self.overrides["skin"] = tree
             return tree
         except:
@@ -569,7 +570,7 @@ class DataFunctions:
         override_path = os.path.join(profile_dir, "overrides.xml")
         self.hashable.add(override_path)
         try:
-            tree = ETree.parse(xbmcvfs.translatePath(override_path))
+            tree = defusedxml.ElementTree.parse(xbmcvfs.translatePath(override_path))
             self.overrides["user"] = tree
             return tree
         except:
@@ -778,7 +779,7 @@ class DataFunctions:
         self.hashable.add(path)
 
         if xbmcvfs.exists(path):
-            tree = ETree.parse(path)
+            tree = defusedxml.ElementTree.parse(path)
             for node in tree.getroot().findall("shortcut"):
                 label = self.local(node.find("label").text)[3].replace(" ", "").lower()
                 action = node.find("action.text")

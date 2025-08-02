@@ -12,7 +12,6 @@ import xml.etree.ElementTree as ETree
 from traceback import print_exc
 from urllib.parse import unquote
 from urllib.request import url2pathname
-from xml.dom.minidom import parse
 
 import xbmc
 import xbmcgui
@@ -31,6 +30,8 @@ from .constants import KODI_PATH
 from .constants import KODI_VERSION
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
+import defusedxml.ElementTree
+import defusedxml.minidom
 
 
 def kodiwalk(path, string_force=False):
@@ -1239,7 +1240,7 @@ class LibraryFunctions:
 
                     if playlist.endswith('.xsp'):
                         contents_data = read_file(playlistfile)
-                        xmldata = ETree.fromstring(contents_data)
+                        xmldata = defusedxml.ElementTree.fromstring(contents_data)
                         media_type = "unknown"
                         try:
                             iterator = xmldata.iter()
@@ -1351,7 +1352,7 @@ class LibraryFunctions:
 
                 if playlist.endswith('-randomversion.xsp'):
                     contents_data = read_file(playlistfile)
-                    xmldata = ETree.fromstring(contents_data)
+                    xmldata = defusedxml.ElementTree.fromstring(contents_data)
                     try:
                         iterator = xmldata.iter()
                     except:
@@ -1381,7 +1382,7 @@ class LibraryFunctions:
 
         fav_file = xbmcvfs.translatePath('special://profile/favourites.xml')
         if xbmcvfs.exists(fav_file):
-            doc = parse(fav_file)
+            doc = defusedxml.minidom.parse(fav_file)
             listing = doc.documentElement.getElementsByTagName('favourite')
 
         else:
@@ -1539,7 +1540,7 @@ class LibraryFunctions:
     def _has_plugin_entry_point(path):
         # Check if an addon has a plugin entry point by parsing its addon.xml file
         try:
-            tree = ETree.parse(os.path.join(path, "addon.xml")).getroot()
+            tree = defusedxml.ElementTree.parse(os.path.join(path, "addon.xml")).getroot()
             for extension in tree.findall("extension"):
                 if "point" in extension.attrib and \
                         extension.attrib.get("point") == "xbmc.python.pluginsource":
@@ -2386,7 +2387,7 @@ class LibraryFunctions:
                 return
 
             # Load the tree and change the name
-            tree = ETree.parse(filename)
+            tree = defusedxml.ElementTree.parse(filename)
             name = tree.getroot().find("name")
             name.text = new_label
 
@@ -2395,7 +2396,7 @@ class LibraryFunctions:
             tree.write(filename, encoding="utf-8")
 
             # Load the random tree and change the name
-            tree = ETree.parse(filename.replace(".xsp", "-randomversion.xsp"))
+            tree = defusedxml.ElementTree.parse(filename.replace(".xsp", "-randomversion.xsp"))
             name = tree.getroot().find("name")
             name.text = new_label
 
