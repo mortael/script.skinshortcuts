@@ -35,6 +35,7 @@ from .hash_utils import generate_file_hash
 from .hash_utils import read_hashes
 from .hash_utils import write_hashes
 from .property_utils import has_fallback_property
+import defusedxml.ElementTree
 
 
 class XMLFunctions:
@@ -68,7 +69,7 @@ class XMLFunctions:
         if xbmcvfs.exists(profiles_xml):
             try:
                 contents = read_file(profiles_xml)
-                tree = ETree.fromstring(contents)
+                tree = defusedxml.ElementTree.fromstring(contents)
             except FileNotFoundError:
                 pass
 
@@ -157,7 +158,7 @@ class XMLFunctions:
 
         # Get the skins addon.xml file
         addonpath = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
-        addon = ETree.parse(addonpath)
+        addon = defusedxml.ElementTree.parse(addonpath)
         extensionpoints = addon.findall("extension")
         paths = []
         skinpaths = []
@@ -738,7 +739,7 @@ class XMLFunctions:
 
         # Get the skins addon.xml file
         addon_xml = xbmcvfs.translatePath(os.path.join("special://skin/", 'addon.xml'))
-        addon = ETree.parse(addon_xml)
+        addon = defusedxml.ElementTree.parse(addon_xml)
         extensionpoints = addon.findall("extension")
 
         skin_version = addon.getroot().attrib.get("version")

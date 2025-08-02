@@ -24,6 +24,7 @@ from .constants import KODI_PATH
 from .constants import LANGUAGE
 from .constants import PROFILE_PATH
 from .property_utils import write_properties
+import defusedxml.ElementTree
 
 
 class NodeFunctions:
@@ -66,7 +67,7 @@ class NodeFunctions:
             with open(file.encode('utf-8'), "rb") as infile:
                 filedata = infile.read().decode('utf-8')
 
-            root = ETree.fromstring(filedata)
+            root = defusedxml.ElementTree.fromstring(filedata)
 
             # Get the item index
             if "order" in root.attrib:
@@ -168,7 +169,7 @@ class NodeFunctions:
         # Open the file
         try:
             # Load the xml file
-            tree = ETree.parse(path)
+            tree = defusedxml.ElementTree.parse(path)
             root = tree.getroot()
 
             group = root.find("group")
@@ -239,7 +240,7 @@ class NodeFunctions:
             # Open the file
             try:
                 # Load the xml file
-                tree = ETree.parse(xml_file)
+                tree = defusedxml.ElementTree.parse(xml_file)
                 root = tree.getroot()
 
                 if "visible" in root.attrib:
@@ -287,7 +288,7 @@ class NodeFunctions:
         # Open the file
         try:
             # Load the xml file
-            tree = ETree.parse(path)
+            tree = defusedxml.ElementTree.parse(path)
             root = tree.getroot()
 
             media_type = "unknown"
